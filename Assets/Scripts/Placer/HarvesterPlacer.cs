@@ -51,7 +51,7 @@ public class HarvesterPlacer : IBlockPlacer
 
         var uiObj = Object.Instantiate(uiPrefab, obj.transform);
         uiObj.transform.localPosition = new Vector3(0, 1.5f, 0);
-        var ui = uiObj.GetComponent<HarvesterUI>();
+        var ui = uiObj.GetComponent<StorageUI>();
         ui.Initialize(storageModule);
 
         FlowManager.Instance.RegisterBox(harvester);
@@ -80,7 +80,7 @@ public class HarvesterPlacer : IBlockPlacer
             if (hit.gameObject == previewInstance) 
                 continue;
             
-            Debug.Log($"[Harvester] {hit.gameObject.name} was placed at {pos}");
+            Debug.Log($"[HarvesterPlacer] Blocked by {hit.gameObject.name} at {pos}");
             return false;
         }
         

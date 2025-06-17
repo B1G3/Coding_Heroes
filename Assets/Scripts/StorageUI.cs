@@ -1,7 +1,7 @@
 using UnityEngine;
 using TMPro;
 
-public class HarvesterUI : MonoBehaviour
+public class StorageUI : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI storageText;
 

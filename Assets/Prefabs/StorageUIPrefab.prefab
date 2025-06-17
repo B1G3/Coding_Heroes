@@ -225,7 +225,7 @@ GameObject:
   - component: {fileID: 3583629724839570657}
   - component: {fileID: 5072879279527724598}
   m_Layer: 0
-  m_Name: HarvesterUIPrefab
+  m_Name: StorageUIPrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -297,7 +297,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 0
+  m_PresetInfoIsWorld: 1
 --- !u!114 &3583629724839570657
 MonoBehaviour:
   m_ObjectHideFlags: 0

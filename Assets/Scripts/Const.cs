@@ -16,6 +16,7 @@ public class Const
     {
         None,
         Tree,
-        Harvester
+        Harvester,
+        Storage,
     }
 }

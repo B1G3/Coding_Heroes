@@ -1,15 +1,17 @@
 using UnityEngine;
 
-public class TreePlacer : IBlockPlacer
+public class StoragePlacer : IBlockPlacer
 {
     private GameObject prefab;
+    private GameObject uiPrefab;
     private GameObject previewInstance;
     private LayerMask ignoredLayers;
 
-    public TreePlacer(GameObject treePrefab, LayerMask treeIgnoredLayers)
-    { 
-        prefab = treePrefab;
-        ignoredLayers = treeIgnoredLayers;
+    public StoragePlacer(GameObject storagePrefab, GameObject storageUIPrefab, LayerMask ignoredLayers)
+    {
+        prefab = storagePrefab;
+        uiPrefab = storageUIPrefab;
+        this.ignoredLayers = ignoredLayers;
     }
 
     public void StartPlacing()
@@ -27,23 +29,26 @@ public class TreePlacer : IBlockPlacer
 
     public void ConfirmPlacement(Vector3Int gridPos)
     {
-        if (IsPlaceable(gridPos))
+        if (!IsPlaceable(gridPos))
         {
-            var obj = Object.Instantiate(prefab, gridPos, Quaternion.identity);
-            var tree = obj.GetComponent<IHarvestable>() as MonoBehaviour;
-
-            if (tree != null && obj.TryGetComponent(out BoxBase box))
-            {
-                box.Initialize(gridPos);
-                FlowManager.Instance.RegisterBox(box);
-                Debug.Log($"[Placement] Placed Tree at {gridPos}");
-            }
-            else
-            {
-                Debug.LogError("[TreePlacer] Invalid prefab setup.");
-                Object.Destroy(obj);
-            }
+            CancelPlacing();
+            return;
         }
+
+        var obj = Object.Instantiate(prefab, gridPos, Quaternion.identity);
+        var box = obj.GetComponent<StorageBox>();
+        box.Initialize(gridPos);
+
+        var storageModule = obj.AddComponent<BasicStorage>();
+        box.SetStorageModule(storageModule);
+        
+        var uiObj = Object.Instantiate(uiPrefab, obj.transform);
+        uiObj.transform.localPosition = new Vector3(0, 1.5f, 0);
+        var ui = uiObj.GetComponent<StorageUI>();
+        ui.Initialize(storageModule);
+
+        FlowManager.Instance.RegisterBox(box);
+        Debug.Log($"[Placement] Placed StorageBox at {gridPos}");
 
         CancelPlacing();
     }
@@ -57,20 +62,17 @@ public class TreePlacer : IBlockPlacer
     private bool IsPlaceable(Vector3Int pos)
     {
         Collider[] hits = Physics.OverlapBox(pos, Vector3.one * 0.4f);
-
         foreach (var hit in hits)
         {
             if (((1 << hit.gameObject.layer) & ignoredLayers) != 0)
                 continue;
-            if (hit.gameObject == previewInstance) 
+            if (hit.gameObject == previewInstance)
                 continue;
-            
-            // 다른 오브젝트가 겹쳐 있다면 설치 불가
-            Debug.Log($"[TreePlacer] Blocked by {hit.gameObject.name} at {pos}");
+
+            Debug.Log($"[StoragePlacer] Blocked by {hit.gameObject.name} at {pos}");
             return false;
         }
 
-        // 겹치는 것 없음 or 무시해도 되는 것만 있음 → 설치 가능
         return true;
     }
 
@@ -79,8 +81,9 @@ public class TreePlacer : IBlockPlacer
         foreach (var r in obj.GetComponentsInChildren<Renderer>())
         {
             r.material = new Material(Shader.Find("Universal Render Pipeline/Unlit"));
-            r.material.color = new Color(0, 1, 0, 0.5f);
+            r.material.color = new Color(1, 1, 0, 0.5f);
         }
+
         obj.AddComponent<BlockPreview>();
     }
 }
