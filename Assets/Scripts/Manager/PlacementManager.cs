@@ -1,90 +1,83 @@
+using System.Collections.Generic;
 using UnityEngine;
+using static Const;
 
 public class PlacementManager : MonoBehaviour
 {
-    [SerializeField] private GameObject treePrefab;
-    [SerializeField] private GameObject harvesterPrefab;
-    [SerializeField] private GameObject harvesterUIPrefab;
+    [SerializeField] private List<BlockPrefabBinding> blockPrefabs;
     
-    private int boxCounter = 0;
-
-    void Update()
+    private Dictionary<BlockType, IBlockPlacer> placers;
+    private BlockType selectedType = BlockType.None;
+    
+    void Awake()
     {
-        if (Input.GetMouseButtonDown(0))
+        placers = new Dictionary<BlockType, IBlockPlacer>();
+
+        foreach (var binding in blockPrefabs)
+        {
+            IBlockPlacer placer = binding.type switch
+            {
+                BlockType.Tree => new TreePlacer(binding.prefab),
+                BlockType.Harvester => new HarvesterPlacer(binding.prefab, binding.uiPrefab),
+                _ => null
+            };
+
+            if (placer != null)
+            {
+                placers[binding.type] = placer;
+            }
+            else
+            {
+                Debug.LogWarning($"[PlacementManager] No placer defined for {binding.type}");
+            }
+        }
+    }
+    
+    private void OnEnable()
+    {
+        BlockSelection.OnBlockTypeSelected += OnBlockTypeChanged;
+    }
+
+    private void OnDisable()
+    {
+        BlockSelection.OnBlockTypeSelected -= OnBlockTypeChanged;
+    }
+
+    private void OnBlockTypeChanged(BlockType type)
+    {
+        selectedType = type;
+        Debug.Log($"[PlacementManager] Ready to place: {type}");
+    }
+
+    private void Update()
+    {
+        if (Input.GetMouseButtonDown(0) && selectedType != BlockType.None)
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out RaycastHit hit))
             {
                 Vector3Int gridPos = Vector3Int.RoundToInt(hit.point);
-
-                // 예시: Shift 키를 누르면 나무, 안 누르면 수확기
-                if (Input.GetKey(KeyCode.LeftShift))
-                {
-                    PlaceTree(gridPos);
-                }
-                else
-                {
-                    PlaceHarvester(gridPos);
-                }
+                PlaceBlock(gridPos);
             }
         }
     }
-
-    void PlaceTree(Vector3Int gridPos)
+    
+    public void SetSelectedBlockType(BlockType type)
     {
-        var obj = Instantiate(treePrefab, gridPos, Quaternion.identity);
-        var tree = obj.GetComponent<IHarvestable>() as MonoBehaviour;
-
-        if (tree != null)
+        selectedType = type;
+    }
+    
+    private void PlaceBlock(Vector3Int gridPos)
+    {
+        if (placers.TryGetValue(selectedType, out var placer))
         {
-            if (obj.TryGetComponent(out BoxBase box))
-            {
-                box.Initialize(gridPos);
-                FlowManager.Instance.RegisterBox(box);
-                Debug.Log($"[Placement] Placed Tree at {gridPos}");
-            }
-            else
-            {
-                Debug.LogError("[Placement] Tree prefab lacks BoxBase.");
-                Destroy(obj);
-            }
+            placer.Place(gridPos);
         }
         else
         {
-            Debug.LogError("[Placement] Tree prefab does not implement IHarvestable.");
-            Destroy(obj);
-        }
-    }
-
-    void PlaceHarvester(Vector3Int gridPos)
-    {
-        var obj = Instantiate(harvesterPrefab, gridPos, Quaternion.identity);
-        var harvester = obj.GetComponent<HarvesterBox>();
-        harvester.Initialize(gridPos);
-
-        var target = FlowManager.Instance.FindNearbyInterface<IHarvestable>(gridPos);
-        if (target == null)
-        {
-            Debug.LogWarning($"[Placement] No IHarvestable nearby. Harvester not placed.");
-            Destroy(obj);
-            return;
+            Debug.LogError($"[PlacementManager] No placer found for {selectedType}");
         }
 
-        var harvestModule = obj.AddComponent<TreeHarvester>();
-        harvestModule.SetHarvestInterval(2f);
-        harvestModule.InitializeTarget(target);
-        harvester.SetHarvestModule(harvestModule);
-
-        var storageModule = obj.AddComponent<BasicStorage>();
-        harvester.SetStorageModule(storageModule);
-        
-        var uiObj = Instantiate(harvesterUIPrefab, obj.transform);
-        uiObj.transform.localPosition = new Vector3(0, 1.5f, 0);
-        var ui = uiObj.GetComponent<HarvesterUI>();
-        ui.Initialize(storageModule);
-
-        FlowManager.Instance.RegisterBox(harvester);
-        Debug.Log($"[Placement] Placed Harvester at {gridPos} with auto modules");
+        BlockSelection.Clear();
     }
-
 }
