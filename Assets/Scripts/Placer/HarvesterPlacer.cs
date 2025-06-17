@@ -31,7 +31,7 @@ public class HarvesterPlacer : IBlockPlacer
 
     public void ConfirmPlacement(Vector3Int gridPos)
     {
-        if (!IsPlaceable(gridPos, out var target))
+        if (cachedTarget == null)
         {
             CancelPlacing();
             return;
@@ -43,7 +43,7 @@ public class HarvesterPlacer : IBlockPlacer
 
         var harvestModule = obj.AddComponent<TreeHarvester>();
         harvestModule.SetHarvestInterval(2f);
-        harvestModule.InitializeTarget(target);
+        harvestModule.InitializeTarget(cachedTarget);
         harvester.SetHarvestModule(harvestModule);
 
         var storageModule = obj.AddComponent<BasicStorage>();
@@ -80,12 +80,10 @@ public class HarvesterPlacer : IBlockPlacer
             if (hit.gameObject == previewInstance) 
                 continue;
             
-            // 다른 오브젝트가 겹쳐 있다면 설치 불가
             Debug.Log($"[Harvester] {hit.gameObject.name} was placed at {pos}");
             return false;
         }
-
-        // 겹치는 것 없음 or 무시해도 되는 것만 있음 → 설치 가능
+        
         return true;
     }
 
