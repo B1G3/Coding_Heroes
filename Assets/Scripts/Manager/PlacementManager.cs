@@ -4,10 +4,14 @@ using static Const;
 
 public class PlacementManager : MonoBehaviour
 {
+    [SerializeField] private LayerMask placementMask;
     [SerializeField] private List<BlockPrefabBinding> blockPrefabs;
     
     private Dictionary<BlockType, IBlockPlacer> placers;
     private BlockType selectedType = BlockType.None;
+    
+    private bool isPlacing = false;
+    private IBlockPlacer activePlacer;
     
     void Awake()
     {
@@ -17,8 +21,8 @@ public class PlacementManager : MonoBehaviour
         {
             IBlockPlacer placer = binding.type switch
             {
-                BlockType.Tree => new TreePlacer(binding.prefab),
-                BlockType.Harvester => new HarvesterPlacer(binding.prefab, binding.uiPrefab),
+                BlockType.Tree => new TreePlacer(binding.prefab, binding.ignoredLayers),
+                BlockType.Harvester => new HarvesterPlacer(binding.prefab, binding.uiPrefab, binding.ignoredLayers),
                 _ => null
             };
 
@@ -51,33 +55,42 @@ public class PlacementManager : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetMouseButtonDown(0) && selectedType != BlockType.None)
+        if (selectedType == BlockType.None) return;
+
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        if (!Physics.Raycast(ray, out var hit, Mathf.Infinity, placementMask)) return;
+
+        Vector3Int gridPos = Vector3Int.RoundToInt(hit.point);
+
+        if (Input.GetMouseButtonDown(0))
         {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray, out RaycastHit hit))
+            if (placers.TryGetValue(selectedType, out var placer))
             {
-                Vector3Int gridPos = Vector3Int.RoundToInt(hit.point);
-                PlaceBlock(gridPos);
+                isPlacing = true;
+                activePlacer = placer;
+                activePlacer.StartPlacing();
             }
         }
-    }
-    
-    public void SetSelectedBlockType(BlockType type)
-    {
-        selectedType = type;
-    }
-    
-    private void PlaceBlock(Vector3Int gridPos)
-    {
-        if (placers.TryGetValue(selectedType, out var placer))
-        {
-            placer.Place(gridPos);
-        }
-        else
-        {
-            Debug.LogError($"[PlacementManager] No placer found for {selectedType}");
-        }
 
-        BlockSelection.Clear();
+        if (isPlacing)
+        {
+            activePlacer.UpdatePreview(gridPos);
+
+            if (Input.GetMouseButtonUp(0))
+            {
+                activePlacer.ConfirmPlacement(gridPos);
+                isPlacing = false;
+                activePlacer = null;
+                BlockSelection.Clear();
+            }
+
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                activePlacer.CancelPlacing();
+                isPlacing = false;
+                activePlacer = null;
+                BlockSelection.Clear();
+            }
+        }
     }
 }

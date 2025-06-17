@@ -98,6 +98,7 @@ GameObject:
   - component: {fileID: 3755878477685733177}
   - component: {fileID: 8170309163365407869}
   - component: {fileID: 3585076275210990583}
+  - component: {fileID: 2558806977380066123}
   m_Layer: 0
   m_Name: TreePrefab
   m_TagString: Untagged
@@ -167,3 +168,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   color: {r: 0, g: 0, b: 0, a: 0}
+--- !u!114 &2558806977380066123
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2789373171507495475}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3506f928855c054faa486f349932340, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

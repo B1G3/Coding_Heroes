@@ -9,6 +9,7 @@ public class Const
         public BlockType type;
         public GameObject prefab;
         public GameObject uiPrefab;
+        public LayerMask ignoredLayers;
     }
     
     public enum BlockType
