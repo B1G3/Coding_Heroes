@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
-using static Const;
+using static BlockConfig;
 
 public class PlacementManager : MonoBehaviour
 {

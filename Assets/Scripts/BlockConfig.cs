@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class Const
+public class BlockConfig
 {
     [Serializable]
     public struct BlockPrefabBinding

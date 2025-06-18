@@ -1,6 +1,6 @@
 using System;
 using UnityEngine;
-using static Const;
+using static BlockConfig;
 
 public static class BlockSelection
 {

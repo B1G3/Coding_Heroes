@@ -1,5 +1,5 @@
 using UnityEngine;
-using static Const;
+using static BlockConfig;
 
 public class BlockButton : MonoBehaviour
 {
