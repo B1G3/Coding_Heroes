@@ -23,14 +23,7 @@ public class InputManager : MonoBehaviour
 
     public async UniTask InitializeAsync()
     {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
         Instance = this;
-        DontDestroyOnLoad(gameObject);
 
         gameplayMap = inputActions.FindActionMap("Gameplay");
         uiMap = inputActions.FindActionMap("UI");
