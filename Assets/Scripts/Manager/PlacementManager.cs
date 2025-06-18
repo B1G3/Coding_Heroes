@@ -1,19 +1,24 @@
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using static BlockConfig;
 
 public class PlacementManager : MonoBehaviour
 {
+    [Header("Config")]
     [SerializeField] private LayerMask placementMask;
     [SerializeField] private List<BlockPrefabBinding> blockPrefabs;
-    
+    [SerializeField] private InputActionAsset inputActions;
+
     private Dictionary<BlockType, IBlockPlacer> placers;
     private BlockType selectedType = BlockType.None;
-    
+
     private bool isPlacing = false;
     private IBlockPlacer activePlacer;
-    
-    void Awake()
+    private Vector3Int cachedGridPos;
+
+    public async UniTask InitializeAsync()
     {
         placers = new Dictionary<BlockType, IBlockPlacer>();
 
@@ -28,24 +33,25 @@ public class PlacementManager : MonoBehaviour
             };
 
             if (placer != null)
-            {
                 placers[binding.type] = placer;
-            }
             else
-            {
                 Debug.LogWarning($"[PlacementManager] No placer defined for {binding.type}");
-            }
         }
-    }
-    
-    private void OnEnable()
-    {
+
         BlockSelection.OnBlockTypeSelected += OnBlockTypeChanged;
+        InputManager.Instance.PlaceAction.performed += OnPlaceStarted;
+        InputManager.Instance.PlaceAction.canceled += OnPlaceReleased;
+        InputManager.Instance.CancelAction.performed += OnCancel;
+
+        await UniTask.Yield();
     }
 
-    private void OnDisable()
+    public void Dispose()
     {
         BlockSelection.OnBlockTypeSelected -= OnBlockTypeChanged;
+        InputManager.Instance.PlaceAction.performed -= OnPlaceStarted;
+        InputManager.Instance.PlaceAction.canceled -= OnPlaceReleased;
+        InputManager.Instance.CancelAction.performed -= OnCancel;
     }
 
     private void OnBlockTypeChanged(BlockType type)
@@ -56,42 +62,52 @@ public class PlacementManager : MonoBehaviour
 
     private void Update()
     {
-        if (selectedType == BlockType.None) return;
+        if (selectedType == BlockType.None)
+            return;
 
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        if (!Physics.Raycast(ray, out var hit, Mathf.Infinity, placementMask)) return;
+        Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
+        if (!Physics.Raycast(ray, out var hit, Mathf.Infinity, placementMask))
+            return;
 
-        Vector3Int gridPos = Vector3Int.RoundToInt(hit.point);
+        cachedGridPos = Vector3Int.RoundToInt(hit.point);
 
-        if (Input.GetMouseButtonDown(0))
+        if (isPlacing && activePlacer != null)
         {
-            if (placers.TryGetValue(selectedType, out var placer))
-            {
-                isPlacing = true;
-                activePlacer = placer;
-                activePlacer.StartPlacing();
-            }
+            activePlacer.UpdatePreview(cachedGridPos);
         }
+    }
 
-        if (isPlacing)
+    private void OnPlaceStarted(InputAction.CallbackContext ctx)
+    {
+        if (selectedType == BlockType.None) return;
+    
+        if (!isPlacing && placers.TryGetValue(selectedType, out var placer))
         {
-            activePlacer.UpdatePreview(gridPos);
+            isPlacing = true;
+            activePlacer = placer;
+            activePlacer.StartPlacing();
+        }
+    }
 
-            if (Input.GetMouseButtonUp(0))
-            {
-                activePlacer.ConfirmPlacement(gridPos);
-                isPlacing = false;
-                activePlacer = null;
-                BlockSelection.Clear();
-            }
+    private void OnPlaceReleased(InputAction.CallbackContext ctx)
+    {
+        if (isPlacing && activePlacer != null)
+        {
+            activePlacer.ConfirmPlacement(cachedGridPos);
+            isPlacing = false;
+            activePlacer = null;
+            BlockSelection.Clear();
+        }
+    }
 
-            if (Input.GetKeyDown(KeyCode.Escape))
-            {
-                activePlacer.CancelPlacing();
-                isPlacing = false;
-                activePlacer = null;
-                BlockSelection.Clear();
-            }
+    private void OnCancel(InputAction.CallbackContext context)
+    {
+        if (isPlacing && activePlacer != null)
+        {
+            activePlacer.CancelPlacing();
+            isPlacing = false;
+            activePlacer = null;
+            BlockSelection.Clear();
         }
     }
 }
