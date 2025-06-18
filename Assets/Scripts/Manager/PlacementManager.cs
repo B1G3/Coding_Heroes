@@ -29,6 +29,7 @@ public class PlacementManager : MonoBehaviour
                 BlockType.Tree => new TreePlacer(binding.prefab, binding.ignoredLayers),
                 BlockType.Harvester => new HarvesterPlacer(binding.prefab, binding.uiPrefab, binding.ignoredLayers),
                 BlockType.Storage => new StoragePlacer(binding.prefab, binding.uiPrefab, binding.ignoredLayers),
+                BlockType.Rail => new RailPlacer(binding.prefab, binding.uiPrefab, binding.ignoredLayers),
                 _ => null
             };
 

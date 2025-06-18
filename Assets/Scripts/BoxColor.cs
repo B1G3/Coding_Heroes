@@ -27,11 +27,13 @@ public class BoxColor : MonoBehaviour
     private Color GetColorByType()
     {
         if (TryGetComponent(out TreeResourceBox _))
-            return new Color(0.3f, 0.8f, 0.3f); // 녹색
+            return Color.forestGreen; // 녹색
         if (TryGetComponent(out HarvesterBox _))
-            return new Color(0.2f, 0.6f, 1.0f); // 파랑
+            return Color.darkBlue;
         if (TryGetComponent(out StorageBox _))
-            return new Color(1.0f, 0.8f, 0.2f); // 노랑
+            return Color.saddleBrown;
+        if (TryGetComponent(out RailBox _))
+            return Color.chocolate;
 
         return Color.gray; // 기본 색
     }

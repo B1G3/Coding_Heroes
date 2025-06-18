@@ -18,5 +18,16 @@ public class BlockConfig
         Tree,
         Harvester,
         Storage,
+        Rail,
+        
+    }
+    
+    public enum Direction
+    {
+        None,
+        North,
+        East,
+        South,
+        West
     }
 }

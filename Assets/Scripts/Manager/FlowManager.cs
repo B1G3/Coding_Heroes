@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using static BlockConfig;
 
 public class FlowManager : MonoBehaviour
 {
@@ -11,6 +12,18 @@ public class FlowManager : MonoBehaviour
 
     public void RegisterBox(BoxBase box) {
         grid[box.GridPosition] = box;
+    }
+    
+    public BoxBase FindBox(Vector3Int pos)
+    {
+        grid.TryGetValue(pos, out var box);
+        return box;
+    }
+
+    public BoxBase FindBoxInDirection(Vector3Int origin, Direction dir)
+    {
+        Vector3Int targetPos = origin + dir.ToVector();
+        return FindBox(targetPos);
     }
 
     public T FindNearbyInterface<T>(Vector3Int pos) where T : class {
@@ -30,7 +43,7 @@ public class FlowManager : MonoBehaviour
         return null;
     }
 
-    void Update() {
+    private void Update() {
         foreach (var box in grid.Values) {
             box.Tick(); // 모든 박스의 행동 처리
         }
