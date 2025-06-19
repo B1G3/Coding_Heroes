@@ -6,5 +6,6 @@ public interface IOutput
     bool TrySend(out int amount, Direction dir);
     
     void SetOutputDirection(Direction dir);
-    void RegisterOutputTarget(IInput target, Direction toDir);
+    Direction GetOutputDirection();
+    // void RegisterOutputTarget(IInput target, Direction toDir);
 }

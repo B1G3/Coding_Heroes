@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class RailBox : BoxBase
 {
+    [Header("Module Slots")]
     [SerializeField] private RailModule railModule;
 
     public void SetRailModule(RailModule module) => railModule = module;
@@ -17,5 +18,15 @@ public class RailBox : BoxBase
         railModule.Tick(GridPosition);
     }
     
-    public RailModule GetRailModule() => railModule;
+    public override T GetIoModule<T>()
+    {
+        if (typeof(T) == typeof(RailModule) ||
+            typeof(T) == typeof(IInput) ||
+            typeof(T) == typeof(IOutput))
+        {
+            return railModule as T;
+        }
+
+        return base.GetIoModule<T>();
+    }
 }

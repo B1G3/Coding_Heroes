@@ -9,4 +9,6 @@ public abstract class BoxBase : MonoBehaviour
     }
 
     public virtual void Tick() { }
+
+    public virtual T GetIoModule<T>() where T : class => null;
 }

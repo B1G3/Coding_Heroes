@@ -43,8 +43,8 @@ public class RailPlacer : IBlockPlacer
         var railModule = obj.AddComponent<RailModule>();
         rail.SetRailModule(railModule);
         
-        railModule.SetInputDirection(Direction.South);
-        railModule.SetOutputDirection(Direction.North);
+        railModule.SetInputDirection(Direction.None);
+        railModule.SetOutputDirection(Direction.None);
 
         var uiObj = Object.Instantiate(uiPrefab, obj.transform);
         uiObj.transform.localPosition = new Vector3(0, 0.25f, 0);
@@ -55,7 +55,7 @@ public class RailPlacer : IBlockPlacer
         
         AutoConfigureDirection(gridPos, railModule);
         
-        TryConnectWithNeighbors(gridPos, rail);
+        // TryConnectWithNeighbors(gridPos, rail);
 
         Debug.Log($"[Placement] Placed Rail at {gridPos}");
         CancelPlacing();
@@ -95,64 +95,61 @@ public class RailPlacer : IBlockPlacer
     
     private void AutoConfigureDirection(Vector3Int gridPos, RailModule railModule)
     {
+        Direction? inputDir  = null;
+        Direction? outputDir = null;
+        
         foreach (var dir in DirectionExtensions.AllDirections())
         {
             var neighborPos = gridPos + dir.ToVector();
             var neighbor = FlowManager.Instance.FindBox(neighborPos);
             if (neighbor == null) continue;
-
-            var neighborOutput = neighbor.GetComponent<IOutput>();
+            
+            
+            var neighborOutput = neighbor.GetIoModule<IOutput>();
+            if (neighborOutput != null && 
+                neighborOutput.GetOutputDirection() == Direction.None)
+            {
+                Debug.Log($"1. neighbor: {neighbor}, dir: {dir}");
+                neighborOutput.SetOutputDirection(dir.Opposite());
+                inputDir = dir;
+            }
+            
             if (neighborOutput != null && neighborOutput.CanSend(dir.Opposite()))
             {
-                railModule.SetInputDirection(dir);
-                railModule.SetOutputDirection(dir.Opposite());
-                return;
+                Debug.Log($"2. neighbor: {neighbor}, dir: {dir}");
+                inputDir = dir;
             }
-
-            var neighborInput = neighbor.GetComponent<IInput>();
+            
+            var neighborInput = neighbor.GetIoModule<IInput>();
+            if (neighborInput != null && 
+                neighborInput.GetInputDirection() == Direction.None)
+            {
+                Debug.Log($"3. neighbor: {neighbor}, dir: {dir}");
+                neighborInput.SetInputDirection(dir.Opposite());
+                outputDir = dir;
+            }
+            
             if (neighborInput != null && neighborInput.CanReceive(dir.Opposite()))
             {
-                railModule.SetOutputDirection(dir);
-                railModule.SetInputDirection(dir.Opposite());
-                return;
-            }
-            
-            var neighborRailModule = neighbor.GetComponent<RailModule>();
-            if (neighborRailModule != null &&
-                neighborRailModule.GetInputDirection() == Direction.None &&
-                neighborRailModule.GetOutputDirection() == Direction.None)
-            {
-                // neighbor의 output을 나 쪽으로, 나의 input을 neighbor 쪽으로
-                neighborRailModule.SetOutputDirection(dir.Opposite());
-                neighborRailModule.SetInputDirection(dir);
-                railModule.SetInputDirection(dir);
-                railModule.SetOutputDirection(dir.Opposite());
-                return;
-            }
-            
-            if (neighborRailModule != null &&
-                neighborRailModule.GetInputDirection() != Direction.None)
-            {
-                railModule.SetOutputDirection(dir);
-                railModule.SetInputDirection(dir.Opposite());
-                return;
+                Debug.Log($"4. neighbor: {neighbor}, dir: {dir}");
+                outputDir = dir;
             }
         }
         
-        railModule.SetInputDirection(Direction.None);
-        railModule.SetOutputDirection(Direction.None);
+        railModule.SetInputDirection (inputDir  ?? Direction.None);
+        railModule.SetOutputDirection(outputDir ?? Direction.None);
     }
     
-    private void TryConnectWithNeighbors(Vector3Int gridPos, BoxBase rail)
-    {
-        foreach (var dir in DirectionExtensions.AllDirections())
-        {
-            var neighborPos = gridPos + dir.ToVector();
-            var neighbor = FlowManager.Instance.FindBox(neighborPos);
-            if (neighbor == null) continue;
-
-            ConnectionUtil.TryConnect(rail, neighbor, dir);
-            ConnectionUtil.TryConnect(neighbor, rail, dir);
-        }
-    }
+    // private void TryConnectWithNeighbors(Vector3Int gridPos, BoxBase rail)
+    // {
+    //     foreach (var dir in DirectionExtensions.AllDirections())
+    //     {
+    //         var neighborPos = gridPos + dir.ToVector();
+    //         var neighbor = FlowManager.Instance.FindBox(neighborPos);
+    //         if (neighbor == null) continue;
+    //
+    //         ConnectionUtil.TryConnect(rail, neighbor, dir);
+    //         ConnectionUtil.TryConnect(neighbor, rail, dir);
+    //     }
+    // }
 }
