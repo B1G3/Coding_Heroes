@@ -19,7 +19,7 @@ public class HarvesterPlacer : IBlockPlacer
     public void StartPlacing()
     {
         previewInstance = Object.Instantiate(prefab);
-        SetPreviewMaterial(previewInstance);
+        // SetPreviewMaterial(previewInstance);
     }
 
     public void UpdatePreview(Vector3Int gridPos)
@@ -87,13 +87,13 @@ public class HarvesterPlacer : IBlockPlacer
         return true;
     }
 
-    private void SetPreviewMaterial(GameObject obj)
-    {
-        foreach (var r in obj.GetComponentsInChildren<Renderer>())
-        {
-            r.material = new Material(Shader.Find("Universal Render Pipeline/Unlit"));
-            r.material.color = new Color(1, 1, 0, 0.5f);
-        }
-        obj.AddComponent<BlockPreview>();
-    }
+    // private void SetPreviewMaterial(GameObject obj)
+    // {
+    //     foreach (var r in obj.GetComponentsInChildren<Renderer>())
+    //     {
+    //         r.material = new Material(Shader.Find("Universal Render Pipeline/Unlit"));
+    //         r.material.color = new Color(1, 1, 0, 0.5f);
+    //     }
+    //     obj.AddComponent<BlockPreview>();
+    // }
 }

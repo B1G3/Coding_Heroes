@@ -15,7 +15,7 @@ public class TreePlacer : IBlockPlacer
     public void StartPlacing()
     {
         previewInstance = Object.Instantiate(prefab);
-        SetPreviewMaterial(previewInstance);
+        // SetPreviewMaterial(previewInstance);
     }
 
     public void UpdatePreview(Vector3Int gridPos)
@@ -74,13 +74,13 @@ public class TreePlacer : IBlockPlacer
         return true;
     }
 
-    private void SetPreviewMaterial(GameObject obj)
-    {
-        foreach (var r in obj.GetComponentsInChildren<Renderer>())
-        {
-            r.material = new Material(Shader.Find("Universal Render Pipeline/Unlit"));
-            r.material.color = new Color(0, 1, 0, 0.5f);
-        }
-        obj.AddComponent<BlockPreview>();
-    }
+    // private void SetPreviewMaterial(GameObject obj)
+    // {
+    //     foreach (var r in obj.GetComponentsInChildren<Renderer>())
+    //     {
+    //         r.material = new Material(Shader.Find("Universal Render Pipeline/Unlit"));
+    //         r.material.color = new Color(0, 1, 0, 0.5f);
+    //     }
+    //     obj.AddComponent<BlockPreview>();
+    // }
 }
