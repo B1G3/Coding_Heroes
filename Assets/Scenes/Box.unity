@@ -2371,7 +2371,6 @@ MonoBehaviour:
     ignoredLayers:
       serializedVersion: 2
       m_Bits: 8
-  inputActions: {fileID: 0}
 --- !u!1 &5965528478278070244
 GameObject:
   m_ObjectHideFlags: 0

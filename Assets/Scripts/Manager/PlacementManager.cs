@@ -9,7 +9,6 @@ public class PlacementManager : MonoBehaviour
     [Header("Config")]
     [SerializeField] private LayerMask placementMask;
     [SerializeField] private List<BlockPrefabBinding> blockPrefabs;
-    [SerializeField] private InputActionAsset inputActions;
 
     private Dictionary<BlockType, IBlockPlacer> placers;
     private BlockType selectedType = BlockType.None;

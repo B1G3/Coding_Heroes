@@ -18,7 +18,7 @@ public class RailPlacer : IBlockPlacer
     public void StartPlacing()
     {
         previewInstance = Object.Instantiate(prefab);
-        SetPreviewMaterial(previewInstance);
+        // SetPreviewMaterial(previewInstance);
     }
 
     public void UpdatePreview(Vector3Int gridPos)
@@ -83,15 +83,15 @@ public class RailPlacer : IBlockPlacer
         return true;
     }
 
-    private void SetPreviewMaterial(GameObject obj)
-    {
-        foreach (var r in obj.GetComponentsInChildren<Renderer>())
-        {
-            r.material = new Material(Shader.Find("Universal Render Pipeline/Unlit"));
-            r.material.color = new Color(0, 1, 1, 0.5f); // 청록색 반투명
-        }
-        obj.AddComponent<BlockPreview>();
-    }
+    // private void SetPreviewMaterial(GameObject obj)
+    // {
+    //     foreach (var r in obj.GetComponentsInChildren<Renderer>())
+    //     {
+    //         r.material = new Material(Shader.Find("Universal Render Pipeline/Unlit"));
+    //         r.material.color = new Color(0, 1, 1, 0.5f); // 청록색 반투명
+    //     }
+    //     obj.AddComponent<BlockPreview>();
+    // }
     
     private void AutoConfigureDirection(Vector3Int gridPos, RailModule railModule)
     {
@@ -107,26 +107,31 @@ public class RailPlacer : IBlockPlacer
             
             var neighborOutput = neighbor.GetIoModule<IOutput>();
             if (neighborOutput != null && 
+                inputDir == null &&
                 neighborOutput.GetOutputDirection() == Direction.None)
             {
                 Debug.Log($"1. neighbor: {neighbor}, dir: {dir}");
                 neighborOutput.SetOutputDirection(dir.Opposite());
                 inputDir = dir;
+                continue;
             }
             
             if (neighborOutput != null && neighborOutput.CanSend(dir.Opposite()))
             {
                 Debug.Log($"2. neighbor: {neighbor}, dir: {dir}");
                 inputDir = dir;
+                continue;
             }
             
             var neighborInput = neighbor.GetIoModule<IInput>();
             if (neighborInput != null && 
+                outputDir == null &&
                 neighborInput.GetInputDirection() == Direction.None)
             {
                 Debug.Log($"3. neighbor: {neighbor}, dir: {dir}");
                 neighborInput.SetInputDirection(dir.Opposite());
                 outputDir = dir;
+                continue;
             }
             
             if (neighborInput != null && neighborInput.CanReceive(dir.Opposite()))
