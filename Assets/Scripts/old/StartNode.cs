@@ -5,9 +5,9 @@ using UnityEngine;
 public class StartNode : MonoBehaviour
 {
     [Header("First BoxNode")]
-    [SerializeField] private BoxNode firstBox;
+    [SerializeField] private Block firstBox;
 
-    public BoxNode FirstBox => firstBox;
+    public Block FirstBox => firstBox;
     
     public async UniTaskVoid InitializeAsync()
     {

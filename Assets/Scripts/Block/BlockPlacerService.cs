@@ -2,18 +2,17 @@ using UnityEngine;
 
 public class BlockPlacerService : MonoBehaviour, IBlockPlacer
 {
+    [SerializeField] private NodeRegistry _registry;
     [SerializeField] LayerMask ignoreMask;
 
     private ICollisionValidator _validator;
     private IPlacementPreview _preview;
-    private NodeRegistry _registry;
     private GameObject _placementPrefab;
 
     void Awake()
     {
         _validator = new PhysicsCollisionValidator(ignoreMask);
         _preview   = gameObject.AddComponent<PlacementPreview>();
-        _registry  = NodeRegistry.Instance;
     }
     
     public void SetCollisionValidator(ICollisionValidator validator)
@@ -39,7 +38,10 @@ public class BlockPlacerService : MonoBehaviour, IBlockPlacer
         {
             var go = Instantiate(_placementPrefab, pos, Quaternion.identity);
             if (go.TryGetComponent<IGridNode>(out var node))
+            {
+                node.Initialize(pos);
                 _registry.Register(node);
+            }
         }
         _preview.ClearPreview();
     }

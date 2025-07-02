@@ -28,12 +28,10 @@ public class BlockColor : MonoBehaviour
     {
         if (TryGetComponent(out StartNode _))
             return Color.forestGreen; // 녹색
-        if (TryGetComponent(out BoxNode _))
+        if (TryGetComponent(out Block _))
             return Color.darkBlue;
-        if (TryGetComponent(out RailNode _))
+        if (TryGetComponent(out PathTile _))
             return Color.saddleBrown;
-        if(TryGetComponent(out Unit _))
-            return Color.yellow;
 
         return Color.gray; // 기본 색
     }

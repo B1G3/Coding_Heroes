@@ -16,8 +16,11 @@ public class NodeRegistry : MonoBehaviour
         if (Instance == this) Instance = null;
     }
 
-    public void Register(IGridNode node) 
-        => _nodes[node.GridPosition] = node;
+    public void Register(IGridNode node)
+    { 
+        _nodes[node.GridPosition] = node;
+    }
+    
 
     public IGridNode GetNodeAt(Vector3Int pos)
         => _nodes.TryGetValue(pos, out var n) ? n : null;

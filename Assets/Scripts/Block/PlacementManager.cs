@@ -12,11 +12,17 @@ public class PlacementManager : MonoBehaviour
     [SerializeField] private BlockPlacerService placer;
     [SerializeField] private Camera cam;
     [SerializeField] private LayerMask groundMask;
+    [SerializeField] private LayerMask blockMask;
     [SerializeField] private BlockBindings blockBindings;
+    [SerializeField] private NodeRegistry registry;
+    private enum Mode { None, Block, WaitingForPathStart, PlacingPath }
+    private Mode mode = Mode.None;
     
     private BlockType currentType = BlockType.None;
     private PrefabEntry currentEntry;
     private Vector3Int gridPos;
+    
+    private Vector3Int pathStart;
 
     private void OnEnable()
     {
@@ -41,7 +47,17 @@ public class PlacementManager : MonoBehaviour
             return;
 
         if (TryGetGridPosition(out gridPos))
-            placer.UpdatePlacement(gridPos);
+        {
+            if (mode == Mode.Block)
+            {
+                placer.UpdatePlacement(gridPos);
+            }
+            else if (mode == Mode.PlacingPath)
+            {
+                var aligned = AlignOnAxis(pathStart, gridPos);
+                placer.UpdatePlacement(aligned);
+            }
+        }
     }
 
     /// <summary>
@@ -50,6 +66,7 @@ public class PlacementManager : MonoBehaviour
     /// </summary>
     private void OnSelectType(BlockType type, int prefabIndex)
     {
+        Debug.Log($"[PlacementManager] Selected block type: {type}");
         int entryIndex = (int)type;
         if (blockBindings == null || entryIndex < 0 || entryIndex >= blockBindings.entries.Count)
             return;
@@ -63,42 +80,77 @@ public class PlacementManager : MonoBehaviour
 
         currentType = binding.type;
         currentEntry = binding.prefabs[prefabIndex];
+            Debug.Log($"[PlacementManager] Selected block: {currentEntry.prefab.name}");
 
         // 충돌 검사 설정 갱신
         placer.SetCollisionValidator(new PhysicsCollisionValidator(currentEntry.ignoredLayers));
         // 프리뷰 및 배치 시작
-        placer.StartPlacement(currentEntry.prefab);
+        if (currentType == BlockType.Block)
+        {
+            mode = Mode.Block;
+            placer.StartPlacement(currentEntry.prefab);
+        }
+        else if (currentType == BlockType.Path)
+        {
+            mode = Mode.WaitingForPathStart;
+        }
+        else
+        {
+            // other types (unit, etc.)
+            mode = Mode.None;
+        }
     }
 
     private void OnPlacePerformed(InputAction.CallbackContext ctx)
     {
-        if (currentType == BlockType.None)
-            return;
-
-        placer.ConfirmPlacement(gridPos);
-        ResetState();
+        if (currentType == BlockType.None) return;
+        if (!TryGetGridPosition(out var pos)) return;
+        
+        if (mode == Mode.Block)
+        {
+            placer.ConfirmPlacement(pos);
+            ResetState();
+        }
+        else if (mode == Mode.WaitingForPathStart)
+        {
+            // require clicking on existing node
+            if (registry.GetNodeAt(pos) != null)
+            {
+                pathStart = pos;
+                mode = Mode.PlacingPath;
+                placer.StartPlacement(currentEntry.prefab);
+            }
+        }
+        else if (mode == Mode.PlacingPath)
+        {
+            var end = AlignOnAxis(pathStart, pos);
+            InstallPath(pathStart, end);
+            placer.CancelPlacement();
+            ResetState();
+        }
     }
 
     private void OnCancelPerformed(InputAction.CallbackContext ctx)
     {
-        if (currentType == BlockType.None)
-            return;
-
+        if (mode == Mode.None) return;
         placer.CancelPlacement();
         ResetState();
     }
 
     private void ResetState()
     {
+        mode = Mode.None;
         currentType = BlockType.None;
         currentEntry = default;
+        BlockSelection.Clear();
     }
 
     private bool TryGetGridPosition(out Vector3Int pos)
     {
         Vector2 mouse = InputManager.Instance.MousePosition;
         Ray ray = cam.ScreenPointToRay(mouse);
-        if (Physics.Raycast(ray, out var hit, 100f, groundMask))
+        LayerMask mask = groundMask;
+        if (Physics.Raycast(ray, out var hit, 100f, mask))
         {
             Vector3 p = hit.point;
             pos = new Vector3Int(
@@ -112,4 +164,39 @@ public class PlacementManager : MonoBehaviour
         return false;
     }
     
+    private Vector3Int AlignOnAxis(Vector3Int a, Vector3Int b)
+    {
+        var dx = Mathf.Abs(b.x - a.x);
+        var dz = Mathf.Abs(b.z - a.z);
+        return dx >= dz ? new Vector3Int(b.x, 0, a.z)
+            : new Vector3Int(a.x, 0, b.z);
+    }
+
+    private void InstallPath(Vector3Int start, Vector3Int end)
+    {
+        var dir = (end - start);
+        dir.x = dir.x == 0 ? 0 : dir.x / Mathf.Abs(dir.x);
+        dir.z = dir.z == 0 ? 0 : dir.z / Mathf.Abs(dir.z);
+
+        for (var pos = start + dir; ; pos += dir)
+        {
+            var tileGO = Instantiate(currentEntry.prefab, pos, Quaternion.identity);
+            var tile   = tileGO.GetComponent<PathTile>();
+            tile.Initialize(pos);
+            registry.Register(tile);  // 점유 정보만 저장
+
+            if (pos == end - dir) break;
+        }
+
+        // 2) 로직 연결 (블록 노드만)
+        var fromNode = registry.GetNodeAt(start) as IConnectable;
+        var toNode   = registry.GetNodeAt(end)   as IConnectable;
+        if (fromNode != null && toNode != null)
+        {
+            // PathConnection 생성 시 ConnectNext/Prev까지 처리
+            var connection = new PathConnection(fromNode, toNode);
+            PathConnectionManager.Instance.RegisterConnection(connection);
+            // (필요하다면) connections 리스트에 담아두고 관리
+        }
+    }
 }

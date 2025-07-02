@@ -1,6 +1,6 @@
-using Cysharp.Threading.Tasks;
-
-public interface IUnitCommand
-{
-    UniTask ExecuteAsync(Unit unit);
-}
+// using Cysharp.Threading.Tasks;
+//
+// public interface IUnitCommand
+// {
+//     UniTask ExecuteAsync(Unit unit);
+// }

@@ -13,24 +13,21 @@ MonoBehaviour:
   m_Name: BlockBindings
   m_EditorClassIdentifier: 
   entries:
-  - type: 1
+  - type: 0
     prefabs:
     - prefab: {fileID: 7478957879801460289, guid: a4331e227f1a7df4c89c6be8e6be2420, type: 3}
-      uiPrefab: {fileID: 0}
       ignoredLayers:
         serializedVersion: 2
         m_Bits: 8
-  - type: 2
+  - type: 1
     prefabs:
     - prefab: {fileID: 4821083770212554965, guid: 82f0e0b6187063543b55de15deaee8f1, type: 3}
-      uiPrefab: {fileID: 0}
       ignoredLayers:
         serializedVersion: 2
-        m_Bits: 8
-  - type: 3
+        m_Bits: 72
+  - type: 2
     prefabs:
     - prefab: {fileID: 3810350408636312661, guid: f4131897a894a654ead2534681807488, type: 3}
-      uiPrefab: {fileID: 0}
       ignoredLayers:
         serializedVersion: 2
         m_Bits: 8
