@@ -21,7 +21,7 @@ public class InputManager : MonoBehaviour
     private InputActionMap gameplayMap;
     private InputActionMap uiMap;
 
-    public async UniTask InitializeAsync()
+    public void Awake()
     {
         Instance = this;
 
@@ -35,7 +35,6 @@ public class InputManager : MonoBehaviour
         CancelAction.Enable();
 
         SwitchContext(InputContext.Gameplay);
-        await UniTask.Yield();
     }
 
     public void Dispose()
