@@ -19,6 +19,10 @@ MonoBehaviour:
       ignoredLayers:
         serializedVersion: 2
         m_Bits: 8
+    - prefab: {fileID: 7478957879801460289, guid: e503426b0a860c740b8235c49c637b24, type: 3}
+      ignoredLayers:
+        serializedVersion: 2
+        m_Bits: 8
   - type: 1
     prefabs:
     - prefab: {fileID: 4821083770212554965, guid: 82f0e0b6187063543b55de15deaee8f1, type: 3}
@@ -27,7 +31,7 @@ MonoBehaviour:
         m_Bits: 72
   - type: 2
     prefabs:
-    - prefab: {fileID: 3810350408636312661, guid: f4131897a894a654ead2534681807488, type: 3}
+    - prefab: {fileID: 7478957879801460289, guid: 3f5d086d5cdf2304a8d89f0135e53b2b, type: 3}
       ignoredLayers:
         serializedVersion: 2
         m_Bits: 8

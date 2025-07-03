@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 7913604356010231603}
   - component: {fileID: 7196121347454800607}
   m_Layer: 0
-  m_Name: RotationRail
+  m_Name: Rotation Tile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -93,7 +93,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d4bd850936dc0414c8e02cf8dda68e59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  color: {r: 0, g: 0, b: 0, a: 0}
+  color: {r: 1, g: 0.5, b: 0.5, a: 0}
 --- !u!1 &6046492901784911591
 GameObject:
   m_ObjectHideFlags: 0

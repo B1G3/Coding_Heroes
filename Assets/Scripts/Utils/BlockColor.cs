@@ -27,11 +27,14 @@ public class BlockColor : MonoBehaviour
     private Color GetColorByType()
     {
         if (TryGetComponent(out StartNode _))
-            return Color.forestGreen; // 녹색
+            return Color.forestGreen;
+        if (TryGetComponent(out EndNode _))
+            return Color.greenYellow;
         if (TryGetComponent(out Block _))
             return Color.darkBlue;
         if (TryGetComponent(out PathTile _))
             return Color.saddleBrown;
+        
 
         return Color.gray; // 기본 색
     }

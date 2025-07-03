@@ -1,7 +1,6 @@
-
 using UnityEngine;
 
-public class Block : IGridNode, IConnectable, ILogicalModule
+public class StartNode : IGridNode, IConnectable, ILogicalModule
 {
     public IConnectable Next { get; set; }
     public IConnectable Prev { get; set; }
@@ -9,9 +8,9 @@ public class Block : IGridNode, IConnectable, ILogicalModule
     public override void Initialize(Vector3Int gridPos)
     {
         base.Initialize(gridPos);
-        name = "Block";
+        name = "Start";
     }
-
+    
     public void ConnectNext(IConnectable next)
     {
         Next = next;
@@ -31,9 +30,17 @@ public class Block : IGridNode, IConnectable, ILogicalModule
     {
         Prev = null;
     }
-    
-    public void OnSignalEnter(string signal)
+
+    // 외부에서 호출하면 신호 전파를 시작
+    public void Launch()
     {
-        (Next as ILogicalModule)?.OnSignalEnter($"{signal} {name}");
+        OnSignalEnter();
+    }
+
+    // 신호가 도착했을 때(자기 자신에게), 즉시 Next로 이어줌
+    public void OnSignalEnter(string signal = "")
+    {
+        // 예: 애니메이션 등 효과를 먼저 실행해도 좋습니다.
+        (Next as ILogicalModule)?.OnSignalEnter($"{name}");
     }
 }
