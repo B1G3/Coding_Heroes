@@ -176,12 +176,7 @@ public class PlacementManager : MonoBehaviour
         LayerMask mask = groundMask;
         if (Physics.Raycast(ray, out var hit, 100f, mask))
         {
-            Vector3 p = hit.point;
-            pos = new Vector3Int(
-                Mathf.FloorToInt(p.x),
-                0,
-                Mathf.FloorToInt(p.z)
-            );
+            pos = Vector3Int.RoundToInt(hit.point);
             return true;
         }
         pos = default;
