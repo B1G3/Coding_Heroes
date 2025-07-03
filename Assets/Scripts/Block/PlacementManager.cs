@@ -15,6 +15,7 @@ public class PlacementManager : MonoBehaviour
     [SerializeField] private LayerMask blockMask;
     [SerializeField] private BlockBindings blockBindings;
     [SerializeField] private NodeRegistry registry;
+    [SerializeField] private GameObject rotationPrefab;
     private enum Mode { None, Block, WaitingForPathStart, PlacingPath }
     private Mode mode = Mode.None;
     
@@ -66,7 +67,6 @@ public class PlacementManager : MonoBehaviour
     /// </summary>
     private void OnSelectType(BlockType type, int prefabIndex)
     {
-        Debug.Log($"[PlacementManager] Selected block type: {type}");
         int entryIndex = (int)type;
         if (blockBindings == null || entryIndex < 0 || entryIndex >= blockBindings.entries.Count)
             return;
@@ -80,7 +80,6 @@ public class PlacementManager : MonoBehaviour
 
         currentType = binding.type;
         currentEntry = binding.prefabs[prefabIndex];
-            Debug.Log($"[PlacementManager] Selected block: {currentEntry.prefab.name}");
 
         // 충돌 검사 설정 갱신
         placer.SetCollisionValidator(new PhysicsCollisionValidator(currentEntry.ignoredLayers));
@@ -106,11 +105,15 @@ public class PlacementManager : MonoBehaviour
         if (currentType == BlockType.None) return;
         if (!TryGetGridPosition(out var pos)) return;
         
+        // Debug.Log($"[PlacementManager] Placing block at {pos}, mode: {mode}, type: {currentType}");
+        
         if (mode == Mode.Block)
         {
             placer.ConfirmPlacement(pos);
             ResetState();
         }
+        
+        // 1) 시작 전(WaitingForPathStart)엔 기존 노드 클릭만 허용
         else if (mode == Mode.WaitingForPathStart)
         {
             // require clicking on existing node
@@ -120,13 +123,34 @@ public class PlacementManager : MonoBehaviour
                 mode = Mode.PlacingPath;
                 placer.StartPlacement(currentEntry.prefab);
             }
+
+            return;
         }
-        else if (mode == Mode.PlacingPath)
+        
+        // 2) 직선 구간 배치 중
+        if (mode == Mode.PlacingPath)
         {
-            var end = AlignOnAxis(pathStart, pos);
-            InstallPath(pathStart, end);
-            placer.CancelPlacement();
-            ResetState();
+            var clickedIsNode = registry.GetNodeAt(pos) != null;
+            var aligned = AlignOnAxis(pathStart, pos);
+
+            // 블록(노드)을 클릭했다면: 직선 설치 후 완료
+            if (clickedIsNode)
+            {
+                InstallStraight(pathStart, aligned);
+                ConnectNodes(pathStart, aligned);
+                placer.CancelPlacement();
+                ResetState();
+            }
+            else
+            {
+                // 땅을 클릭했다면: 직선 설치 → 회전 블록 설치 → 다음 세그먼트 준비
+                InstallStraight(pathStart, aligned);
+                PlaceRotationBlock(aligned);
+                // 다음 직선은 이 회전 블록 위치부터
+                pathStart = aligned;
+                mode = Mode.PlacingPath;
+                placer.StartPlacement(currentEntry.prefab);
+            }
         }
     }
 
@@ -172,31 +196,53 @@ public class PlacementManager : MonoBehaviour
             : new Vector3Int(a.x, 0, b.z);
     }
 
-    private void InstallPath(Vector3Int start, Vector3Int end)
+    /// <summary>
+    /// start에서 end까지 한 축 직선 PathTile을 설치합니다.
+    /// </summary>
+    private void InstallStraight(Vector3Int start, Vector3Int end)
     {
-        var dir = (end - start);
-        dir.x = dir.x == 0 ? 0 : dir.x / Mathf.Abs(dir.x);
-        dir.z = dir.z == 0 ? 0 : dir.z / Mathf.Abs(dir.z);
-
-        for (var pos = start + dir; ; pos += dir)
+        var dir = end - start;
+        dir.x = Mathf.Clamp(dir.x, -1, 1);
+        dir.z = Mathf.Clamp(dir.z, -1, 1);
+        for (var p = start + dir; ; p += dir)
         {
-            var tileGO = Instantiate(currentEntry.prefab, pos, Quaternion.identity);
+            var tileGO = Instantiate(currentEntry.prefab, p, Quaternion.identity);
             var tile   = tileGO.GetComponent<PathTile>();
-            tile.Initialize(pos);
-            registry.Register(tile);  // 점유 정보만 저장
-
-            if (pos == end - dir) break;
-        }
-
-        // 2) 로직 연결 (블록 노드만)
-        var fromNode = registry.GetNodeAt(start) as IConnectable;
-        var toNode   = registry.GetNodeAt(end)   as IConnectable;
-        if (fromNode != null && toNode != null)
-        {
-            // PathConnection 생성 시 ConnectNext/Prev까지 처리
-            var connection = new PathConnection(fromNode, toNode);
-            PathConnectionManager.Instance.RegisterConnection(connection);
-            // (필요하다면) connections 리스트에 담아두고 관리
+            tile.Initialize(p);
+            registry.Register(tile); 
+            if (p == end - dir) break;
         }
     }
+
+    /// <summary>
+    /// 회전 블록 프리팹을 at 위치에 배치하고, IConnectable로 등록합니다.
+    /// </summary>
+    private void PlaceRotationBlock(Vector3Int at)
+    {
+        var go = Instantiate(rotationPrefab, at, Quaternion.identity);
+        if (go.TryGetComponent<IGridNode>(out var gridNode) &&
+            go.TryGetComponent<IConnectable>(out var conn))
+        {
+            gridNode.Initialize(at);
+            registry.Register(gridNode);
+            // 앞 세그먼트의 끝 블록과 연결
+            var from = registry.GetNodeAt(pathStart) as IConnectable;
+            from?.ConnectNext(conn);
+        }
+    }
+
+    /// <summary>
+    /// start와 end 지점의 블록 노드를 IConnectable로 연결해 줍니다.
+    /// </summary>
+    private void ConnectNodes(Vector3Int start, Vector3Int end)
+    {
+        var from = registry.GetNodeAt(start) as IConnectable;
+        var to   = registry.GetNodeAt(end)   as IConnectable;
+        Debug.Log($"[PlacementManager] Connecting {start} to {end} / from: {from}, to: {to}");
+        if (from != null && to != null)
+        {
+            PathConnectionManager.Instance.RegisterConnection(new PathConnection(from, to));
+        }
+    }
+
 }

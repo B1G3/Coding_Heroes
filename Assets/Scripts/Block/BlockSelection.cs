@@ -16,7 +16,7 @@ public static class BlockSelection
         current = type;
         currentIndex = index;
         OnBlockTypeSelected?.Invoke(current, currentIndex);
-        Debug.Log($"[BlockSelection] Selected block: {type}");
+        // Debug.Log($"[BlockSelection] Selected block: {type}");
     }
 
     public static void Clear()

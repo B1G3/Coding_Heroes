@@ -1578,6 +1578,7 @@ MonoBehaviour:
     m_Bits: 64
   blockBindings: {fileID: 11400000, guid: 189566081189d494e8063f6734951dfc, type: 2}
   registry: {fileID: 2047643604}
+  rotationPrefab: {fileID: 4821083770212554965, guid: 39499a660e6c95a4da2446c03090e8c5, type: 3}
 --- !u!4 &1839426753
 Transform:
   m_ObjectHideFlags: 0

@@ -19,6 +19,7 @@ public class NodeRegistry : MonoBehaviour
     public void Register(IGridNode node)
     { 
         _nodes[node.GridPosition] = node;
+        Debug.Log($"[NodeRegistry] Registered node: {node.GridPosition}, type: {node.GetType()}");
     }
     
 
