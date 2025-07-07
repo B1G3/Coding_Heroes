@@ -10,11 +10,11 @@ GameObject:
   m_Component:
   - component: {fileID: 5006222595519293204}
   - component: {fileID: 5592751627644659119}
-  - component: {fileID: -8077168882638501440}
+  - component: {fileID: -2348585783204472214}
   - component: {fileID: 7913604356010231603}
   - component: {fileID: 7196121347454800607}
   m_Layer: 0
-  m_Name: Rotation Tile
+  m_Name: RotationTile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -57,7 +57,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 0.4, z: 1}
   m_Center: {x: 0, y: 0.2, z: 0}
---- !u!114 &-8077168882638501440
+--- !u!114 &-2348585783204472214
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -66,9 +66,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 4821083770212554965}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f9e3e49a6092fc240b397800af536878, type: 3}
+  m_Script: {fileID: 11500000, guid: c36defc0cec0a0f47995ef84a2b2aa43, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _next: 
+  _prev: 
 --- !u!114 &7913604356010231603
 MonoBehaviour:
   m_ObjectHideFlags: 0

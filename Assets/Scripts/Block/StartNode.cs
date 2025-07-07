@@ -1,24 +1,30 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class StartNode : IGridNode, IConnectable, ILogicalModule
 {
     public IConnectable Next { get; set; }
     public IConnectable Prev { get; set; }
+    
+    [SerializeField] private string _next;
+    [SerializeField] private string _prev;
 
     public override void Initialize(Vector3Int gridPos)
     {
         base.Initialize(gridPos);
         name = "Start";
+        _prev = "It is start";
     }
     
     public void ConnectNext(IConnectable next)
     {
         Next = next;
+        _next = next.ToString();
     }
 
     public void ConnectPrev(IConnectable prev)
     {
-        Prev = prev;
+        Debug.Log("Start");
     }
 
     public void DisconnectNext()
@@ -38,9 +44,9 @@ public class StartNode : IGridNode, IConnectable, ILogicalModule
     }
 
     // 신호가 도착했을 때(자기 자신에게), 즉시 Next로 이어줌
-    public void OnSignalEnter(string signal = "")
+    public void OnSignalEnter(List<string> signal = null)
     {
         // 예: 애니메이션 등 효과를 먼저 실행해도 좋습니다.
-        (Next as ILogicalModule)?.OnSignalEnter($"{name}");
+        (Next as ILogicalModule)?.OnSignalEnter(new List<string> { name });
     }
 }

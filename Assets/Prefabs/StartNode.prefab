@@ -96,11 +96,11 @@ GameObject:
   m_Component:
   - component: {fileID: 3261504381895993081}
   - component: {fileID: 4032807376998354672}
-  - component: {fileID: -3738394362240266585}
+  - component: {fileID: 5534642116946657911}
   - component: {fileID: 5531559794289410013}
   - component: {fileID: 3717382497925339235}
   m_Layer: 6
-  m_Name: End Node
+  m_Name: StartNode
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -116,7 +116,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 0.01, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7367162885398858430}
@@ -143,7 +143,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0.5, z: 0}
---- !u!114 &-3738394362240266585
+--- !u!114 &5534642116946657911
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -152,10 +152,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 7478957879801460289}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9f9b71884e4097e48a0a7cea78577142, type: 3}
+  m_Script: {fileID: 11500000, guid: 0ce90819e639ef44f886dc19daa2fb35, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  unit: {fileID: 3810350408636312661, guid: f4131897a894a654ead2534681807488, type: 3}
 --- !u!114 &5531559794289410013
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -1,28 +1,25 @@
-using System;
+
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EndNode : IGridNode, IConnectable, ILogicalModule
+public class RotationTile : IGridNode, IConnectable, ILogicalModule
 {
     public IConnectable Next { get; set; }
     public IConnectable Prev { get; set; }
-    
+
     [SerializeField] private string _next;
     [SerializeField] private string _prev;
     
-    [SerializeField] private GameObject unit;
-    private Unit _unitInstance;
-
     public override void Initialize(Vector3Int gridPos)
     {
         base.Initialize(gridPos);
-        name = "End";
-        _next = "It is end";
+        name = "Rotation";
     }
 
     public void ConnectNext(IConnectable next)
     {
-        Debug.Log("End");
+        Next = next;
+        _next = next.ToString();
     }
 
     public void ConnectPrev(IConnectable prev)
@@ -40,14 +37,9 @@ public class EndNode : IGridNode, IConnectable, ILogicalModule
     {
         Prev = null;
     }
-
+    
     public void OnSignalEnter(List<string> signal)
     {
-        signal.Add(name);
-        // 유닛이 없으면 스폰
-        if (_unitInstance == null)
-            _unitInstance = Instantiate(unit, transform.position, Quaternion.identity).GetComponent<Unit>();
-        // 유닛에게 “끝까지 왔어요” 알림
-        _unitInstance.StartUnit(signal);
+        (Next as ILogicalModule)?.OnSignalEnter(signal);
     }
 }

@@ -12,6 +12,7 @@ public class PathConnection
         To   = to;
         // 구독 방식으로도 가능하고, 직접 호출 방식도 가능
         From.ConnectNext(To);
+        To.ConnectPrev(From);
         PathConnectionManager.Instance.RegisterConnection(this);
     }
 

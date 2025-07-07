@@ -220,9 +220,11 @@ public class PlacementManager : MonoBehaviour
         {
             gridNode.Initialize(at);
             registry.Register(gridNode);
+            placer.CancelPlacement();
             // 앞 세그먼트의 끝 블록과 연결
             var from = registry.GetNodeAt(pathStart) as IConnectable;
             from?.ConnectNext(conn);
+            conn?.ConnectPrev(from);
         }
     }
 

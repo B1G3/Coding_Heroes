@@ -1,9 +1,13 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Unit : MonoBehaviour
 {
-    public void StartUnit(string command)
+    public void StartUnit(List<string> command)
     {
-        Debug.Log($"{command}");
+        foreach (var c in command)
+        {
+            Debug.Log(c);
+        }
     }
 }
