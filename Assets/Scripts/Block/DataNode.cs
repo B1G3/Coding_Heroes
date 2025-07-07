@@ -8,11 +8,12 @@ public class DataNode : IGridNode, IConnectable
     [SerializeField] private string next;
     [SerializeField] private string prev;
     
-    [SerializeField] private string target;
+    private ITarget target;
     
     public override void Initialize(Vector3Int gridPos)
     {
         base.Initialize(gridPos);
+        target = GameManager.Instance.GetTarget();
         name = "Target";
         prev = "It is target";
     }

@@ -1,15 +1,19 @@
 
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
+using static StateConfig;
 
 public class MoveNode : IGridNode, IConnectable, ILogicalModule, IGetData
 {
+    private IUnitState state;
     public IConnectable Next { get; set; }
     public IConnectable Prev { get; set; }
 
     [SerializeField] private string next;
     [SerializeField] private string prev;
-    [SerializeField] private string data;
+    private ITarget target;
+    
     public override void Initialize(Vector3Int gridPos)
     {
         base.Initialize(gridPos);
@@ -42,12 +46,13 @@ public class MoveNode : IGridNode, IConnectable, ILogicalModule, IGetData
     
     public void OnSignalEnter(List<string> signal)
     {
-        signal.Add($"{name} to {data}");
+        signal.Add($"{name} to {target}");
         (Next as ILogicalModule)?.OnSignalEnter(signal);
     }
 
-    public void GetData(string data)
+    public void GetData(ITarget target)
     {
-        this.data = data;
+        this.target = target;
+        state = new MoveState(target);
     }
 }

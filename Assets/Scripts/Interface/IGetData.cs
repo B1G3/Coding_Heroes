@@ -2,5 +2,5 @@ using UnityEngine;
 
 public interface IGetData
 {
-    void GetData(string data = null);
+    void GetData(ITarget target = null);
 }
