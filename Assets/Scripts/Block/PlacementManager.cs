@@ -84,7 +84,7 @@ public class PlacementManager : MonoBehaviour
         // 충돌 검사 설정 갱신
         placer.SetCollisionValidator(new PhysicsCollisionValidator(currentEntry.ignoredLayers));
         // 프리뷰 및 배치 시작
-        if (currentType == BlockType.Block || currentType == BlockType.Unit)
+        if (currentType == BlockType.Block || currentType == BlockType.Unit || currentType == BlockType.Data)
         {
             mode = Mode.Block;
             placer.StartPlacement(currentEntry.prefab);

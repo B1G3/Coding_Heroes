@@ -34,6 +34,10 @@ public class BlockColor : MonoBehaviour
             return Color.darkBlue;
         if (TryGetComponent(out PathTile _))
             return Color.saddleBrown;
+        if(TryGetComponent(out MoveNode _))
+            return Color.cyan;
+        if(TryGetComponent(out DataNode _))
+            return Color.orangeRed;
         
 
         return Color.gray; // 기본 색

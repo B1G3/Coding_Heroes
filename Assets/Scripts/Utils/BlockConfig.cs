@@ -23,6 +23,7 @@ public class BlockConfig
         Block,
         Path,
         Unit,
+        Data,
         None,
         
     }
