@@ -41,13 +41,12 @@ public class EndNode : IGridNode, IConnectable, ILogicalModule
         Prev = null;
     }
 
-    public void OnSignalEnter(List<string> signal)
+    public void OnSignalEnter(List<IUnitState> command)
     {
-        signal.Add(name);
         // 유닛이 없으면 스폰
         if (_unitInstance == null)
             _unitInstance = Instantiate(unit, transform.position, Quaternion.identity).GetComponent<Unit>();
         // 유닛에게 “끝까지 왔어요” 알림
-        _unitInstance.StartUnit(signal);
+        _unitInstance.StartUnitAsync(command);
     }
 }

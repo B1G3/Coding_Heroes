@@ -40,9 +40,8 @@ public class Block : IGridNode, IConnectable, ILogicalModule
         _prev = null; 
     }
     
-    public void OnSignalEnter(List<string> signal)
+    public void OnSignalEnter(List<IUnitState> signal)
     {
-        signal.Add(name);
         (Next as ILogicalModule)?.OnSignalEnter(signal);
     }
 }

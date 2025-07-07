@@ -38,8 +38,8 @@ public class RotationTile : IGridNode, IConnectable, ILogicalModule
         Prev = null;
     }
     
-    public void OnSignalEnter(List<string> signal)
+    public void OnSignalEnter(List<IUnitState> command)
     {
-        (Next as ILogicalModule)?.OnSignalEnter(signal);
+        (Next as ILogicalModule)?.OnSignalEnter(command);
     }
 }

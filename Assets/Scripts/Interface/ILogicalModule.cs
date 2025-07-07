@@ -4,5 +4,5 @@ using System.Collections.Generic;
 public interface ILogicalModule
 {
     /// 논리 신호(Flow)가 이 노드에 닿았을 때
-    void OnSignalEnter(List<string> signal);
+    void OnSignalEnter(List<IUnitState> signal);
 }

@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class StartNode : IGridNode, IConnectable, ILogicalModule
 {
+    private IUnitState state;
     public IConnectable Next { get; set; }
     public IConnectable Prev { get; set; }
     
@@ -12,6 +13,7 @@ public class StartNode : IGridNode, IConnectable, ILogicalModule
     public override void Initialize(Vector3Int gridPos)
     {
         base.Initialize(gridPos);
+        state = new IdleState();
         name = "Start";
         _prev = "It is start";
     }
@@ -44,9 +46,9 @@ public class StartNode : IGridNode, IConnectable, ILogicalModule
     }
 
     // 신호가 도착했을 때(자기 자신에게), 즉시 Next로 이어줌
-    public void OnSignalEnter(List<string> signal = null)
+    public void OnSignalEnter(List<IUnitState> command = null)
     {
         // 예: 애니메이션 등 효과를 먼저 실행해도 좋습니다.
-        (Next as ILogicalModule)?.OnSignalEnter(new List<string> { name });
+        (Next as ILogicalModule)?.OnSignalEnter(new List<IUnitState> { state });
     }
 }

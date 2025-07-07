@@ -1,8 +1,6 @@
 
 using System.Collections.Generic;
-using Cysharp.Threading.Tasks;
 using UnityEngine;
-using static StateConfig;
 
 public class MoveNode : IGridNode, IConnectable, ILogicalModule, IGetData
 {
@@ -44,15 +42,15 @@ public class MoveNode : IGridNode, IConnectable, ILogicalModule, IGetData
         prev = null; 
     }
     
-    public void OnSignalEnter(List<string> signal)
+    public void OnSignalEnter(List<IUnitState> command)
     {
-        signal.Add($"{name} to {target}");
-        (Next as ILogicalModule)?.OnSignalEnter(signal);
+        command.Add(state);
+        (Next as ILogicalModule)?.OnSignalEnter(command);
     }
 
     public void GetData(ITarget target)
     {
         this.target = target;
-        state = new MoveState(target);
+        state = new MoveState(this.target);
     }
 }
