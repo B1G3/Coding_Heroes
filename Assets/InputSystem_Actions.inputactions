@@ -476,6 +476,54 @@
             ]
         },
         {
+            "name": "Gameplay",
+            "id": "3773da02-d7fc-4915-b07d-2543d9b72f5f",
+            "actions": [
+                {
+                    "name": "Place",
+                    "type": "Button",
+                    "id": "bfc829bd-4a16-4874-8fdb-e9de5078fb5c",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Cancel",
+                    "type": "Button",
+                    "id": "71da9072-b929-4914-8806-e47e3fa5daf2",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "982f80de-ad0d-4da8-93a0-5c7f25fdcc68",
+                    "path": "<Keyboard>/e",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Place",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "789faef1-df3f-4f58-8a65-f3af2582f786",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Cancel",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
             "name": "UI",
             "id": "272f6d14-89ba-496f-b7ff-215263d3219f",
             "actions": [
