@@ -30,8 +30,8 @@ MonoBehaviour:
           inWeight: 0
           outWeight: 0
         - serializedVersion: 3
-          time: 1
-          value: 1
+          time: 0.98888814
+          value: 0.5015857
           inSlope: 0
           outSlope: 0
           tangentMode: 0
@@ -50,14 +50,14 @@ MonoBehaviour:
       animationStateStartValue: 5
       animationStateEndValue: 5
     - stateName: hovered
-      animationStateStartValue: 15
-      animationStateEndValue: 15
+      animationStateStartValue: 8
+      animationStateEndValue: 8
     - stateName: hoveredPriority
       animationStateStartValue: 0
       animationStateEndValue: 0
     - stateName: selected
-      animationStateStartValue: 15
-      animationStateEndValue: 15
+      animationStateStartValue: 8
+      animationStateEndValue: 8
     - stateName: activated
       animationStateStartValue: 0
       animationStateEndValue: 0
