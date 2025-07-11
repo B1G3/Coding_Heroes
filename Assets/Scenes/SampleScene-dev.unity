@@ -1857,7 +1857,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 40ea03b5a967c5449a7e194f5fccc5ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_CameraToFace: {fileID: 0}
+  m_CameraToFace: {fileID: 6327064769096671034}
   homePrefab: {fileID: 6857888129020966845, guid: ebae2989b8f35d44bbcdadfadd65b3fa, type: 3}
 --- !u!4 &617746790
 Transform:
@@ -5761,9 +5761,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   uiBox: {fileID: 2068844545}
   boxPrefab: {fileID: 7478957879801460289, guid: a4331e227f1a7df4c89c6be8e6be2420, type: 3}
-  raycastManager: {fileID: 8873260856337340967}
-  gridOrigin: {fileID: 0}
   cellSize: 0.2
+  text: {fileID: 1625239419}
 --- !u!1 &2091349736
 GameObject:
   m_ObjectHideFlags: 0
@@ -8812,6 +8811,11 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 6335463574134312787}
   m_SourcePrefab: {fileID: 100100000, guid: d6878e1999eb4b44a9f5a263af86c185, type: 3}
+--- !u!20 &6327064769096671034 stripped
+Camera:
+  m_CorrespondingSourceObject: {fileID: 657184242118504724, guid: d6878e1999eb4b44a9f5a263af86c185, type: 3}
+  m_PrefabInstance: {fileID: 6327064769096671033}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &6335463574134312787
 MonoBehaviour:
   m_ObjectHideFlags: 0
