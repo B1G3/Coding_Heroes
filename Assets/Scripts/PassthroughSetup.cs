@@ -15,7 +15,7 @@ public class PassthroughSetup : MonoBehaviour
         if (m_FadeMaterial != null)
             m_FadeMaterial.FadeSkybox(true);
         
-        StartCoroutine(TurnOnPlanes(true));
+        StartCoroutine(TurnOnPlanes(false));
     }
 
     public IEnumerator TurnOnPlanes(bool visualize)
@@ -24,8 +24,8 @@ public class PassthroughSetup : MonoBehaviour
 
         if (m_FeatureController != null)
         {
-            m_FeatureController.TogglePlaneVisualization(visualize);
             m_FeatureController.TogglePlanes(true);
+            m_FeatureController.TogglePlaneVisualization(visualize);
         }
     }
 }
