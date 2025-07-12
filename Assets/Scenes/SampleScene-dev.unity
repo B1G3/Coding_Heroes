@@ -4964,7 +4964,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   origin: {fileID: 0}
-  cellSize: {x: 0.1, y: 0.1, z: 0.1}
+  cellSize: {x: 3, y: 3, z: 3}
   leftBlockHolder: {fileID: 713811059}
   rightBlockHolder: {fileID: 2110444447}
   text: {fileID: 1625239419}

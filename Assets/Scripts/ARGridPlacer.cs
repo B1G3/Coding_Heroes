@@ -7,7 +7,7 @@ public class ARGridPlacer : MonoBehaviour
 {
     [Header("Grid Settings")]
     [SerializeField] private Transform origin;     // 기준 Transform (AR에 배치한 빈 오브젝트)
-    [SerializeField] private Vector3 cellSize = new Vector3(0.1f, 0.1f, 0.1f);
+    [SerializeField] private Vector3 cellSize;
     
     [Header("Block Holder")]
     [SerializeField] private BlockHolder leftBlockHolder;
@@ -43,11 +43,8 @@ public class ARGridPlacer : MonoBehaviour
     /// </summary>
     public void PlaceAtWorldPosition(Vector3 worldPos, GameObject blockPrefab)
     {
-        // 1) local 좌표로 변환
-        Vector3 localPos = origin.InverseTransformPoint(worldPos);
-
         // 2) cell 인덱스로 변환 (반올림)
-        var cell = WorldToCell(localPos);
+        var cell = WorldToCell(worldPos);
 
         // 이미 배치된 칸이면 무시
         if (placedBlocks.ContainsKey(cell)) return;
