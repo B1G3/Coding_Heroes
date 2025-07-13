@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
@@ -7,8 +8,26 @@ public class Unit : MonoBehaviour
     private IUnitState CurrentState;
     [SerializeField] private float speed = 3f;
     [SerializeField] private float rotationSpeed = 60f;
+    [SerializeField] private BoxCollider attackFilter;
     public float Speed => speed;
     public float RotationSpeed => rotationSpeed;
+    private bool _canAttack;
+    public bool canAttack
+    {
+        get => _canAttack;
+        set
+        {
+            _canAttack = value;
+            attackFilter.enabled = value;
+        }
+    }
+
+    public event Action<GameObject> OnAttackHit;
+    
+    private void Awake()
+    {
+        canAttack = false;
+    }
     
     private void Update()
     {
@@ -33,5 +52,13 @@ public class Unit : MonoBehaviour
     {
         CurrentState = state;
         CurrentState?.Enter(this);
+    }
+    
+    // attackFilter 가 isTrigger = true 여야 합니다.
+    private void OnTriggerEnter(Collider other)
+    {
+        if (!canAttack) return;
+        // 필터링(예: 적 태그)하고 싶으면 여기서 검사 가능
+        OnAttackHit?.Invoke(other.gameObject);
     }
 }
