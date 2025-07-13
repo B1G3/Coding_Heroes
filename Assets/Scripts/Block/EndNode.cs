@@ -44,18 +44,22 @@ public class EndNode : IGridNode, IConnectable, ILogicalModule
 
     public void OnSignalEnter(List<IUnitState> command)
     {
+        var go = Instantiate(unit, transform.position, Quaternion.identity);
+        go.transform.localScale *= 0.01f;
+        _unitInstance = go.GetComponent<Unit>();
+        
         // 유닛이 없으면 스폰
-        if (_unitInstance == null)
-        {
-            // Instantiate 하고
-            var go = Instantiate(unit, transform.position, Quaternion.identity);
-        
-            // 스케일을 0.01로 줄여주고
-            // go.transform.localScale = Vector3.one * 0.01f;
-        
-            // Unit 컴포넌트 획득
-            _unitInstance = go.GetComponent<Unit>();
-        }
+        // if (_unitInstance == null)
+        // {
+        //     // Instantiate 하고
+        //     var go = Instantiate(unit, transform.position, Quaternion.identity);
+        //
+        //     // 스케일을 0.01로 줄여주고
+        //     // go.transform.localScale = Vector3.one * 0.01f;
+        //
+        //     // Unit 컴포넌트 획득
+        //     _unitInstance = go.GetComponent<Unit>();
+        // }
         // 유닛에게 “끝까지 왔어요” 알림
         _unitInstance.OnFinishCommand += Finish;
         _unitInstance.StartUnitAsync(command);
@@ -63,7 +67,6 @@ public class EndNode : IGridNode, IConnectable, ILogicalModule
 
     private void Finish()
     {
-        _unitInstance.OnFinishCommand -= Finish;
         _unitInstance = null;
     }
 }
