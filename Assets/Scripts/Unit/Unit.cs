@@ -6,7 +6,7 @@ public class Unit : MonoBehaviour
 {
     private IUnitState CurrentState;
     [SerializeField] private float speed = 3f;
-    [SerializeField] private float rotationSpeed = 30f;
+    [SerializeField] private float rotationSpeed = 60f;
     public float Speed => speed;
     public float RotationSpeed => rotationSpeed;
     
@@ -25,12 +25,12 @@ public class Unit : MonoBehaviour
         {
             ChangeState(state);
             await UniTask.WaitUntil(() => state.IsCompleted(this));
+            CurrentState?.Exit(this);
         }
     }
     
     private void ChangeState(IUnitState state)
     {
-        CurrentState?.Exit(this);
         CurrentState = state;
         CurrentState?.Enter(this);
     }
