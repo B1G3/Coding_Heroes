@@ -18,6 +18,16 @@ public class PassthroughSetup : MonoBehaviour
         StartCoroutine(TurnOnPlanes(false));
     }
 
+    private void OnEnable()
+    {
+        HomeSpawner.OnHomeSpawned += TurnOffPlanes;
+    }
+    
+    private void OnDisable()
+    {
+        HomeSpawner.OnHomeSpawned -= TurnOffPlanes;
+    }
+
     public IEnumerator TurnOnPlanes(bool visualize)
     {
         yield return new WaitForSeconds(1f);
@@ -26,6 +36,14 @@ public class PassthroughSetup : MonoBehaviour
         {
             m_FeatureController.TogglePlanes(true);
             m_FeatureController.TogglePlaneVisualization(visualize);
+        }
+    }
+    
+    public void TurnOffPlanes(GameObject home)
+    {
+        if (m_FeatureController != null)
+        {
+            m_FeatureController.TogglePlanes(false);
         }
     }
 }

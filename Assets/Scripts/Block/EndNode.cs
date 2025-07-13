@@ -46,8 +46,24 @@ public class EndNode : IGridNode, IConnectable, ILogicalModule
     {
         // 유닛이 없으면 스폰
         if (_unitInstance == null)
-            _unitInstance = Instantiate(unit, transform.position, Quaternion.identity).GetComponent<Unit>();
+        {
+            // Instantiate 하고
+            var go = Instantiate(unit, transform.position, Quaternion.identity);
+        
+            // 스케일을 0.01로 줄여주고
+            // go.transform.localScale = Vector3.one * 0.01f;
+        
+            // Unit 컴포넌트 획득
+            _unitInstance = go.GetComponent<Unit>();
+        }
         // 유닛에게 “끝까지 왔어요” 알림
+        _unitInstance.OnFinishCommand += Finish;
         _unitInstance.StartUnitAsync(command);
+    }
+
+    private void Finish()
+    {
+        _unitInstance.OnFinishCommand -= Finish;
+        _unitInstance = null;
     }
 }

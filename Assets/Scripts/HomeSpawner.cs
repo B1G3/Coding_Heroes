@@ -19,6 +19,7 @@ public class HomeSpawner : MonoBehaviour
     }
     
     [SerializeField] private GameObject homePrefab;
+    [SerializeField] private DialogueSetup dialogueSetup;
     
     public static event Action<GameObject> OnHomeSpawned;
     
@@ -43,6 +44,8 @@ public class HomeSpawner : MonoBehaviour
         home.transform.rotation = Quaternion.LookRotation(projectedForward, spawnNormal);
         
         OnHomeSpawned?.Invoke(home);
+        home.GetComponent<Home>()?.Initialize(dialogueSetup.SetDialogueNodes());
+        
         return true;
     }
 }

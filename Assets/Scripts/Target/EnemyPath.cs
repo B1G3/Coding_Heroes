@@ -31,8 +31,15 @@ public class EnemyPath : MonoBehaviour, ITarget
     {
         // 1) 인스턴스 생성
         var worm = Instantiate(dataContainerPrefab, start, Quaternion.identity);
+        
         // 2) WormMover 붙이고 초기화
         var mover = worm.AddComponent<DataContainerMover>();
         mover.Initialize(start, end);
+        mover.OnMoveComplete += OnReset;
+    }
+    
+    private void OnReset()
+    {
+        doorAnimator.SetBool(IsOpenHash, false);
     }
 }

@@ -534,6 +534,68 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6402443037861003465, guid: d6878e1999eb4b44a9f5a263af86c185, type: 3}
   m_PrefabInstance: {fileID: 6327064769096671033}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &154376307
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 154376308}
+  - component: {fileID: 154376309}
+  - component: {fileID: 154376310}
+  m_Layer: 0
+  m_Name: Dialogue Setup
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &154376308
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 154376307}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6889724299521477712}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &154376309
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 154376307}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 355b8e23678c2ef43b761679bc796367, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &154376310
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 154376307}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d099f437a029064786a30c1d403b8cc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dialogueNodes:
+  - {fileID: 11400000, guid: 9b05f8fe77ecc934a8c92c1a628e8615, type: 2}
+  - {fileID: 11400000, guid: e77ac323ecc1d6b47b32e8fce51605e5, type: 2}
+  - {fileID: 11400000, guid: 16fdbf812d2156a4d8bf1c1d36f591f8, type: 2}
+  provider: {fileID: 154376309}
 --- !u!1 &169138118
 GameObject:
   m_ObjectHideFlags: 0
@@ -1572,6 +1634,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_CameraToFace: {fileID: 6327064769096671034}
   homePrefab: {fileID: 6857888129020966845, guid: ebae2989b8f35d44bbcdadfadd65b3fa, type: 3}
+  dialogueSetup: {fileID: 154376310}
 --- !u!4 &617746790
 Transform:
   m_ObjectHideFlags: 0
@@ -9413,6 +9476,7 @@ Transform:
   - {fileID: 32483695}
   - {fileID: 1872183241}
   - {fileID: 254779611}
+  - {fileID: 154376308}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!136 &6933828428400311162

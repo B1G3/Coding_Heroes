@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -5,6 +6,8 @@ public class DataContainerMover : MonoBehaviour
 {
     private Vector3 _targetPosition;
     private float _speed = 0.1f;
+    
+    public event Action OnMoveComplete;
 
     /// <summary>
     /// 웜 이동 초기화
@@ -33,6 +36,7 @@ public class DataContainerMover : MonoBehaviour
         }
 
         transform.position = _targetPosition;
+        OnMoveComplete?.Invoke();
         Destroy(gameObject);
     }
 }

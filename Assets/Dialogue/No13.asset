@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a488abbd587bec446bca1332da59a0bf, type: 3}
+  m_Name: No13
+  m_EditorClassIdentifier: 
+  text: "\uD1B5\uC2E0 \uB808\uBC84\uB97C \uB2F9\uACA8\uC11C \uB370\uC774\uD130\uB97C
+    \uBC1B\uC544\uBD10!"
+  clip: {fileID: 8300000, guid: 132e8e43be3dee44a95f96c06f211993, type: 3}
+  condition:
+    onCheck:
+      m_PersistentCalls:
+        m_Calls: []
+  shown: 0

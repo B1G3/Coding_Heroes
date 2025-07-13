@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using TMPro;
@@ -25,6 +26,7 @@ public class Unit : MonoBehaviour
     }
 
     public event Action<GameObject> OnAttackHit;
+    public event Action OnFinishCommand;
     
     private void Awake()
     {
@@ -49,7 +51,8 @@ public class Unit : MonoBehaviour
             await UniTask.WaitUntil(() => state.IsCompleted(this));
             CurrentState?.Exit(this);
         }
-        
+
+        FinishCommandAsync().Forget();
     }
     
     private void ChangeState(IUnitState state)
@@ -67,8 +70,10 @@ public class Unit : MonoBehaviour
         OnAttackHit?.Invoke(other.gameObject);
     }
 
-    private void OnFinishCommand()
+    private async UniTaskVoid FinishCommandAsync()
     {
-        
+        OnFinishCommand?.Invoke();
+        await UniTask.Yield();
+        Destroy(gameObject);
     }
 }
