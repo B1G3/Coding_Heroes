@@ -1677,10 +1677,34 @@ MonoBehaviour:
       m_Calls: []
   m_SelectEntered:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 644625219}
+        m_TargetAssemblyTypeName: LeverController, Assembly-CSharp
+        m_MethodName: OnSelectEnter
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_SelectExited:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 644625219}
+        m_TargetAssemblyTypeName: LeverController, Assembly-CSharp
+        m_MethodName: OnSelectExit
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_FirstFocusEntered:
     m_PersistentCalls:
       m_Calls: []
@@ -1791,6 +1815,19 @@ HingeJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
+--- !u!114 &644625219
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 644625208}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3587a707307f7dc4ab52ddefe7c835fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  returnSpeed: 180
 --- !u!1 &647602240
 GameObject:
   m_ObjectHideFlags: 0
@@ -6756,6 +6793,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: e0d7a4f2e5f1c7e4587162add7220646, type: 3}
       insertIndex: -1
       addedObject: {fileID: 644625216}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: e0d7a4f2e5f1c7e4587162add7220646, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 644625219}
   m_SourcePrefab: {fileID: 100100000, guid: e0d7a4f2e5f1c7e4587162add7220646, type: 3}
 --- !u!1 &3107641197464984285
 GameObject:

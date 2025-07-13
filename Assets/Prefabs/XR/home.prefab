@@ -51,7 +51,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 7540151424450582097}
-  StartObject: {fileID: 5321233193705711602}
+  StartDoorObject: {fileID: 5321233193705711602}
   EndObject: {fileID: 2894896861977454161}
 --- !u!1 &4333636275773629487
 GameObject:

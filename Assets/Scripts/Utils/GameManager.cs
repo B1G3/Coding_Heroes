@@ -15,11 +15,13 @@ public class GameManager : MonoBehaviour
     private void OnEnable()
     {
         HomeSpawner.OnHomeSpawned += SetEnemyPath;
+        LeverController.OnLeverMax += LaunchGame;
     }
 
     private void OnDisable()
     {
         HomeSpawner.OnHomeSpawned -= SetEnemyPath;
+        LeverController.OnLeverMax -= LaunchGame;
     }
 
     public ITarget GetTarget()
@@ -37,6 +39,12 @@ public class GameManager : MonoBehaviour
     public void ClearStartNode()
     {
         startNodes.Clear();
+    }
+
+    private void LaunchGame()
+    {
+        text.text = "Launch Game";
+        enemyPath?.StartGame();
     }
 
     public void LaunchStartNode()
