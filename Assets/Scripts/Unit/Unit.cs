@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
+using TMPro;
 using UnityEngine;
 
 public class Unit : MonoBehaviour
@@ -9,6 +10,7 @@ public class Unit : MonoBehaviour
     [SerializeField] private float speed = 3f;
     [SerializeField] private float rotationSpeed = 60f;
     [SerializeField] private BoxCollider attackFilter;
+    [SerializeField] private TMP_Text text;
     public float Speed => speed;
     public float RotationSpeed => rotationSpeed;
     private bool _canAttack;
@@ -42,10 +44,12 @@ public class Unit : MonoBehaviour
     {
         foreach (var state in command)
         {
+            text.text = $"{state}";
             ChangeState(state);
             await UniTask.WaitUntil(() => state.IsCompleted(this));
             CurrentState?.Exit(this);
         }
+        
     }
     
     private void ChangeState(IUnitState state)
@@ -57,8 +61,14 @@ public class Unit : MonoBehaviour
     // attackFilter 가 isTrigger = true 여야 합니다.
     private void OnTriggerEnter(Collider other)
     {
+        text.text = $"{other.gameObject.name}";
         if (!canAttack) return;
         // 필터링(예: 적 태그)하고 싶으면 여기서 검사 가능
         OnAttackHit?.Invoke(other.gameObject);
+    }
+
+    private void OnFinishCommand()
+    {
+        
     }
 }

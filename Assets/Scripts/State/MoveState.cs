@@ -41,7 +41,7 @@ public class MoveState : IUnitState
 
     public bool IsCompleted(Unit unit)
     {
-        return Vector3.Distance(unit.transform.position, goal) < 0.05f;
+        return Vector3.Distance(unit.transform.position, goal) < 0.01f;
     }
 
     public void Exit(Unit unit)

@@ -7598,6 +7598,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 3
   rotationSpeed: 30
+  attackFilter: {fileID: 0}
+  text: {fileID: 0}
 --- !u!114 &5074908946439882785
 MonoBehaviour:
   m_ObjectHideFlags: 0

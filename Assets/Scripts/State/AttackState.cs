@@ -25,11 +25,12 @@ public class AttackState : IUnitState
 
     private void OnHit(GameObject target)
     {
-        if(_target is DataContainer)
-        {
-            _hitCount++;
-            target.GetComponent<DataContainer>()?.OnAttack();
-        }
+        _hitCount++;
+        target.GetComponent<DataContainer>()?.OnAttack();
+        // if(_target is DataContainer)
+        // {
+        //     target.GetComponent<DataContainer>()?.OnAttack();
+        // }
         // 데미지 처리, 이펙트 등
     }
 

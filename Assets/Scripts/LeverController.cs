@@ -34,16 +34,16 @@ public class LeverController : MonoBehaviour
     void Update()
     {
         // 잡고 있는 동안에만 최대각도 체크
-        if (isGrabbed && !maxReached)
-        {
-            float angle = hinge.angle;
-            // 오차범위 0.5도 이내면 max 도달로 간주
-            if (Mathf.Abs(Mathf.DeltaAngle(angle, maxAngle)) < 0.5f)
-            {
-                maxReached = true;
-                OnLeverMax?.Invoke();
-            }
-        }
+        // if (isGrabbed && !maxReached)
+        // {
+        //     float angle = hinge.angle;
+        //     // 오차범위 0.5도 이내면 max 도달로 간주
+        //     if (Mathf.Abs(Mathf.DeltaAngle(angle, maxAngle)) < 0.5f)
+        //     {
+        //         maxReached = true;
+        //         OnLeverMax?.Invoke();
+        //     }
+        // }
     }
     
     public void OnSelectEnter(SelectEnterEventArgs args)
@@ -58,6 +58,9 @@ public class LeverController : MonoBehaviour
     public void OnSelectExit(SelectExitEventArgs args)
     {
         isGrabbed = false;
+        // 일단 이걸로 걍 해버려
+        
+        OnLeverMax?.Invoke();
         // 이미 진행 중인 복귀 코루틴이 있으면 중단
         if (returnRoutine != null) 
             StopCoroutine(returnRoutine);
