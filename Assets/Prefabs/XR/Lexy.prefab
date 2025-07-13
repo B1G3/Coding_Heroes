@@ -226,6 +226,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a265e1e3f5e52340b1a8465b5cf90a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  dialogueObject: {fileID: 4687916321930558257}
   dialogueText: {fileID: 4356563678930185980}
   audioSource: {fileID: 6106569949152240180}
   typingSpeed: 0.05

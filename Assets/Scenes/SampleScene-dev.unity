@@ -579,6 +579,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 355b8e23678c2ef43b761679bc796367, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  dialogueSetup: {fileID: 154376310}
+  dialogueNodes:
+  - {fileID: 11400000, guid: 16fdbf812d2156a4d8bf1c1d36f591f8, type: 2}
 --- !u!114 &154376310
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -594,8 +597,6 @@ MonoBehaviour:
   dialogueNodes:
   - {fileID: 11400000, guid: 9b05f8fe77ecc934a8c92c1a628e8615, type: 2}
   - {fileID: 11400000, guid: e77ac323ecc1d6b47b32e8fce51605e5, type: 2}
-  - {fileID: 11400000, guid: 16fdbf812d2156a4d8bf1c1d36f591f8, type: 2}
-  provider: {fileID: 154376309}
 --- !u!1 &169138118
 GameObject:
   m_ObjectHideFlags: 0

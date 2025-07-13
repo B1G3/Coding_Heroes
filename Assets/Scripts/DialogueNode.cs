@@ -10,37 +10,18 @@ public class DialogueNode : ScriptableObject
     [Tooltip("재생할 음성 클립")]
     public AudioClip clip;
 
-    [Tooltip("다이얼로그를 활성화할 조건 (Runtime에서 설정)")]
-    public BoolEventReference condition;
-
     [HideInInspector]
     public bool shown = false;
-}
-
-[Serializable]
-public class BoolEventReference
-{
-    public BoolEvent onCheck;
-
+    
     /// <summary>
-    /// 조건을 검사하여 결과 반환
+    /// 런타임에 인스턴스 생성과 동시에 필드 초기화
     /// </summary>
-    public bool IsTrue()
+    public static DialogueNode Create(string text, AudioClip clip)
     {
-        return onCheck?.Invoke() ?? false;
-    }
-}
-
-[Serializable]
-public class BoolEvent : UnityEngine.Events.UnityEvent<bool>
-{
-    /// <summary>
-    /// 기본 생성자: 반환값 없음 → true 전달
-    /// </summary>
-    public bool Invoke()
-    {
-        // 이 이벤트는 리스너가 직접 상태를 전달해야 함
-        // 예시: event.AddListener((state) => { /* ... */ });
-        return true;
+        var instance = CreateInstance<DialogueNode>();
+        instance.text  = text;
+        instance.clip  = clip;
+        instance.shown = false;
+        return instance;
     }
 }

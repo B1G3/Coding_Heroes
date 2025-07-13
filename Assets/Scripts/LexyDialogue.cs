@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class LexyDialogue : MonoBehaviour
 {
+    [SerializeField] private GameObject dialogueObject;
     [SerializeField] private TMP_Text dialogueText;
     [SerializeField] private AudioSource audioSource;
     [SerializeField] private float typingSpeed = 0.05f;
@@ -27,9 +28,6 @@ public class LexyDialogue : MonoBehaviour
         foreach (var node in nodes)
         {
             if (node.shown) continue;
-            
-            // 조건이 true가 될 때까지 대기  
-            yield return new WaitUntil(() => node.condition.IsTrue());
 
             // 조건 만족 후 대사 재생
             yield return StartCoroutine(PlayNode(node));
@@ -39,6 +37,7 @@ public class LexyDialogue : MonoBehaviour
 
     private IEnumerator PlayNode(DialogueNode node)
     {
+        dialogueObject.SetActive(true);
         dialogueText.gameObject.SetActive(true);
         dialogueText.text = "";
 
@@ -59,5 +58,6 @@ public class LexyDialogue : MonoBehaviour
         yield return new WaitWhile(() => audioSource.isPlaying);
 
         dialogueText.gameObject.SetActive(false);
+        dialogueObject.SetActive(false);
     }
 }

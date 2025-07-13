@@ -44,7 +44,7 @@ public class HomeSpawner : MonoBehaviour
         home.transform.rotation = Quaternion.LookRotation(projectedForward, spawnNormal);
         
         OnHomeSpawned?.Invoke(home);
-        home.GetComponent<Home>()?.Initialize(dialogueSetup.SetDialogueNodes());
+        home.GetComponent<Home>()?.Initialize();
         
         return true;
     }
