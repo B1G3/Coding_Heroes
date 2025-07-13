@@ -16,6 +16,7 @@ public class EndNode : IGridNode, IConnectable, ILogicalModule
     public override void Initialize(Vector3Int gridPos)
     {
         base.Initialize(gridPos);
+        _unitInstance ??= unit.GetComponent<Unit>();
         name = "End";
         _next = "It is end";
     }

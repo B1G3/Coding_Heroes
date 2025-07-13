@@ -176,11 +176,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 87ec37a6838454c4bb31e49f920f131c, type: 3}
---- !u!1 &31319596 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7993056856805167690, guid: 87ec37a6838454c4bb31e49f920f131c, type: 3}
-  m_PrefabInstance: {fileID: 31319595}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &38434634
 GameObject:
   m_ObjectHideFlags: 0
@@ -1085,7 +1080,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 867a3f9c6fce7744ab937cdda976014a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyPathPrefab: {fileID: 31319596}
+  text: {fileID: 0}
 --- !u!4 &501235463
 Transform:
   m_ObjectHideFlags: 0

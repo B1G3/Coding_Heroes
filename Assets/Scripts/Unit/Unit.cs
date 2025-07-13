@@ -6,7 +6,9 @@ public class Unit : MonoBehaviour
 {
     private IUnitState CurrentState;
     [SerializeField] private float speed = 3f;
+    [SerializeField] private float rotationSpeed = 30f;
     public float Speed => speed;
+    public float RotationSpeed => rotationSpeed;
     
     private void Update()
     {

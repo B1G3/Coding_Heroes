@@ -12,7 +12,18 @@ public class MoveState : IUnitState
 
     public void Update(Unit unit)
     {
-        // MoveToAsync 대신 매 프레임 단위 이동
+        Vector3 dir = _target.Position - unit.transform.position;
+        if (dir.sqrMagnitude > 0.0001f)
+        {
+            Quaternion targetRot = Quaternion.LookRotation(dir);
+            float t = unit.RotationSpeed * Time.deltaTime; // 0~1 사이 합리적 범위로 조정
+            unit.transform.rotation = Quaternion.Slerp(
+                unit.transform.rotation,
+                targetRot,
+                t
+            );
+        }
+
         unit.transform.position = Vector3.MoveTowards(
             unit.transform.position,
             _target.Position,
