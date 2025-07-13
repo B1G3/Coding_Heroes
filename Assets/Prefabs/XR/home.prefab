@@ -53,6 +53,7 @@ MonoBehaviour:
   target: {fileID: 7540151424450582097}
   StartDoorObject: {fileID: 5321233193705711602}
   EndObject: {fileID: 2894896861977454161}
+  dataContainerPrefab: {fileID: 3060869569163377651, guid: 479db0ba2d3d0604dbb7d292175cb52e, type: 3}
 --- !u!1 &4333636275773629487
 GameObject:
   m_ObjectHideFlags: 0
