@@ -18,7 +18,7 @@ public class ARGridPlacer : MonoBehaviour
     private Dictionary<Vector3Int, IGridNode> placedBlocks = new();
     
     
-    [SerializeField] private TMP_Text text;
+    // [SerializeField] private TMP_Text text;
     
     private void OnEnable()
     {
@@ -64,12 +64,12 @@ public class ARGridPlacer : MonoBehaviour
         placedBlocks[cell] = grid;
         grid.Initialize(cell);
         
-        text.text = $"Place {blockPrefab.name} at {cell}";
+        // text.text = $"Place {blockPrefab.name} at {cell}";
         
         var start = grid as StartNode;
         if (start)
         {
-            text.text = $"Place startnode at {cell}";
+            // text.text = $"Place startnode at {cell}";
             GameManager.Instance.SaveStartNode(start);
         }
         
@@ -133,7 +133,7 @@ public class ARGridPlacer : MonoBehaviour
         
         if (from != null && to != null)
         {
-            text.text = $"Connect {from} to {to}";
+            // text.text = $"Connect {from} to {to}";
             from?.ConnectNext(to);
             to?.ConnectPrev(from);
         }

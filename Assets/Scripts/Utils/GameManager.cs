@@ -9,7 +9,7 @@ public class GameManager : MonoBehaviour
     
     private List<StartNode> startNodes = new();
 
-    [SerializeField] private TMP_Text text;
+    // [SerializeField] private TMP_Text text;
     void Awake() => Instance = this;
     
     private void OnEnable()
@@ -26,7 +26,7 @@ public class GameManager : MonoBehaviour
 
     public ITarget GetTarget()
     {
-        text.text += $"Get Target {enemyPath.Position}";
+        // text.text += $"Get Target {enemyPath.Position}";
         if(!enemyPath) return null;
         return enemyPath;
     }
@@ -43,7 +43,7 @@ public class GameManager : MonoBehaviour
 
     private void LaunchGame()
     {
-        text.text = "Launch Game";
+        // text.text = "Launch Game";
         enemyPath?.StartGame();
     }
 
@@ -51,7 +51,7 @@ public class GameManager : MonoBehaviour
     {
         foreach (var startNode in startNodes)
         {
-            text.text = $"Launch! {startNode.name}";
+            // text.text = $"Launch! {startNode.name}";
             startNode.Launch();
         }
     }
@@ -59,6 +59,6 @@ public class GameManager : MonoBehaviour
     private void SetEnemyPath(GameObject home)
     {
         enemyPath ??= home.GetComponent<Home>().path1;
-        text.text = $"{enemyPath.Position}";
+        // text.text = $"{enemyPath.Position}";
     }
 }

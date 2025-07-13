@@ -13,7 +13,7 @@ public class BlockHolder : MonoBehaviour
     [SerializeField] private Transform _holdPoint;
 
     [Header("UI")]
-    [SerializeField] private TMP_Text _text;
+    // [SerializeField] private TMP_Text _text;
 
     [Header("LayerMasks")]
     [Tooltip("땅에만 설치 가능")]
@@ -88,7 +88,7 @@ public class BlockHolder : MonoBehaviour
         {
             currentBlock = clicker.GetBlock();
             currentBlockType = clicker.GetBlockType();
-            _text.text = currentBlock.name;
+            // _text.text = currentBlock.name;
             
             if (currentBlockType == BlockType.Block || currentBlockType == BlockType.Unit || currentBlockType == BlockType.Data)
             {
@@ -162,12 +162,12 @@ public class BlockHolder : MonoBehaviour
         if (onBlock)
         {
             pathStartBlock = hit.collider.gameObject;
-            _text.text = $"Path Start from {pathStartBlock.name}";
+            // _text.text = $"Path Start from {pathStartBlock.name}";
             // mode = Mode.PlacingPath;
         }
         else
         {
-            _text.text = $"Path Start failed";
+            // _text.text = $"Path Start failed";
             _isHolding = false;
             ResetHold();
         }
@@ -188,7 +188,7 @@ public class BlockHolder : MonoBehaviour
         if (onBlock)
         {
             pathEndBlock = hit.collider.gameObject;
-            _text.text = $"Path End at {pathEndBlock.name}";
+            // _text.text = $"Path End at {pathEndBlock.name}";
             OnPlacePath?.Invoke(pathStartBlock, pathEndBlock, currentBlock);
             pathStartBlock = null;
             pathEndBlock = null;
@@ -199,7 +199,7 @@ public class BlockHolder : MonoBehaviour
         }
         else
         {
-            _text.text = $"Path End failed";
+            // _text.text = $"Path End failed";
             pathStartBlock = null;
             ResetHold();
         }
@@ -210,6 +210,6 @@ public class BlockHolder : MonoBehaviour
         currentBlock = null;
         currentBlockType = BlockType.None;
         mode = Mode.None;
-        _text.text = "Reset";
+        // _text.text = "Reset";
     }
 }

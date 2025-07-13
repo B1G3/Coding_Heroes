@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a488abbd587bec446bca1332da59a0bf, type: 3}
+  m_Name: lexy2_ver4_1_52_100_45_x
+  m_EditorClassIdentifier: 
+  text: "\uADF8\uAC74 \uBE14\uB85D\uC758 \uBC30\uCE58 \uC21C\uC11C\uAC00 \uC798\uBABB\uB418\uC5C8\uAE30
+    \uB54C\uBB38\uC774\uC57C! \uACF5\uACA9 \uBA85\uB839\uC740 \uC774\uBBF8 \uC6C0\uC9C1\uC774\uAE30
+    \uC804\uC5D0 \uC218\uD589\uD588\uAC70\uB4E0. \uC774\uB3D9\uD55C \uB2E4\uC74C\uC5D0
+    \uACF5\uACA9\uD558\uACE0 \uC2F6\uB2E4\uBA74, \uB124\uAC00 \uC0DD\uAC01\uD55C
+    \uC21C\uC11C\uB791 \uB611\uAC19\uC774 \uBC30\uCE58\uD574 \uBCFC\uAE4C?"
+  clip: {fileID: 8300000, guid: c76357b1c317a7b48b5b3dd12ad35d2c, type: 3}
+  shown: 0
