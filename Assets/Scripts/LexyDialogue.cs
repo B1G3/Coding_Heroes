@@ -10,6 +10,9 @@ public class LexyDialogue : MonoBehaviour
     [SerializeField] private GameObject dialogueObject;
     [SerializeField] private TMP_Text dialogueText;
     [SerializeField] private AudioSource audioSource;
+    [SerializeField] private Material faceMaterial;
+    [SerializeField] private Sprite[] faceSprite;
+    [SerializeField] private Sprite faceSpriteDefault;
     [SerializeField] private float typingSpeed = 0.05f;
     [SerializeField] private int maxCharsPerPage = 36;
     [SerializeField] private float pageDelay = 1.5f;
@@ -74,6 +77,7 @@ public class LexyDialogue : MonoBehaviour
         // 4) 마지막 페이지 대기 후, 음성 끝날 때까지
         yield return new WaitUntil(() => !audioSource.isPlaying);
 
+        
         dialogueText.gameObject.SetActive(false);
         dialogueObject.SetActive(false);
     }
