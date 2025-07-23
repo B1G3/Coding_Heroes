@@ -90,11 +90,11 @@ public class BlockHolder : MonoBehaviour
             currentBlockType = clicker.GetBlockType();
             // _text.text = currentBlock.name;
             
-            if (currentBlockType == BlockType.Block || currentBlockType == BlockType.Unit || currentBlockType == BlockType.Data)
+            if (currentBlockType is BlockType.Block or BlockType.Unit or BlockType.Data)
             {
                 mode = Mode.Block;
             }
-            else if (currentBlockType == BlockType.Path)
+            else if (currentBlockType is BlockType.Path)
             {
                 mode = Mode.WaitingForPathStart;
             }
@@ -108,7 +108,7 @@ public class BlockHolder : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        if (_isHolding || currentBlockType == BlockType.Path) return;
+        if (_isHolding || currentBlockType is BlockType.Path) return;
         if (other.GetComponent<BlockClicker>() != null)
         {
             ResetHold();
