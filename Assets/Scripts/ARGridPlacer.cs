@@ -1,32 +1,32 @@
-using System;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
-using static BlockConfig;
+using static GridUtils;
 
 public class ARGridPlacer : MonoBehaviour
 {
-    [Header("Grid Settings")]
-    [SerializeField] private Transform origin;     // 기준 Transform (AR에 배치한 빈 오브젝트)
-    [SerializeField] private Vector3 cellSize;
+    [Header("Config")]
+    [SerializeField] private Transform origin;
     
     [Header("Block Holder")]
     [SerializeField] private BlockHolder leftBlockHolder;
     [SerializeField] private BlockHolder rightBlockHolder;
 
+    [Header("Prefab")]
+    [SerializeField] private GameObject cornerPrefab;
+    
     // 이미 배치된 칸 관리
     private Dictionary<Vector3Int, IGridNode> placedBlocks = new();
     
-    
-    // [SerializeField] private TMP_Text text;
     
     private void OnEnable()
     {
         HomeSpawner.OnHomeSpawned += SetOrigin;
         leftBlockHolder.OnPlaceBlock += PlaceAtWorldPosition;
         leftBlockHolder.OnPlacePath += PlaceFromToWorldPosition;
+        leftBlockHolder.OnPlaceCorner += PlaceFromToWorldPosition;
         rightBlockHolder.OnPlaceBlock += PlaceAtWorldPosition;
         rightBlockHolder.OnPlacePath += PlaceFromToWorldPosition;
+        rightBlockHolder.OnPlaceCorner += PlaceFromToWorldPosition;
     }
     
     private void OnDisable()
@@ -34,13 +34,15 @@ public class ARGridPlacer : MonoBehaviour
         HomeSpawner.OnHomeSpawned -= SetOrigin;
         leftBlockHolder.OnPlaceBlock -= PlaceAtWorldPosition;
         leftBlockHolder.OnPlacePath -= PlaceFromToWorldPosition;
+        leftBlockHolder.OnPlaceCorner -= PlaceFromToWorldPosition;
         rightBlockHolder.OnPlaceBlock -= PlaceAtWorldPosition;
         rightBlockHolder.OnPlacePath -= PlaceFromToWorldPosition;
+        rightBlockHolder.OnPlaceCorner -= PlaceFromToWorldPosition;
     }
 
-    private void SetOrigin(GameObject origin)
+    private void SetOrigin(GameObject home)
     {
-        this.origin = origin.transform;
+        origin = home.transform;
     }
 
     /// <summary>
@@ -64,12 +66,9 @@ public class ARGridPlacer : MonoBehaviour
         placedBlocks[cell] = grid;
         grid.Initialize(cell);
         
-        // text.text = $"Place {blockPrefab.name} at {cell}";
-        
         var start = grid as StartNode;
         if (start)
         {
-            // text.text = $"Place startnode at {cell}";
             GameManager.Instance.SaveStartNode(start);
         }
         
@@ -100,40 +99,54 @@ public class ARGridPlacer : MonoBehaviour
         }
     }
     // 아직 꺽는 기능이 없음
-
     
-    /// <summary>
-    /// worldPos 위치의 칸 정보를 Vector3Int로 조회
-    /// </summary>
-    private Vector3Int WorldToCell(Vector3 worldPos)
+    
+    // 코너 설치는 이런 식으로 하면 될 듯
+    // 근데 두번 째 값에 좌표가 들어오긴 해야함
+    private void PlaceFromToWorldPosition(GameObject fromWorldPos, Vector3Int to, GameObject pathPrefab)
     {
-        Vector3 localPos = origin.InverseTransformPoint(worldPos);
-        return new Vector3Int(
-            Mathf.RoundToInt(localPos.x / cellSize.x),
-            Mathf.RoundToInt(localPos.y / cellSize.y),
-            Mathf.RoundToInt(localPos.z / cellSize.z)
-        );
-    }
-
-    private Vector3 CellToWorld(Vector3Int cell)
-    {
-        Vector3 cellCenterLocal = new Vector3(
-            cell.x * cellSize.x,
-            cell.y * cellSize.y,
-            cell.z * cellSize.z
-        );
-        Vector3 spawnPos = origin.TransformPoint(cellCenterLocal);
-        return spawnPos;
+        var from = WorldToCell(fromWorldPos.transform.position);
+        var fromNode = fromWorldPos.GetComponentInParent<IGridNode>();
+        
+        IGridNode toNode;
+        
+        if (placedBlocks.TryGetValue(to, out toNode))
+        {
+            // ▶ 블록이 있으면 블록–블록 연결
+            ConnectNode(fromNode, toNode);
+        }
+        else
+        {
+            // ▶ 블록이 없으면 코너 스폰 후 딕셔너리에 등록, then 연결
+            Vector3 cornerWorldPos = CellToWorld(to);
+            GameObject cornerGO = Instantiate(cornerPrefab, cornerWorldPos, origin.rotation);
+            toNode = cornerGO.GetComponent<IGridNode>();
+            toNode.Initialize(to);
+            placedBlocks[to] = toNode;
+        
+            ConnectNode(fromNode, toNode);
+        }
+        
+        var dir = to - from;
+        dir.x = Mathf.Clamp(dir.x, -1, 1);
+        dir.z = Mathf.Clamp(dir.z, -1, 1);
+        
+        for (var p = from + dir; ; p += dir)
+        {
+            Vector3 spawnPos = CellToWorld(p);
+            spawnPos.y = fromWorldPos.transform.position.y;
+            var path = Instantiate(pathPrefab, spawnPos, origin.rotation);
+            var grid = path.GetComponent<IGridNode>();
+            placedBlocks[p] = grid;
+            grid.Initialize(p);
+            if (p == to - dir) break;
+        }
     }
     
     private void ConnectNode(IGridNode fromNode, IGridNode toNode)
     {
-        var from = fromNode as IConnectable;
-        var to   = toNode   as IConnectable;
-        
-        if (from != null && to != null)
+        if (fromNode is IConnectable from && toNode is IConnectable to)
         {
-            // text.text = $"Connect {from} to {to}";
             from?.ConnectNext(to);
             to?.ConnectPrev(from);
         }

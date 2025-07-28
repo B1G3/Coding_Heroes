@@ -1,7 +1,6 @@
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using TMPro;
 using static BlockConfig;
 
 public class BlockHolder : MonoBehaviour
@@ -22,21 +21,31 @@ public class BlockHolder : MonoBehaviour
     [SerializeField] private LayerMask blockLayer;
 
     [Header("Placement")]
-    [SerializeField] private float placementCheckDistance = 0.1f;
-    [SerializeField] private float groundCheckDistance  = 0.2f;
+    [SerializeField] private float placementCheckDistance = 0.2f;
 
-    private enum Mode { None, Block, WaitingForPathStart, PlacingPath }
+    private enum Mode { None, Block, PlacingPath }
     private Mode mode = Mode.None;
+    
+    private int interactMask;
+    private RaycastHit hit;
+    private bool OnGround;
+    private bool OnBlock;
     
     private GameObject currentBlock;
     private BlockType currentBlockType = BlockType.None;
-    private bool _isHolding;
+    private bool isHolding;
     
     private GameObject pathStartBlock;
     private GameObject pathEndBlock;
 
     public event Action <Vector3, GameObject> OnPlaceBlock;
     public event Action <GameObject, GameObject, GameObject> OnPlacePath;
+    public event Action <GameObject, Vector3Int, GameObject> OnPlaceCorner;
+    
+    private void Awake()
+    {
+        interactMask = groundLayer.value | blockLayer.value;
+    }
     
     private void OnEnable()
     {
@@ -51,28 +60,33 @@ public class BlockHolder : MonoBehaviour
     {
         if (currentBlockType == BlockType.None) return;
 
+        if (mode != Mode.None)
+        {
+            ConfigPosition();
+        }
+
         if (mode == Mode.Block)
         {
             // Grab 버튼 눌렀을 때
-            if (!_isHolding && grabAction.action.WasPressedThisFrame())
+            if (!isHolding && grabAction.action.WasPressedThisFrame())
             {
                 PickUpBlock();
             }
             // Grab 버튼 뗐을 때
-            else if (_isHolding && grabAction.action.WasReleasedThisFrame())
+            else if (isHolding && grabAction.action.WasReleasedThisFrame())
             {
                 TryPlaceBlock();
             }
         }
-        else if (mode == Mode.WaitingForPathStart)
+        else if (mode == Mode.PlacingPath)
         {
             // Grab 버튼 눌렀을 때
-            if (!_isHolding && grabAction.action.WasPressedThisFrame())
+            if (!isHolding && grabAction.action.WasPressedThisFrame())
             {
                 TryGetStartBlock();
             }
             // Grab 버튼 뗐을 때
-            else if (_isHolding && grabAction.action.WasReleasedThisFrame())
+            else if (isHolding && grabAction.action.WasReleasedThisFrame())
             {
                 TryPlacePath();
             }
@@ -82,13 +96,12 @@ public class BlockHolder : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (_isHolding) return;
+        if (isHolding) return;
         var clicker = other.GetComponent<BlockClicker>();
         if (clicker != null)
         {
             currentBlock = clicker.GetBlock();
             currentBlockType = clicker.GetBlockType();
-            // _text.text = currentBlock.name;
             
             if (currentBlockType is BlockType.Block or BlockType.Unit or BlockType.Data)
             {
@@ -96,7 +109,7 @@ public class BlockHolder : MonoBehaviour
             }
             else if (currentBlockType is BlockType.Path)
             {
-                mode = Mode.WaitingForPathStart;
+                mode = Mode.PlacingPath;
             }
             else
             {
@@ -108,33 +121,39 @@ public class BlockHolder : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        if (_isHolding || currentBlockType is BlockType.Path) return;
+        if (isHolding || currentBlockType is BlockType.Path) return;
         if (other.GetComponent<BlockClicker>() != null)
         {
             ResetHold();
         }
     }
 
+    private void ConfigPosition()
+    {
+        if (Physics.Raycast(_holdPoint.position, Vector3.down,
+                out hit, placementCheckDistance, interactMask))
+        {
+            int mask = 1 << hit.collider.gameObject.layer;
+            OnGround = (mask & groundLayer.value) != 0;
+            OnBlock  = (mask & blockLayer.value)  != 0;
+        }
+        else
+        {
+            OnGround = OnBlock = false;
+        }
+    }
+
     private void PickUpBlock()
     {
-        _isHolding = true;
+        isHolding = true;
         // 픽업 했을 때 로직
     }
 
     private void TryPlaceBlock()
     {
-        _isHolding = false;
+        isHolding = false;
 
-        // 1) 땅 위에 있는지
-        bool onGround = Physics.Raycast(
-            _holdPoint.position,
-            Vector3.down,
-            out var hit,
-            groundCheckDistance,
-            groundLayer
-        );
-
-        if (onGround)
+        if (OnGround)
             PlaceBlock(hit.point);
         else
             ResetHold();
@@ -149,60 +168,36 @@ public class BlockHolder : MonoBehaviour
 
     private void TryGetStartBlock()
     {
-        _isHolding = true;
+        isHolding = true;
         
-        bool onBlock = Physics.Raycast(
-            _holdPoint.position,
-            Vector3.down,
-            out var hit,
-            placementCheckDistance,
-            blockLayer
-        );
-        
-        if (onBlock)
+        if (OnBlock)
         {
             pathStartBlock = hit.collider.gameObject;
-            // _text.text = $"Path Start from {pathStartBlock.name}";
-            // mode = Mode.PlacingPath;
         }
         else
         {
-            // _text.text = $"Path Start failed";
-            _isHolding = false;
-            ResetHold();
+            isHolding = false;
+            ResetHold(); // 이거 초기화 안하면 무한으로 설치 가능
         }
     }
 
     private void TryPlacePath()
     {
-        _isHolding = false;
+        isHolding = false;
         
-        bool onBlock = Physics.Raycast(
-            _holdPoint.position,
-            Vector3.down,
-            out var hit,
-            placementCheckDistance,
-            blockLayer
-        );
+        if (OnGround || OnBlock)
+        {
+            var pathEnd = GridUtils.SnapToStraight(pathStartBlock.transform.position, hit.point);
+
+            OnPlaceCorner?.Invoke(
+                pathStartBlock,
+                pathEnd,
+                currentBlock
+            );
+        }
         
-        if (onBlock)
-        {
-            pathEndBlock = hit.collider.gameObject;
-            // _text.text = $"Path End at {pathEndBlock.name}";
-            OnPlacePath?.Invoke(pathStartBlock, pathEndBlock, currentBlock);
-            pathStartBlock = null;
-            pathEndBlock = null;
-            // ResetHold();
-            currentBlock = null;
-            currentBlockType = BlockType.None;
-            mode = Mode.None;
-        }
-        else
-        {
-            // _text.text = $"Path End failed";
-            pathStartBlock = null;
-            ResetHold();
-        }
+        pathStartBlock = null;
+        ResetHold();
     }
 
     private void ResetHold()
@@ -210,6 +205,6 @@ public class BlockHolder : MonoBehaviour
         currentBlock = null;
         currentBlockType = BlockType.None;
         mode = Mode.None;
-        // _text.text = "Reset";
+        OnGround = OnBlock = false;
     }
 }

@@ -11,9 +11,8 @@ GameObject:
   - component: {fileID: 5006222595519293204}
   - component: {fileID: 5592751627644659119}
   - component: {fileID: -2348585783204472214}
-  - component: {fileID: 7913604356010231603}
   - component: {fileID: 7196121347454800607}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Rotation Tile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -30,8 +29,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 0.01, y: 0.01, z: 0.01}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 5823046260270143565}
   m_Father: {fileID: 0}
@@ -71,18 +70,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _next: 
   _prev: 
---- !u!114 &7913604356010231603
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4821083770212554965}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7feb59b8adacaa34f839daa6483fb24e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &7196121347454800607
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -107,7 +94,7 @@ GameObject:
   - component: {fileID: 5823046260270143565}
   - component: {fileID: 6253995372665033680}
   - component: {fileID: 3038993934840601113}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: model
   m_TagString: Untagged
   m_Icon: {fileID: 0}
