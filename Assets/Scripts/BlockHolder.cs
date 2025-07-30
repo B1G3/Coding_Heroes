@@ -1,18 +1,16 @@
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Serialization;
 using static BlockConfig;
 
 public class BlockHolder : MonoBehaviour
 {
     [Header("Input")]
     [SerializeField] private InputActionReference grabAction;          // ← 여기
-
+    
     [Header("Hand Settings")]
-    [SerializeField] private Transform _holdPoint;
-
-    [Header("UI")]
-    // [SerializeField] private TMP_Text _text;
+    [SerializeField] private Transform holdPoint;
 
     [Header("LayerMasks")]
     [Tooltip("땅에만 설치 가능")]
@@ -20,8 +18,12 @@ public class BlockHolder : MonoBehaviour
     [Tooltip("길은 블럭부터 설치")]
     [SerializeField] private LayerMask blockLayer;
 
+    [Header("Preview")]
+    [SerializeField] private GameObject preview;
+    
     [Header("Placement")]
     [SerializeField] private float placementCheckDistance = 0.2f;
+    
 
     private enum Mode { None, Block, PlacingPath }
     private Mode mode = Mode.None;
@@ -130,7 +132,7 @@ public class BlockHolder : MonoBehaviour
 
     private void ConfigPosition()
     {
-        if (Physics.Raycast(_holdPoint.position, Vector3.down,
+        if (Physics.Raycast(holdPoint.position, Vector3.down,
                 out hit, placementCheckDistance, interactMask))
         {
             int mask = 1 << hit.collider.gameObject.layer;
