@@ -40,14 +40,17 @@ public class VoiceInteractionManager : MonoBehaviour {
         CurrentState = State.Uploading;
 
         // WAV 바이트 변환
-        byte[] wavData = WavUtility.FromAudioClip(clip);
+        byte[] wavData = WavUtility.AudioClipToWav(clip);
 
         // 1) STT 호출
         string userText = await client.SendSTT(wavData);
+        Debug.Log(userText);
         OnSttTextReceived?.Invoke(userText);
 
         // 2) QA 챗봇 호출
         var chatResp = await client.SendChat(userText);
+        Debug.Log(chatResp.answer);
+        
         if (chatResp != null) {
             OnBotTextReceived?.Invoke(chatResp.answer);
 

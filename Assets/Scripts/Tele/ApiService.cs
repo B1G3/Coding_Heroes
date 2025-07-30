@@ -30,12 +30,19 @@ public class ApiService : IServerClient
         this.timeoutSeconds = timeoutSeconds;
     }
 
-    public async UniTask<string> SendSTT(byte[] wavData)
+    public async UniTask<string> SendSTT(byte[] wavFile)
     {
+        // 2) multipart/form-data 폼 생성
         string url = $"{baseUrl}/ai_npc/stt";
         var form = new WWWForm();
-        form.AddBinaryData("audio_file", wavData, "recording.wav", "audio/wav");
+        form.AddBinaryData(
+            fieldName: "audio_file",
+            contents: wavFile,
+            fileName: "recording.wav",
+            mimeType: "audio/wav"
+        );
 
+        // 3) 요청 전송
         using (var req = UnityWebRequest.Post(url, form))
         {
             req.timeout = timeoutSeconds;
@@ -43,7 +50,7 @@ public class ApiService : IServerClient
 
             if (req.result == UnityWebRequest.Result.Success)
             {
-                // Newtonsoft.Json으로 파싱
+                // 4) JSON 파싱
                 var resp = JsonConvert.DeserializeObject<SttResponse>(req.downloadHandler.text);
                 return resp.stt_result;
             }
@@ -54,6 +61,7 @@ public class ApiService : IServerClient
             }
         }
     }
+
     
     public async UniTask<ChatbotResponse> SendChat(string prompt) {
         string url = $"{baseUrl}/ai_npc/qa_chatbot";
