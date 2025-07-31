@@ -2,7 +2,7 @@ using UnityEngine;
 
 public interface IPlacementPreview
 {
-    void CreatePreview(GameObject prefab);
-    void UpdatePreview(Vector3Int gridPos, bool isValid);
+    void CreatePreview();
+    void UpdatePreview(Vector3 gridPos, bool isValid);
     void ClearPreview();
 }

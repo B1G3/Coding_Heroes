@@ -38,11 +38,13 @@ public class BlockHolder : MonoBehaviour
     private bool isHolding;
     
     private GameObject pathStartBlock;
-    private GameObject pathEndBlock;
+    private Vector3Int pathEnd;
 
     public event Action <Vector3, GameObject> OnPlaceBlock;
-    public event Action <GameObject, GameObject, GameObject> OnPlacePath;
     public event Action <GameObject, Vector3Int, GameObject> OnPlaceCorner;
+    public event Action <Vector3, bool> OnPreviewBlock;
+    public event Action <Vector3, Vector3Int> OnPreviewPath;
+    public event Action OnDestroyPreview;
     
     private void Awake()
     {
@@ -69,6 +71,12 @@ public class BlockHolder : MonoBehaviour
 
         if (mode == Mode.Block)
         {
+            // 현재 설치할라고 하고 있고 땅 위에 있을 경우에만
+            if (isHolding && (OnGround || OnBlock))
+            {
+                OnPreviewBlock?.Invoke(hit.point, OnGround);
+            }
+            
             // Grab 버튼 눌렀을 때
             if (!isHolding && grabAction.action.WasPressedThisFrame())
             {
@@ -82,6 +90,13 @@ public class BlockHolder : MonoBehaviour
         }
         else if (mode == Mode.PlacingPath)
         {
+            if (!isHolding && (OnGround || OnBlock)) OnPreviewBlock?.Invoke(hit.point, OnBlock);
+            if (isHolding && (OnGround || OnBlock))
+            {
+                pathEnd = GridUtils.SnapToStraight(pathStartBlock.transform.position, hit.point);
+                OnPreviewPath?.Invoke(pathStartBlock.transform.position, pathEnd);
+            }
+            
             // Grab 버튼 눌렀을 때
             if (!isHolding && grabAction.action.WasPressedThisFrame())
             {
@@ -189,8 +204,6 @@ public class BlockHolder : MonoBehaviour
         
         if (OnGround || OnBlock)
         {
-            var pathEnd = GridUtils.SnapToStraight(pathStartBlock.transform.position, hit.point);
-
             OnPlaceCorner?.Invoke(
                 pathStartBlock,
                 pathEnd,
