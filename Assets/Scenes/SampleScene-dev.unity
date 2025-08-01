@@ -5827,6 +5827,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: trailway_01
       objectReference: {fileID: 0}
+    - target: {fileID: 640032911732810345, guid: a63212f11356af64bb8604c90dbab474, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -5921,6 +5925,18 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: beb244ac3a640a64494e45f8e5d9c6a2, type: 3}
       propertyPath: m_Name
       value: model
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: beb244ac3a640a64494e45f8e5d9c6a2, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 4424396828587804706, guid: beb244ac3a640a64494e45f8e5d9c6a2, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 5148817236446094103, guid: beb244ac3a640a64494e45f8e5d9c6a2, type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -6044,7 +6060,7 @@ GameObject:
   - component: {fileID: 2910185957470053352}
   - component: {fileID: 2910185957470053351}
   - component: {fileID: 2910185957470053350}
-  m_Layer: 6
+  m_Layer: 8
   m_Name: Data Block
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6550,7 +6566,7 @@ GameObject:
   - component: {fileID: 6583787968596779212}
   - component: {fileID: 6583787968596779211}
   - component: {fileID: 6583787968596779210}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Gnome Block
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8023,7 +8039,7 @@ GameObject:
   - component: {fileID: 5402803541369697195}
   - component: {fileID: 5402803541369697194}
   - component: {fileID: 5402803541369697193}
-  m_Layer: 6
+  m_Layer: 8
   m_Name: Start Block
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9322,7 +9338,7 @@ GameObject:
   - component: {fileID: 6426597960898927592}
   - component: {fileID: 6426597960898927591}
   - component: {fileID: 6426597960898927594}
-  m_Layer: 6
+  m_Layer: 8
   m_Name: Path Block
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9655,7 +9671,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 100000, guid: 0c6eb60ad59a81145839dbc6dedcbc3f, type: 3}
       propertyPath: m_Layer
-      value: 6
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 0c6eb60ad59a81145839dbc6dedcbc3f, type: 3}
       propertyPath: m_LocalPosition.x
@@ -9890,7 +9906,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 100000, guid: 05035b78d90b21f43854dfe010ccd289, type: 3}
       propertyPath: m_Layer
-      value: 6
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 05035b78d90b21f43854dfe010ccd289, type: 3}
       propertyPath: m_LocalScale.x
@@ -10310,7 +10326,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2259268371303815389}
   - component: {fileID: 5019731429719133045}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Gnome
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -55,7 +55,7 @@ public class PlacementPreview : MonoBehaviour
         rightBlockHolder.OnDestroyPreview -= ClearPreview;
     }
 
-    public void CreatePreview()
+    private void CreatePreview()
     {
         if (blockPreview != null) return;
 
@@ -94,7 +94,7 @@ public class PlacementPreview : MonoBehaviour
         var pathPositions = CalculatePathPositions(startGridPos, endGridPos);
         
         // 경로가 유효한지 확인 (중간에 블록이 있는지 체크)
-        bool isPathValid = IsPathValid(startGridPos, endGridPos, pathPositions);
+        bool isPathValid = IsPathValid(pathPositions);
         
         // 각 위치에 프리뷰 오브젝트 생성
         foreach (var gridPos in pathPositions)
@@ -102,7 +102,8 @@ public class PlacementPreview : MonoBehaviour
             var go = pathPool.Get();
             go.SetActive(true);
             go.transform.position = GridUtils.CellToWorld(gridPos);
-
+            go.transform.rotation = GridUtils.GetOriginRotation();
+        
             var rend = go.GetComponentInChildren<Renderer>();
             // 새로운 머티리얼 인스턴스 생성 (색상 변경을 위해)
             rend.material = new Material(previewMaterial);
@@ -110,7 +111,7 @@ public class PlacementPreview : MonoBehaviour
             // 경로 유효성에 따라 색상 설정
             var color = isPathValid ? new Color(0, 1, 0, 0.5f) : new Color(1, 0, 0, 0.5f);
             rend.material.color = color;
-
+        
             activePathPreviews.Add(go);
         }
     }
@@ -125,24 +126,17 @@ public class PlacementPreview : MonoBehaviour
         dir.z = Mathf.Clamp(dir.z, -1, 1);
         
         // 시작점부터 끝점까지 순차적으로 추가
-        for (var p = start + dir; ; p += dir)
-        {
-            positions.Add(p);
-            if (p == end - dir) break;
-        }
+        // for (var p = start + dir; ; p += dir)
+        // {
+        //     positions.Add(p);
+        //     if (p == end - dir) break;
+        // }
         
         return positions;
     }
     
-    private bool IsPathValid(Vector3Int start, Vector3Int end, List<Vector3Int> pathPositions)
+    private bool IsPathValid(List<Vector3Int> pathPositions)
     {
-        // 시작점에 블록이 있는지 확인
-        if (!GridState.Instance.TryGetNode(start, out _))
-            return false;
-            
-        // 끝점 확인 - 블록이 있거나 빈 공간이어야 함 (코너 설치 가능)
-        // 이 부분은 게임 로직에 따라 조정 필요
-        
         // 중간 경로에 블록이 있는지 확인
         foreach (var pos in pathPositions)
         {
@@ -163,12 +157,13 @@ public class PlacementPreview : MonoBehaviour
         activePathPreviews.Clear();
     }
 
-    public void ClearPreview()
+    private void ClearPreview()
     {
         if (blockPreview != null)
             blockPreview.SetActive(false);
 
-        ClearPathPreviews();
+        if( activePathPreviews.Count > 0)
+            ClearPathPreviews();
     }
     
     private void OnDestroy()

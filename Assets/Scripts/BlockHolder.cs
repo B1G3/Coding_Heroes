@@ -169,15 +169,13 @@ public class BlockHolder : MonoBehaviour
 
         if (OnGround)
             PlaceBlock(hit.point);
-        else
-            ResetHold();
+        
+        ResetHold();
     }
 
     private void PlaceBlock(Vector3 pos)
     {
         OnPlaceBlock?.Invoke(pos, currentBlock);
-        currentBlockType = BlockType.None;
-        currentBlock = null;
     }
 
     private void TryGetStartBlock()
