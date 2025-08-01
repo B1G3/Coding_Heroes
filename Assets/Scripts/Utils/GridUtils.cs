@@ -49,4 +49,9 @@ public static class GridUtils
 
         return resultCell;
     }
+
+    public static Quaternion GetOriginRotation()
+    {
+        return _origin.rotation;
+    }
 }

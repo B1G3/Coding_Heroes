@@ -17,9 +17,6 @@ public class BlockHolder : MonoBehaviour
     [SerializeField] private LayerMask groundLayer;
     [Tooltip("길은 블럭부터 설치")]
     [SerializeField] private LayerMask blockLayer;
-
-    [Header("Preview")]
-    [SerializeField] private GameObject preview;
     
     [Header("Placement")]
     [SerializeField] private float placementCheckDistance = 0.2f;
@@ -217,6 +214,7 @@ public class BlockHolder : MonoBehaviour
 
     private void ResetHold()
     {
+        OnDestroyPreview?.Invoke();
         currentBlock = null;
         currentBlockType = BlockType.None;
         mode = Mode.None;
