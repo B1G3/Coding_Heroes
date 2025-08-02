@@ -16,11 +16,6 @@ public class RotationTile : IGridNode, IConnectable, ILogicalModule
         name = "Rotation";
     }
 
-    protected override void InitializePorts()
-    {
-        throw new System.NotImplementedException();
-    }
-
     public void ConnectNext(IConnectable next)
     {
         Next = next;

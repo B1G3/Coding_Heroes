@@ -21,11 +21,6 @@ public class EndNode : IGridNode, IConnectable, ILogicalModule
         _next = "It is end";
     }
 
-    protected override void InitializePorts()
-    {
-        throw new NotImplementedException();
-    }
-
     public void ConnectNext(IConnectable next)
     {
         Debug.Log("End");

@@ -16,11 +16,6 @@ public class Block : IGridNode, IConnectable, ILogicalModule
         name = "Block";
     }
 
-    protected override void InitializePorts()
-    {
-        throw new System.NotImplementedException();
-    }
-
     public void ConnectNext(IConnectable next)
     {
         Next = next;

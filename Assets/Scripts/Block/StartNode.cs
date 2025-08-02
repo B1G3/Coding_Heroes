@@ -18,11 +18,6 @@ public class StartNode : IGridNode, IConnectable, ILogicalModule
         _prev = "It is start";
     }
 
-    protected override void InitializePorts()
-    {
-        throw new System.NotImplementedException();
-    }
-
     public void ConnectNext(IConnectable next)
     {
         Next = next;

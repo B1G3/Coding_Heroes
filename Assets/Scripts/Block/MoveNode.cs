@@ -18,11 +18,6 @@ public class MoveNode : IGridNode, IConnectable, ILogicalModule, IGetData
         name = "Move";
     }
 
-    protected override void InitializePorts()
-    {
-        throw new System.NotImplementedException();
-    }
-
     public void ConnectNext(IConnectable next)
     {
         Next = next;

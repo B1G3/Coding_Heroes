@@ -7,100 +7,94 @@ public abstract class IGridNode : MonoBehaviour
     public string Name { get; private set; }
     public Vector3Int GridPosition { get; private set; }
     
-    [Header("Port Configuration")]
-    [SerializeField] protected List<Port> ports = new List<Port>();
-    
     // 연결된 노드들 (월드 방향별로)
     protected Dictionary<WorldDirection, IGridNode> connections = new Dictionary<WorldDirection, IGridNode>();
 
     public virtual void Initialize(Vector3Int gridPos)
     {
         GridPosition = gridPos;
-        InitializePorts();
     }
     
-    // 각 블록 타입별로 오버라이드해서 포트 설정
-    protected abstract void InitializePorts();
-    
-    // 로컬 방향의 포트 가져오기
-    public Port GetLocalPort(LocalDirection localDirection)
+    // Input 인터페이스 체크
+    public bool HasInput()
     {
-        return ports.Find(p => p.localDirection == localDirection);
+        return this is IInput;
     }
     
-    // 월드 방향의 포트 가져오기
-    public Port GetWorldPort(WorldDirection worldDirection)
+    // Output 인터페이스 체크  
+    public bool HasOutput()
     {
-        var localDir = DirectionUtils.WorldToLocalDirection(worldDirection, transform);
-        return GetLocalPort(localDir);
+        return this is IOutput;
     }
     
-    // 특정 월드 방향에 포트가 있는지 확인
-    public bool HasWorldPort(WorldDirection worldDirection, PortType portType = PortType.Both)
+    
+    // 특정 방향으로 연결 가능한지 확인
+    public bool CanConnectTo(IGridNode other, WorldDirection direction)
     {
-        var port = GetWorldPort(worldDirection);
-        if (port == null) return false;
+        // 내가 Output을 가지고 있고, 상대방이 Input을 가지고 있는지 확인
+        if (this is IOutput myOutput && other is IInput otherInput)
+        {
+            var myOutputDir = myOutput.GetOutputDirection(transform);
+            var otherInputDir = otherInput.GetInputDirection(other.transform);
+            var oppositeDir = DirectionUtils.GetOppositeWorldDirection(direction);
+            
+            return myOutputDir == direction && 
+                   otherInputDir == oppositeDir &&
+                   myOutput.CanProvideOutput() && 
+                   otherInput.CanReceiveInput();
+        }
         
-        return portType == PortType.Both || 
-               port.portType == PortType.Both || 
-               port.portType == portType;
-    }
-    
-    // 연결 가능한지 확인
-    public bool CanConnectTo(IGridNode other, WorldDirection worldDirection)
-    {
-        var myPort = GetWorldPort(worldDirection);
-        if (myPort == null || myPort.isConnected) return false;
-        
-        var oppositeDir = DirectionUtils.GetOppositeWorldDirection(worldDirection);
-        var otherPort = other.GetWorldPort(oppositeDir);
-        if (otherPort == null || otherPort.isConnected) return false;
-        
-        // 포트 타입 호환성 확인
-        return (myPort.portType == PortType.Output || myPort.portType == PortType.Both) &&
-               (otherPort.portType == PortType.Input || otherPort.portType == PortType.Both);
+        return false;
     }
     
     // 노드 연결
-    public bool ConnectTo(IGridNode other, WorldDirection worldDirection)
+    public bool ConnectTo(IGridNode other, WorldDirection direction)
     {
-        if (!CanConnectTo(other, worldDirection)) return false;
+        if (!CanConnectTo(other, direction)) return false;
         
-        var myPort = GetWorldPort(worldDirection);
-        var oppositeDir = DirectionUtils.GetOppositeWorldDirection(worldDirection);
-        var otherPort = other.GetWorldPort(oppositeDir);
+        var oppositeDir = DirectionUtils.GetOppositeWorldDirection(direction);
         
         // 연결 설정
-        connections[worldDirection] = other;
+        connections[direction] = other;
         other.connections[oppositeDir] = this;
         
-        myPort.isConnected = true;
-        otherPort.isConnected = true;
+        // 인터페이스를 통한 연결 처리
+        if (this is IOutput myOutput && other is IInput otherInput)
+        {
+            myOutput.ConnectOutput(otherInput);
+            otherInput.ReceiveInput(myOutput);
+        }
         
         return true;
     }
     
     // 연결 해제
-    public void DisconnectFrom(WorldDirection worldDirection)
+    public void DisconnectFrom(WorldDirection direction)
     {
-        if (connections.TryGetValue(worldDirection, out var other))
+        if (connections.TryGetValue(direction, out var other))
         {
-            var oppositeDir = DirectionUtils.GetOppositeWorldDirection(worldDirection);
+            var oppositeDir = DirectionUtils.GetOppositeWorldDirection(direction);
             
-            // 포트 연결 상태 해제
-            GetWorldPort(worldDirection).isConnected = false;
-            other.GetWorldPort(oppositeDir).isConnected = false;
+            // 인터페이스를 통한 연결 해제
+            if (this is IOutput myOutput)
+            {
+                myOutput.DisconnectOutput();
+            }
+            if (other is IInput otherInput)
+            {
+                otherInput.DisconnectInput();
+            }
             
             // 연결 제거
-            connections.Remove(worldDirection);
+            connections.Remove(direction);
             other.connections.Remove(oppositeDir);
         }
     }
     
     // 연결된 노드 가져오기
-    public IGridNode GetConnectedNode(WorldDirection worldDirection)
+    public IGridNode GetConnectedNode(WorldDirection direction)
     {
-        connections.TryGetValue(worldDirection, out var node);
+        connections.TryGetValue(direction, out var node);
         return node;
     }
     
