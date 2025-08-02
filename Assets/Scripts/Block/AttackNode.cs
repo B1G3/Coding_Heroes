@@ -17,6 +17,11 @@ public class AttackNode : IGridNode, IConnectable, ILogicalModule, IGetData
         name = "Attack";
     }
 
+    protected override void InitializePorts()
+    {
+        throw new System.NotImplementedException();
+    }
+
     public void ConnectNext(IConnectable next)
     {
         Next = next;

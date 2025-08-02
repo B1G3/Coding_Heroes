@@ -18,6 +18,11 @@ public class DataNode : IGridNode, IConnectable
         prev = "It is target";
     }
 
+    protected override void InitializePorts()
+    {
+        throw new System.NotImplementedException();
+    }
+
     public void ConnectNext(IConnectable next)
     {
         Next = next;

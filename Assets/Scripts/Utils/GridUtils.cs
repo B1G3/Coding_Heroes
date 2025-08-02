@@ -10,6 +10,13 @@ public static class GridUtils
         _origin = origin;
         _cellSize = cellSize;
     }
+    
+    // Origin 접근자 추가
+    public static Transform GetOrigin()
+    {
+        return _origin;
+    }
+    
     // world → cell
     public static Vector3Int WorldToCell(Vector3 worldPos)
     {
@@ -32,20 +39,23 @@ public static class GridUtils
         return _origin.TransformPoint(localCenter);
     }
 
-    // 스냅 계산 (직선 보정)
-    public static Vector3Int SnapToStraight(
-        Vector3 startWorld, Vector3 targetWorld
-    )
+    // 스냅 계산 (직선 보정) - 월드 방향 기준으로 수정
+    public static Vector3Int SnapToStraight(Vector3 startWorld, Vector3 targetWorld)
     {
-        var fromCell   = WorldToCell(startWorld);
+        var fromCell = WorldToCell(startWorld);
         var targetCell = WorldToCell(targetWorld);
 
-        int dx = Mathf.Abs(targetCell.x - fromCell.x);
-        int dz = Mathf.Abs(targetCell.z - fromCell.z);
+        // Origin 공간에서의 차이 계산
+        Vector3 originSpaceDiff = _origin.InverseTransformVector(targetWorld - startWorld);
+        
+        int dx = Mathf.Abs(Mathf.RoundToInt(originSpaceDiff.x / _cellSize.x));
+        int dz = Mathf.Abs(Mathf.RoundToInt(originSpaceDiff.z / _cellSize.z));
 
         var resultCell = fromCell;
-        if (dx > dz) resultCell.x = targetCell.x;
-        else         resultCell.z = targetCell.z;
+        if (dx > dz) 
+            resultCell.x = targetCell.x;
+        else         
+            resultCell.z = targetCell.z;
 
         return resultCell;
     }
@@ -53,5 +63,29 @@ public static class GridUtils
     public static Quaternion GetOriginRotation()
     {
         return _origin.rotation;
+    }
+    
+    // Origin 기준 방향 벡터들
+    public static Vector3 GetOriginForward() => _origin.forward;    // South
+    public static Vector3 GetOriginRight() => _origin.right;       // East  
+    public static Vector3 GetOriginBack() => -_origin.forward;     // North
+    public static Vector3 GetOriginLeft() => -_origin.right;       // West
+    
+    // 월드 위치를 Origin 로컬 공간으로 변환
+    public static Vector3 WorldToOriginLocal(Vector3 worldPos)
+    {
+        return _origin.InverseTransformPoint(worldPos);
+    }
+    
+    // Origin 로컬 공간을 월드 위치로 변환
+    public static Vector3 OriginLocalToWorld(Vector3 localPos)
+    {
+        return _origin.TransformPoint(localPos);
+    }
+    
+    // Origin 기준 방향 벡터를 월드 공간으로 변환
+    public static Vector3 OriginDirectionToWorld(Vector3 originDirection)
+    {
+        return _origin.TransformDirection(originDirection);
     }
 }
