@@ -85,13 +85,16 @@ public class PlacementPreview : MonoBehaviour
     private void UpdatePathPreview(Vector3 startWorldPos, Vector3Int endGridPos)
     {
         // 기존 패스 프리뷰 정리
-        ClearPathPreviews();
+        ClearPreview();
         
         // 시작점을 그리드 좌표로 변환
         var startGridPos = GridUtils.WorldToCell(startWorldPos);
         
         // 경로상의 모든 위치 계산 (실제 배치 로직과 동일)
         var pathPositions = CalculatePathPositions(startGridPos, endGridPos);
+        
+        // 패스가 비어있으면 리턴 (무한루프나 잘못된 계산 방지)
+        if (pathPositions.Count == 0) return;
         
         // 경로가 유효한지 확인 (중간에 블록이 있는지 체크)
         bool isPathValid = IsPathValid(pathPositions);
@@ -120,17 +123,44 @@ public class PlacementPreview : MonoBehaviour
     {
         var positions = new List<Vector3Int>();
         
+        // Y 좌표를 시작점에 맞춤 (높이 차이 무시)
+        end.y = start.y;
+        
         // 실제 PlaceFromToWorldPosition 로직과 동일하게 계산
         var dir = end - start;
         dir.x = Mathf.Clamp(dir.x, -1, 1);
         dir.z = Mathf.Clamp(dir.z, -1, 1);
         
+        // 방향 벡터가 0이면 빈 리스트 반환 (무한루프 방지)
+        if (dir.x == 0 && dir.z == 0)
+        {
+            Debug.LogWarning("Path direction is zero - no path to create");
+            return positions;
+        }
+        
+        // 안전장치: 최대 반복 횟수 제한
+        const int maxIterations = 100;
+        int iterations = 0;
+        
         // 시작점부터 끝점까지 순차적으로 추가
-        // for (var p = start + dir; ; p += dir)
-        // {
-        //     positions.Add(p);
-        //     if (p == end - dir) break;
-        // }
+        for (var p = start + dir; iterations < maxIterations; p += dir)
+        {
+            iterations++;
+            positions.Add(p);
+            
+            // 종료 조건: 끝점에 도달했거나 끝점을 지나쳤을 때
+            if (p.x == end.x && p.z == end.z) break;
+            if (p == end - dir) break;
+            
+            // 추가 안전장치: 끝점에 가까워졌을 때
+            var distanceToEnd = Vector3Int.Distance(p, end);
+            if (distanceToEnd <= 1) break;
+        }
+        
+        if (iterations >= maxIterations)
+        {
+            Debug.LogError($"Path calculation exceeded max iterations! Start: {start}, End: {end}, Dir: {dir}");
+        }
         
         return positions;
     }
