@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using static BlockConfig;
 
-public class EndNode : IGridNode, IConnectable, ILogicalModule
+public class EndNode : IGridNode, IConnectable, ILogicalModule, IInput
 {
+    [SerializeField] private LocalDirection inputDirection = LocalDirection.Back;
     public IConnectable Next { get; set; }
     public IConnectable Prev { get; set; }
     
@@ -68,5 +70,10 @@ public class EndNode : IGridNode, IConnectable, ILogicalModule
     private void Finish()
     {
         _unitInstance = null;
+    }
+    
+    public WorldDirection GetInputDirection(Transform transform)
+    {
+        return DirectionUtils.LocalToWorldDirection(inputDirection, transform);
     }
 }

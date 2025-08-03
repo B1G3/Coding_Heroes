@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: -2348585783204472214}
   - component: {fileID: 7196121347454800607}
   m_Layer: 6
-  m_Name: Rotation Tile
+  m_Name: Rotation Right Tile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -68,6 +68,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c36defc0cec0a0f47995ef84a2b2aa43, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  inputDirection: 2
+  outputDirection: 3
   _next: 
   _prev: 
 --- !u!114 &7196121347454800607

@@ -45,6 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99bb824ade74fd145aeea79c62bf0c08, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  inputDirection: 0
   next: 
   prev: 
 --- !u!1001 &4674550361506629435

@@ -1,7 +1,10 @@
 using UnityEngine;
+using static BlockConfig;
 
-public class DataNode : IGridNode, IConnectable
+public class DataNode : IGridNode, IConnectable, IOutput
 {
+    [SerializeField] private LocalDirection outputDirection = LocalDirection.Forward;
+    
     public IConnectable Next { get; set; }
     public IConnectable Prev { get; set; }
 
@@ -40,5 +43,10 @@ public class DataNode : IGridNode, IConnectable
     {
         Prev = null;
         prev = null; 
+    }
+
+    public WorldDirection GetOutputDirection(Transform transform)
+    {
+        return DirectionUtils.LocalToWorldDirection(outputDirection, transform);
     }
 }

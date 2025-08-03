@@ -1,8 +1,12 @@
 using System.Collections.Generic;
 using UnityEngine;
+using static BlockConfig;
 
-public class AttackNode : IGridNode, IConnectable, ILogicalModule, IGetData
+public class AttackNode : IGridNode, IConnectable, ILogicalModule, IGetData, IOutput, IInput
 {
+    [SerializeField] private LocalDirection inputDirection = LocalDirection.Back;
+    [SerializeField] private LocalDirection outputDirection = LocalDirection.Forward;
+    
     private IUnitState state;
     public IConnectable Next { get; set; }
     public IConnectable Prev { get; set; }
@@ -53,5 +57,15 @@ public class AttackNode : IGridNode, IConnectable, ILogicalModule, IGetData
     {
         this.target = target;
         state = new AttackState(target as IAttackable);
+    }
+    
+    public WorldDirection GetInputDirection(Transform transform)
+    {
+        return DirectionUtils.LocalToWorldDirection(inputDirection, transform);
+    }
+    
+    public WorldDirection GetOutputDirection(Transform transform)
+    {
+        return DirectionUtils.LocalToWorldDirection(outputDirection, transform);
     }
 }

@@ -1,8 +1,11 @@
 using System.Collections.Generic;
 using UnityEngine;
+using static BlockConfig;
 
-public class StartNode : IGridNode, IConnectable, ILogicalModule
+public class StartNode : IGridNode, IConnectable, ILogicalModule, IOutput
 {
+    [SerializeField] private LocalDirection outputDirection = LocalDirection.Forward;
+    
     private IUnitState state;
     public IConnectable Next { get; set; }
     public IConnectable Prev { get; set; }
@@ -50,5 +53,10 @@ public class StartNode : IGridNode, IConnectable, ILogicalModule
     {
         // 예: 애니메이션 등 효과를 먼저 실행해도 좋습니다.
         (Next as ILogicalModule)?.OnSignalEnter(new List<IUnitState> { state });
+    }
+    
+    public WorldDirection GetOutputDirection(Transform transform)
+    {
+        return DirectionUtils.LocalToWorldDirection(outputDirection, transform);
     }
 }

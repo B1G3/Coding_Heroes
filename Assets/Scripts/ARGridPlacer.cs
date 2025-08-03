@@ -56,6 +56,7 @@ public class ARGridPlacer : MonoBehaviour
         var block = Instantiate(blockPrefab, spawnPos, origin.rotation);
         var grid = block.GetComponent<IGridNode>();
         GridState.Instance.AddOrUpdateNode(cell, grid);
+        BlockManager.Instance.RegisterBlock(block);
         grid.Initialize(cell);
         
         var start = grid as StartNode;
@@ -88,6 +89,7 @@ public class ARGridPlacer : MonoBehaviour
             toNode = cornerGO.GetComponent<IGridNode>();
             toNode.Initialize(to);
             GridState.Instance.AddOrUpdateNode(to, toNode);
+            BlockManager.Instance.RegisterBlock(cornerGO);
         
             ConnectNode(fromNode, toNode);
         }

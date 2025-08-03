@@ -1,9 +1,13 @@
 
 using System.Collections.Generic;
 using UnityEngine;
+using static BlockConfig;
 
-public class RotationTile : IGridNode, IConnectable, ILogicalModule
+public class RotationTile : IGridNode, IConnectable, ILogicalModule, IInput, IOutput
 {
+    [SerializeField] private LocalDirection inputDirection = LocalDirection.Back;
+    [SerializeField] private LocalDirection outputDirection = LocalDirection.Forward;
+    
     public IConnectable Next { get; set; }
     public IConnectable Prev { get; set; }
 
@@ -41,5 +45,15 @@ public class RotationTile : IGridNode, IConnectable, ILogicalModule
     public void OnSignalEnter(List<IUnitState> command)
     {
         (Next as ILogicalModule)?.OnSignalEnter(command);
+    }
+    
+    public WorldDirection GetInputDirection(Transform transform)
+    {
+        return DirectionUtils.LocalToWorldDirection(inputDirection, transform);
+    }
+    
+    public WorldDirection GetOutputDirection(Transform transform)
+    {
+        return DirectionUtils.LocalToWorldDirection(outputDirection, transform);
     }
 }

@@ -82,7 +82,7 @@ public class PlacementPreview : MonoBehaviour
             : new Color(1, 0, 0, 0.5f);  // 빨강
     }
 
-    private void UpdatePathPreview(Vector3 startWorldPos, Vector3Int endGridPos)
+    private void UpdatePathPreview(Vector3 startWorldPos, Vector3Int endGridPos, bool isValid)
     {
         // 기존 패스 프리뷰 정리
         ClearPreview();
@@ -97,7 +97,7 @@ public class PlacementPreview : MonoBehaviour
         if (pathPositions.Count == 0) return;
         
         // 경로가 유효한지 확인 (중간에 블록이 있는지 체크)
-        bool isPathValid = IsPathValid(pathPositions);
+        bool isPathValid = IsPathValid(pathPositions) && isValid;
         
         // 각 위치에 프리뷰 오브젝트 생성
         foreach (var gridPos in pathPositions)
@@ -109,6 +109,7 @@ public class PlacementPreview : MonoBehaviour
         
             var rend = go.GetComponentInChildren<Renderer>();
             // 새로운 머티리얼 인스턴스 생성 (색상 변경을 위해)
+            
             rend.material = new Material(previewMaterial);
             
             // 경로 유효성에 따라 색상 설정

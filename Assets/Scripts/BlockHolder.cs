@@ -35,12 +35,13 @@ public class BlockHolder : MonoBehaviour
     private bool isHolding;
     
     private GameObject pathStartBlock;
+    private IOutput pathStartOutput;
     private Vector3Int pathEnd;
 
     public event Action <Vector3, GameObject> OnPlaceBlock;
     public event Action <GameObject, Vector3Int, GameObject> OnPlaceCorner;
     public event Action <Vector3, bool> OnPreviewBlock;
-    public event Action <Vector3, Vector3Int> OnPreviewPath;
+    public event Action <Vector3, Vector3Int, bool> OnPreviewPath;
     public event Action OnDestroyPreview;
     
     private void Awake()
@@ -87,11 +88,21 @@ public class BlockHolder : MonoBehaviour
         }
         else if (mode == Mode.PlacingPath)
         {
-            if (!isHolding && (OnGround || OnBlock)) OnPreviewBlock?.Invoke(hit.point, OnBlock);
+            if (!isHolding && (OnGround || OnBlock))
+            {
+                var canEnd = BlockManager.Instance.IsOutputBlock(hit.collider);
+                OnPreviewBlock?.Invoke(hit.point, canEnd);
+            }
             if (isHolding && (OnGround || OnBlock))
             {
-                pathEnd = GridUtils.SnapToStraight(pathStartBlock.transform.position, hit.point);
-                OnPreviewPath?.Invoke(pathStartBlock.transform.position, pathEnd);
+                var canEnd = OnGround || (OnBlock && BlockManager.Instance.IsInputBlock(hit.collider));
+                
+                pathEnd = GridUtils.SnapToDirection(
+                    pathStartBlock.transform.position, 
+                    hit.point, 
+                    pathStartOutput.GetOutputDirection(pathStartBlock.transform)
+                );
+                OnPreviewPath?.Invoke(pathStartBlock.transform.position, pathEnd, canEnd);
             }
             
             // Grab 버튼 눌렀을 때
@@ -180,16 +191,16 @@ public class BlockHolder : MonoBehaviour
 
     private void TryGetStartBlock()
     {
-        isHolding = true;
-        
-        if (OnBlock)
+        if (OnBlock && BlockManager.Instance.IsOutputBlock(hit.collider))
         {
+            isHolding = true;
             pathStartBlock = hit.collider.gameObject;
+            pathStartOutput = pathStartBlock.GetComponent<IOutput>();
         }
         else
         {
             isHolding = false;
-            ResetHold(); // 이거 초기화 안하면 무한으로 설치 가능
+            ResetHold(); // 이거 초기화 안하면 무한으로 설치 가능 >> 이거를 나중에 바꿔서 무한으로 설치하도록
         }
     }
 
@@ -197,7 +208,9 @@ public class BlockHolder : MonoBehaviour
     {
         isHolding = false;
         
-        if (OnGround || OnBlock)
+        var canPlacePath = OnGround || (OnBlock && BlockManager.Instance.IsInputBlock(hit.collider));
+        
+        if (canPlacePath && pathStartBlock != null && pathStartOutput != null)
         {
             OnPlaceCorner?.Invoke(
                 pathStartBlock,
@@ -207,6 +220,7 @@ public class BlockHolder : MonoBehaviour
         }
         
         pathStartBlock = null;
+        pathStartOutput = null;
         ResetHold();
     }
 

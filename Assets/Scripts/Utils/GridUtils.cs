@@ -59,6 +59,39 @@ public static class GridUtils
 
         return resultCell;
     }
+    
+    public static Vector3Int SnapToDirection(Vector3 startWorld, Vector3 targetWorld, BlockConfig.WorldDirection outputDirection)
+    {
+        var fromCell = WorldToCell(startWorld);
+        var targetCell = WorldToCell(targetWorld);
+    
+        Vector3Int resultCell = fromCell;
+    
+        switch (outputDirection)
+        {
+            case BlockConfig.WorldDirection.East: // X+ 방향만
+                if (targetCell.x > fromCell.x)
+                    resultCell.x = targetCell.x;
+                break;
+            
+            case BlockConfig.WorldDirection.West: // X- 방향만
+                if (targetCell.x < fromCell.x)
+                    resultCell.x = targetCell.x;
+                break;
+            
+            case BlockConfig.WorldDirection.South: // Z+ 방향만
+                if (targetCell.z > fromCell.z)
+                    resultCell.z = targetCell.z;
+                break;
+            
+            case BlockConfig.WorldDirection.North: // Z- 방향만
+                if (targetCell.z < fromCell.z)
+                    resultCell.z = targetCell.z;
+                break;
+        }
+    
+        return resultCell;
+    }
 
     public static Quaternion GetOriginRotation()
     {
