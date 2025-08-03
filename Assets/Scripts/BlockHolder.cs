@@ -1,4 +1,5 @@
 using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
@@ -6,6 +7,8 @@ using static BlockConfig;
 
 public class BlockHolder : MonoBehaviour
 {
+    [SerializeField] private TMP_Text text;
+    
     [Header("Input")]
     [SerializeField] private InputActionReference grabAction;          // ← 여기
     
@@ -97,10 +100,42 @@ public class BlockHolder : MonoBehaviour
             {
                 var canEnd = OnGround || (OnBlock && BlockManager.Instance.IsInputBlock(hit.collider));
                 
+                if (pathStartBlock == null)
+                {
+                    text.text = "pathStartBlock is null";
+                    return;
+                }
+    
+                if (pathStartOutput == null)
+                {
+                    text.text = "pathStartOutput is null";
+                    return;
+                }
+                
+                text.text = $"Path from {pathStartBlock.name} to ";
+                switch (pathStartOutput.GetOutputDirection())
+                {
+                    case WorldDirection.East:
+                        text.text += $"East";
+                        break;
+                    case WorldDirection.West:
+                        text.text += $"West";
+                        break;
+                    case WorldDirection.South:
+                        text.text += $"South";
+                        break;
+                    case WorldDirection.North:
+                        text.text += $"North";
+                        break;
+                    default:
+                        text.text += $"Error";
+                        break;
+                }
+                
                 pathEnd = GridUtils.SnapToDirection(
                     pathStartBlock.transform.position, 
                     hit.point, 
-                    pathStartOutput.GetOutputDirection(pathStartBlock.transform)
+                    pathStartOutput.GetOutputDirection()
                 );
                 OnPreviewPath?.Invoke(pathStartBlock.transform.position, pathEnd, canEnd);
             }
@@ -191,11 +226,13 @@ public class BlockHolder : MonoBehaviour
 
     private void TryGetStartBlock()
     {
+        isHolding = true;
+        
         if (OnBlock && BlockManager.Instance.IsOutputBlock(hit.collider))
         {
             isHolding = true;
             pathStartBlock = hit.collider.gameObject;
-            pathStartOutput = pathStartBlock.GetComponent<IOutput>();
+            pathStartOutput = BlockManager.Instance.GetOutputBlock(hit.collider);
         }
         else
         {

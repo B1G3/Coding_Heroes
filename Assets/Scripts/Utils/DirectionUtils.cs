@@ -3,54 +3,73 @@ using static BlockConfig;
 
 public static class DirectionUtils
 {
-    // 로컬 방향을 월드 방향으로 변환 (오브젝트의 rotation 고려)
-    public static WorldDirection LocalToWorldDirection(LocalDirection localDir, Transform transform)
+    // 로컬 방향을 월드 방향으로 변환 (Origin 기준)
+    public static WorldDirection LocalToWorldDirection(LocalDirection localDir)
     {
-        Vector3 localVector = LocalDirectionToVector3(localDir);
-        Vector3 worldVector = transform.TransformDirection(localVector);
+        // Origin의 회전을 고려해서 변환
+        Vector3 localVector = LocalDirectionToOriginSpaceVector(localDir);
+        Vector3 worldVector = GridUtils.OriginDirectionToWorld(localVector);
         return WorldVectorToDirection(worldVector);
     }
     
-    // 월드 방향을 로컬 방향으로 변환
-    public static LocalDirection WorldToLocalDirection(WorldDirection worldDir, Transform transform)
+    // 월드 방향을 로컬 방향으로 변환 (Origin 기준)
+    public static LocalDirection WorldToLocalDirection(WorldDirection worldDir)
     {
-        Vector3 worldVector = WorldDirectionToVector3(worldDir);
-        Vector3 localVector = transform.InverseTransformDirection(worldVector);
-        return Vector3ToLocalDirection(localVector);
+        Vector3 worldVector = GetWorldDirectionVector(worldDir);
+        Vector3 originSpaceVector = GridUtils.GetOrigin().InverseTransformDirection(worldVector);
+        return OriginSpaceVectorToLocalDirection(originSpaceVector);
     }
     
-    // 로컬 방향을 Vector3로 변환
-    public static Vector3 LocalDirectionToVector3(LocalDirection direction)
+    // 로컬 방향을 Origin 로컬 공간의 Vector3로 변환
+    private static Vector3 LocalDirectionToOriginSpaceVector(LocalDirection direction)
     {
         return direction switch
         {
-            LocalDirection.Forward => Vector3.forward,
-            LocalDirection.Right => Vector3.right,
-            LocalDirection.Back => Vector3.back,
-            LocalDirection.Left => Vector3.left,
+            LocalDirection.Forward => Vector3.forward,   // Origin의 forward 방향
+            LocalDirection.Right => Vector3.right,       // Origin의 right 방향
+            LocalDirection.Back => Vector3.back,         // Origin의 back 방향
+            LocalDirection.Left => Vector3.left,         // Origin의 left 방향
             _ => Vector3.forward
         };
     }
     
-    // 월드 방향을 Origin 기준 Vector3로 변환
-    public static Vector3 WorldDirectionToVector3(WorldDirection direction)
+    // Origin 로컬 공간 벡터를 로컬 방향으로 변환
+    private static LocalDirection OriginSpaceVectorToLocalDirection(Vector3 originSpaceVector)
+    {
+        float absX = Mathf.Abs(originSpaceVector.x);
+        float absZ = Mathf.Abs(originSpaceVector.z);
+        
+        if (absX > absZ)
+        {
+            return originSpaceVector.x > 0 ? LocalDirection.Right : LocalDirection.Left;
+        }
+        else
+        {
+            return originSpaceVector.z > 0 ? LocalDirection.Forward : LocalDirection.Back;
+        }
+    }
+    
+    // 월드 방향을 실제 월드 벡터로 변환 (GridUtils 활용)
+    public static Vector3 GetWorldDirectionVector(WorldDirection direction)
     {
         return direction switch
         {
-            WorldDirection.South => Vector3.forward,    // Origin의 forward
-            WorldDirection.East => Vector3.right,       // Origin의 right
-            WorldDirection.North => Vector3.back,       // Origin의 back
-            WorldDirection.West => Vector3.left,        // Origin의 left
-            _ => Vector3.forward
+            WorldDirection.South => GridUtils.GetOriginForward(),   // +Z in origin space
+            WorldDirection.East => GridUtils.GetOriginRight(),      // +X in origin space
+            WorldDirection.North => GridUtils.GetOriginBack(),      // -Z in origin space
+            WorldDirection.West => GridUtils.GetOriginLeft(),       // -X in origin space
+            _ => GridUtils.GetOriginForward()
         };
     }
     
-    // Origin 기준 Vector3를 월드 방향으로 변환
-    public static WorldDirection WorldVectorToDirection(Vector3 vector)
+    // 월드 벡터를 월드 방향으로 변환
+    public static WorldDirection WorldVectorToDirection(Vector3 worldVector)
     {
-        // Origin 공간에서의 벡터로 변환
         Transform origin = GridUtils.GetOrigin();
-        Vector3 originSpaceVector = origin.InverseTransformDirection(vector);
+        if (origin == null) return WorldDirection.South;
+        
+        // 월드 벡터를 Origin 로컬 공간으로 변환
+        Vector3 originSpaceVector = origin.InverseTransformDirection(worldVector);
         
         // 가장 큰 성분을 기준으로 방향 결정
         float absX = Mathf.Abs(originSpaceVector.x);
@@ -66,20 +85,60 @@ public static class DirectionUtils
         }
     }
     
-    // Vector3를 로컬 방향으로 변환
-    public static LocalDirection Vector3ToLocalDirection(Vector3 vector)
+    // 그리드 위치 간의 방향 계산 (Vector3Int 기반)
+    public static WorldDirection GetDirectionBetweenGridPositions(Vector3Int from, Vector3Int to)
     {
-        float absX = Mathf.Abs(vector.x);
-        float absZ = Mathf.Abs(vector.z);
+        Vector3Int diff = to - from;
         
-        if (absX > absZ)
+        // 가장 큰 차이를 가진 축으로 방향 결정
+        if (Mathf.Abs(diff.x) > Mathf.Abs(diff.z))
         {
-            return vector.x > 0 ? LocalDirection.Right : LocalDirection.Left;
+            return diff.x > 0 ? WorldDirection.East : WorldDirection.West;
         }
         else
         {
-            return vector.z > 0 ? LocalDirection.Forward : LocalDirection.Back;
+            return diff.z > 0 ? WorldDirection.South : WorldDirection.North;
         }
+    }
+    
+    // 월드 방향을 그리드 이동 벡터로 변환
+    public static Vector3Int WorldDirectionToGridVector(WorldDirection direction)
+    {
+        return direction switch
+        {
+            WorldDirection.South => Vector3Int.forward,  // +Z
+            WorldDirection.North => Vector3Int.back,     // -Z
+            WorldDirection.East => Vector3Int.right,     // +X
+            WorldDirection.West => Vector3Int.left,      // -X
+            _ => Vector3Int.forward
+        };
+    }
+    
+    // 그리드 벡터를 월드 방향으로 변환
+    public static WorldDirection GridVectorToWorldDirection(Vector3Int gridVector)
+    {
+        if (Mathf.Abs(gridVector.x) > Mathf.Abs(gridVector.z))
+        {
+            return gridVector.x > 0 ? WorldDirection.East : WorldDirection.West;
+        }
+        else
+        {
+            return gridVector.z > 0 ? WorldDirection.South : WorldDirection.North;
+        }
+    }
+    
+    // 그리드 위치에서 특정 방향으로 한 칸 이동한 위치 계산
+    public static Vector3Int MoveGridPosition(Vector3Int currentPos, WorldDirection direction)
+    {
+        return currentPos + WorldDirectionToGridVector(direction);
+    }
+    
+    // 두 그리드 위치가 인접한지 확인
+    public static bool AreGridPositionsAdjacent(Vector3Int pos1, Vector3Int pos2)
+    {
+        Vector3Int diff = pos1 - pos2;
+        int distance = Mathf.Abs(diff.x) + Mathf.Abs(diff.z);
+        return distance == 1 && diff.y == 0; // 같은 높이에서 1칸 차이
     }
     
     // 반대 방향 구하기
@@ -107,29 +166,14 @@ public static class DirectionUtils
         };
     }
     
-    // Vector3Int를 월드 방향으로 변환 (그리드 이동용)
-    public static WorldDirection Vector3IntToWorldDirection(Vector3Int vector)
+    // 연결 가능한 방향인지 확인 (Output -> Input 연결)
+    public static bool CanConnect(Vector3Int outputPos, WorldDirection outputDir, Vector3Int inputPos, WorldDirection inputDir)
     {
-        if (Mathf.Abs(vector.x) > Mathf.Abs(vector.z))
-        {
-            return vector.x > 0 ? WorldDirection.East : WorldDirection.West;
-        }
-        else
-        {
-            return vector.z > 0 ? WorldDirection.South : WorldDirection.North;
-        }
-    }
-    
-    // 월드 방향을 Vector3Int로 변환 (그리드 이동용)
-    public static Vector3Int WorldDirectionToVector3Int(WorldDirection direction)
-    {
-        return direction switch
-        {
-            WorldDirection.South => Vector3Int.forward,
-            WorldDirection.North => Vector3Int.back,
-            WorldDirection.East => Vector3Int.right,
-            WorldDirection.West => Vector3Int.left,
-            _ => Vector3Int.forward
-        };
+        // 출력 위치에서 출력 방향으로 한 칸 이동한 곳이 입력 위치와 같은지 확인
+        Vector3Int expectedInputPos = MoveGridPosition(outputPos, outputDir);
+        if (expectedInputPos != inputPos) return false;
+        
+        // 입력 방향이 출력 방향의 반대인지 확인
+        return inputDir == GetOppositeWorldDirection(outputDir);
     }
 }

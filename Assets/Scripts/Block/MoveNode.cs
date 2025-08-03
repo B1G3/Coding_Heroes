@@ -58,13 +58,13 @@ public class MoveNode : IGridNode, IConnectable, ILogicalModule, IGetData, IOutp
         state = new MoveState(this.target);
     }
     
-    public WorldDirection GetInputDirection(Transform transform)
+    public WorldDirection GetInputDirection()
     {
-        return DirectionUtils.LocalToWorldDirection(inputDirection, transform);
+        return DirectionUtils.LocalToWorldDirection(inputDirection);
     }
     
-    public WorldDirection GetOutputDirection(Transform transform)
+    public WorldDirection GetOutputDirection()
     {
-        return DirectionUtils.LocalToWorldDirection(outputDirection, transform);
+        return DirectionUtils.LocalToWorldDirection(outputDirection);
     }
 }

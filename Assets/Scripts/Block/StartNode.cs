@@ -55,8 +55,8 @@ public class StartNode : IGridNode, IConnectable, ILogicalModule, IOutput
         (Next as ILogicalModule)?.OnSignalEnter(new List<IUnitState> { state });
     }
     
-    public WorldDirection GetOutputDirection(Transform transform)
+    public WorldDirection GetOutputDirection()
     {
-        return DirectionUtils.LocalToWorldDirection(outputDirection, transform);
+        return DirectionUtils.LocalToWorldDirection(outputDirection);
     }
 }

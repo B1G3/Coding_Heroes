@@ -47,13 +47,13 @@ public class RotationTile : IGridNode, IConnectable, ILogicalModule, IInput, IOu
         (Next as ILogicalModule)?.OnSignalEnter(command);
     }
     
-    public WorldDirection GetInputDirection(Transform transform)
+    public WorldDirection GetInputDirection()
     {
-        return DirectionUtils.LocalToWorldDirection(inputDirection, transform);
+        return DirectionUtils.LocalToWorldDirection(inputDirection);
     }
     
-    public WorldDirection GetOutputDirection(Transform transform)
+    public WorldDirection GetOutputDirection()
     {
-        return DirectionUtils.LocalToWorldDirection(outputDirection, transform);
+        return DirectionUtils.LocalToWorldDirection(outputDirection);
     }
 }

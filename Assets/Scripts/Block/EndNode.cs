@@ -72,8 +72,8 @@ public class EndNode : IGridNode, IConnectable, ILogicalModule, IInput
         _unitInstance = null;
     }
     
-    public WorldDirection GetInputDirection(Transform transform)
+    public WorldDirection GetInputDirection()
     {
-        return DirectionUtils.LocalToWorldDirection(inputDirection, transform);
+        return DirectionUtils.LocalToWorldDirection(inputDirection);
     }
 }

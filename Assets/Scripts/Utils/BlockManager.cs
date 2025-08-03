@@ -51,4 +51,16 @@ public class BlockManager : MonoBehaviour
         var target = GetBlockFromCollider(targetCollider);
         return target != null && outputBlocks.ContainsKey(target);
     }
+    
+    public IInput? GetInputBlock(Collider targetCollider)
+    {
+        var target = GetBlockFromCollider(targetCollider);
+        return target != null && inputBlocks.TryGetValue(target, out var input) ? input : null;
+    }
+
+    public IOutput? GetOutputBlock(Collider targetCollider)
+    {
+        var target = GetBlockFromCollider(targetCollider);
+        return target != null && outputBlocks.TryGetValue(target, out var output) ? output : null;
+    }
 }

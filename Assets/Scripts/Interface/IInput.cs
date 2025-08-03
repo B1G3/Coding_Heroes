@@ -2,5 +2,5 @@ using UnityEngine;
 
 public interface IInput
 {
-    BlockConfig.WorldDirection GetInputDirection(Transform transform);
+    BlockConfig.WorldDirection GetInputDirection();
 }

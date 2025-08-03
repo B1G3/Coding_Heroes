@@ -45,8 +45,8 @@ public class DataNode : IGridNode, IConnectable, IOutput
         prev = null; 
     }
 
-    public WorldDirection GetOutputDirection(Transform transform)
+    public WorldDirection GetOutputDirection()
     {
-        return DirectionUtils.LocalToWorldDirection(outputDirection, transform);
+        return DirectionUtils.LocalToWorldDirection(outputDirection);
     }
 }
