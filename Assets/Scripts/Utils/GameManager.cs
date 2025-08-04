@@ -14,6 +14,13 @@ public class GameManager : MonoBehaviour
     [Header("Voice Recoder")]
     [SerializeField] private VoiceRecoder voiceRecoder;
     
+    public enum GameStateType
+    {
+        Idle,
+        Record,
+        Reposition
+    }
+    
     private IGameState currentState;
     private IdleGameState idleGameState;
     private RecordState recordState;
@@ -60,12 +67,30 @@ public class GameManager : MonoBehaviour
         LeverController.OnLeverMax -= LaunchGame;
     }
     
-    public void SetState(IGameState newState)
+    private void SetState(IGameState newState)
     {
         if (currentState == newState) return;
         currentState?.Exit();
         currentState = newState;
         currentState.Enter();
+    }
+    
+    public void ChangeState(GameStateType type)
+    {
+        switch (type)
+        {
+            case GameStateType.Idle:
+                SetState(idleGameState);
+                break;
+            case GameStateType.Record:
+                SetState(recordState);
+                break;
+            case GameStateType.Reposition:
+                SetState(repositionState);
+                break;
+            default:
+                break;
+        }
     }
     
     public bool CanPlaceBlock() => currentState?.CanPlaceBlock ?? false;
