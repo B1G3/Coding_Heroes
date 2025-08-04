@@ -136,7 +136,7 @@ GameObject:
   - component: {fileID: 7196121347454800607}
   m_Layer: 6
   m_Name: Rotation Left Tile
-  m_TagString: Untagged
+  m_TagString: Corner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

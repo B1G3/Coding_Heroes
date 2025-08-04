@@ -23,24 +23,23 @@ public class VoiceRecoder : MonoBehaviour
     {
         audioSource = GetComponent<AudioSource>();
     }
-    
-    void OnEnable()
+
+    public void Enter()
     {
         recordAction.action.Enable();
         recordAction.action.performed += OnRecordStarted;
         recordAction.action.canceled  += OnRecordStopped;
     }
 
-    void OnDisable()
+    public void Exit()
     {
         recordAction.action.performed -= OnRecordStarted;
         recordAction.action.canceled  -= OnRecordStopped;
         recordAction.action.Disable();
     }
-
+    
     private void OnRecordStarted(InputAction.CallbackContext ctx)
     {
-        if (GameManager.Instance.isPlacing) return;
         if (!isRecording)
             StartVoiceRecording();
     }
@@ -51,7 +50,7 @@ public class VoiceRecoder : MonoBehaviour
             StopAndRecognize();
     }
 
-    public void StartVoiceRecording()
+    private void StartVoiceRecording()
     {
         if (Microphone.devices.Length == 0)
         {
@@ -72,7 +71,7 @@ public class VoiceRecoder : MonoBehaviour
         OnVoiceRecordStart?.Invoke();
     }
 
-    public void StopAndRecognize()
+    private void StopAndRecognize()
     {
         if (!isRecording) return;
 

@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: -676598345725246557}
   m_Layer: 6
   m_Name: Path Block
-  m_TagString: Untagged
+  m_TagString: Path
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

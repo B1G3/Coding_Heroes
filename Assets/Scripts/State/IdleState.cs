@@ -1,6 +1,7 @@
 public class IdleState : IUnitState
 {
     private bool _isCompleted = false;
+    
 
     public void Enter(Unit unit)
     {

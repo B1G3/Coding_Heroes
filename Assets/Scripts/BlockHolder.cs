@@ -25,9 +25,10 @@ public class BlockHolder : MonoBehaviour
     [Header("Placement")]
     [SerializeField] private float placementCheckDistance = 0.2f;
     
-
     private enum Mode { None, Block, PlacingPath }
     private Mode mode = Mode.None;
+    
+    private SphereCollider hitCollider;
     
     private int interactMask;
     private RaycastHit hit;
@@ -39,7 +40,6 @@ public class BlockHolder : MonoBehaviour
     private bool isHolding;
     
     private float currentRotationY = 0f;
-
     
     private GameObject pathStartBlock;
     private IOutput pathStartOutput;
@@ -55,21 +55,25 @@ public class BlockHolder : MonoBehaviour
     private void Awake()
     {
         interactMask = groundLayer.value | blockLayer.value;
+        hitCollider = GetComponent<SphereCollider>();
     }
     
-    private void OnEnable()
+    public void Enter()
     {
+        hitCollider.enabled = true;
         grabAction.action.Enable();
         rotationAction?.action.Enable();
     }
-    private void OnDisable()
+    public void Exit()
     {
+        hitCollider.enabled = false;
         grabAction.action.Disable();
         rotationAction?.action.Disable();
     }
 
     void Update()
     {
+        if (GameManager.Instance.CanReposition()) return;
         if (currentBlockType == BlockType.None) return;
 
         if (mode != Mode.None)
