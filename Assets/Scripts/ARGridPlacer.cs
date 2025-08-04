@@ -13,7 +13,8 @@ public class ARGridPlacer : MonoBehaviour
     [SerializeField] private BlockHolder rightBlockHolder;
 
     [Header("Prefab")]
-    [SerializeField] private GameObject cornerPrefab;
+    [SerializeField] private GameObject cornerLeftPrefab;
+    [SerializeField] private GameObject cornerRightPrefab;
     
     private void OnEnable()
     {
@@ -103,7 +104,11 @@ public class ARGridPlacer : MonoBehaviour
             // 3) 상대 yaw 계산 (–180~180 범위로도, 0~360 범위로도 좋습니다)
             float relativeYaw = (worldYaw - originYaw + 360f) % 360f;
             
-            GameObject cornerGO = Instantiate(cornerPrefab, cornerWorldPos, cornerRotation);
+            int step = Mathf.RoundToInt(rotationY / 90f);
+            bool useLeft = (step % 2) == 0;
+            GameObject chosenPrefab = useLeft ? cornerLeftPrefab : cornerRightPrefab;
+            
+            GameObject cornerGO = Instantiate(chosenPrefab, cornerWorldPos, cornerRotation);
             toNode = cornerGO.GetComponent<IGridNode>();
             toNode.Initialize(to, relativeYaw);
             GridState.Instance.AddOrUpdateNode(to, toNode);

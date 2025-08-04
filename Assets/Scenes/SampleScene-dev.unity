@@ -4982,7 +4982,8 @@ MonoBehaviour:
   origin: {fileID: 0}
   leftBlockHolder: {fileID: 713811059}
   rightBlockHolder: {fileID: 2110444447}
-  cornerPrefab: {fileID: 4821083770212554965, guid: 39499a660e6c95a4da2446c03090e8c5, type: 3}
+  cornerLeftPrefab: {fileID: 4821083770212554965, guid: 39499a660e6c95a4da2446c03090e8c5, type: 3}
+  cornerRightPrefab: {fileID: 4821083770212554965, guid: 6353ad4fa1297664a86b26508c2b1980, type: 3}
 --- !u!1 &1875143897
 GameObject:
   m_ObjectHideFlags: 0
