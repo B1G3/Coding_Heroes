@@ -35,7 +35,7 @@ public class BlockManager : MonoBehaviour
         }
     }
     
-    private GameObject? GetBlockFromCollider(Collider col)
+    public GameObject? GetBlockFromCollider(Collider col)
     {
         return colliderToBlock.GetValueOrDefault(col);
     }

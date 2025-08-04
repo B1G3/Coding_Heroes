@@ -40,7 +40,7 @@ public class ARGridPlacer : MonoBehaviour
     /// <summary>
     /// worldPos 위치에 블럭을 배치 시도
     /// </summary>
-    private void PlaceAtWorldPosition(Vector3 worldPos, GameObject blockPrefab)
+    private void PlaceAtWorldPosition(Vector3 worldPos, GameObject blockPrefab, float rotationY)
     {
         // 2) cell 인덱스로 변환 (반올림)
         var cell = WorldToCell(worldPos);
@@ -51,9 +51,11 @@ public class ARGridPlacer : MonoBehaviour
         // 3) 그리드 좌표 → world 좌표
         Vector3 spawnPos = CellToWorld(cell);
         spawnPos.y = worldPos.y;
+        
+        var rotation = GetSpawnRotation(rotationY);
 
         // 4) Instantiate & 정렬
-        var block = Instantiate(blockPrefab, spawnPos, origin.rotation);
+        var block = Instantiate(blockPrefab, spawnPos, rotation);
         var grid = block.GetComponent<IGridNode>();
         GridState.Instance.AddOrUpdateNode(cell, grid);
         BlockManager.Instance.RegisterBlock(block);
@@ -69,10 +71,11 @@ public class ARGridPlacer : MonoBehaviour
     
     // 코너 설치는 이런 식으로 하면 될 듯
     // 근데 두번 째 값에 좌표가 들어오긴 해야함
-    private void PlaceFromToWorldPosition(GameObject fromWorldPos, Vector3Int to, GameObject pathPrefab)
+    private void PlaceFromToWorldPosition(GameObject fromWorldPos, Vector3Int to, GameObject pathPrefab, float rotationY)
     {
         var from = WorldToCell(fromWorldPos.transform.position);
         var fromNode = fromWorldPos.GetComponentInParent<IGridNode>();
+        var rotation = GetSpawnRotation(rotationY);
         
         IGridNode toNode;
         
@@ -85,7 +88,8 @@ public class ARGridPlacer : MonoBehaviour
         {
             // ▶ 블록이 없으면 코너 스폰 후 딕셔너리에 등록, then 연결
             Vector3 cornerWorldPos = CellToWorld(to);
-            GameObject cornerGO = Instantiate(cornerPrefab, cornerWorldPos, origin.rotation);
+            
+            GameObject cornerGO = Instantiate(cornerPrefab, cornerWorldPos, rotation);
             toNode = cornerGO.GetComponent<IGridNode>();
             toNode.Initialize(to);
             GridState.Instance.AddOrUpdateNode(to, toNode);
@@ -102,7 +106,7 @@ public class ARGridPlacer : MonoBehaviour
         {
             Vector3 spawnPos = CellToWorld(p);
             spawnPos.y = fromWorldPos.transform.position.y;
-            var path = Instantiate(pathPrefab, spawnPos, origin.rotation);
+            var path = Instantiate(pathPrefab, spawnPos, fromWorldPos.transform.rotation);
             var grid = path.GetComponent<IGridNode>();
             GridState.Instance.AddOrUpdateNode(p, grid);
             grid.Initialize(p);
@@ -117,5 +121,10 @@ public class ARGridPlacer : MonoBehaviour
             from?.ConnectNext(to);
             to?.ConnectPrev(from);
         }
+    }
+    
+    private Quaternion GetSpawnRotation(float rotationY)
+    {
+        return origin.rotation * Quaternion.Euler(0f, rotationY, 0f);
     }
 }

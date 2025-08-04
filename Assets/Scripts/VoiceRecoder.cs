@@ -40,6 +40,7 @@ public class VoiceRecoder : MonoBehaviour
 
     private void OnRecordStarted(InputAction.CallbackContext ctx)
     {
+        if (GameManager.Instance.isPlacing) return;
         if (!isRecording)
             StartVoiceRecording();
     }

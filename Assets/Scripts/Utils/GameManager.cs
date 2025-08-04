@@ -4,6 +4,12 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    [Header("Block Holder")]
+    [SerializeField] private BlockHolder leftBlockHolder;
+    [SerializeField] private BlockHolder rightBlockHolder;
+
+    public bool isPlacing;
+    
     private EnemyPath enemyPath;
     public static GameManager Instance { get; private set; }
     
@@ -16,12 +22,16 @@ public class GameManager : MonoBehaviour
     {
         HomeSpawner.OnHomeSpawned += SetEnemyPath;
         LeverController.OnLeverMax += LaunchGame;
+        leftBlockHolder.OnPlacing += SetPlacementState;
+        rightBlockHolder.OnPlacing += SetPlacementState;
     }
 
     private void OnDisable()
     {
         HomeSpawner.OnHomeSpawned -= SetEnemyPath;
         LeverController.OnLeverMax -= LaunchGame;
+        leftBlockHolder.OnPlacing -= SetPlacementState;
+        rightBlockHolder.OnPlacing -= SetPlacementState;
     }
 
     public ITarget GetTarget()
@@ -61,4 +71,10 @@ public class GameManager : MonoBehaviour
         enemyPath ??= home.GetComponent<Home>().path1;
         // text.text = $"{enemyPath.Position}";
     }
+    
+    private void SetPlacementState(bool state)
+    {
+        isPlacing = state;
+    }
+
 }

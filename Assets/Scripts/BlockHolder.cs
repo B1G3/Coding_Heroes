@@ -10,7 +10,8 @@ public class BlockHolder : MonoBehaviour
     [SerializeField] private TMP_Text text;
     
     [Header("Input")]
-    [SerializeField] private InputActionReference grabAction;          // ← 여기
+    [SerializeField] private InputActionReference grabAction;    
+    [SerializeField] private InputActionReference rotationAction;
     
     [Header("Hand Settings")]
     [SerializeField] private Transform holdPoint;
@@ -37,12 +38,16 @@ public class BlockHolder : MonoBehaviour
     private BlockType currentBlockType = BlockType.None;
     private bool isHolding;
     
+    private float currentRotationY = 0f;
+
+    
     private GameObject pathStartBlock;
     private IOutput pathStartOutput;
     private Vector3Int pathEnd;
 
-    public event Action <Vector3, GameObject> OnPlaceBlock;
-    public event Action <GameObject, Vector3Int, GameObject> OnPlaceCorner;
+    public event Action <bool> OnPlacing;
+    public event Action <Vector3, GameObject, float> OnPlaceBlock;
+    public event Action <GameObject, Vector3Int, GameObject, float> OnPlaceCorner;
     public event Action <Vector3, bool> OnPreviewBlock;
     public event Action <Vector3, Vector3Int, bool> OnPreviewPath;
     public event Action OnDestroyPreview;
@@ -55,10 +60,12 @@ public class BlockHolder : MonoBehaviour
     private void OnEnable()
     {
         grabAction.action.Enable();
+        rotationAction?.action.Enable();
     }
     private void OnDisable()
     {
         grabAction.action.Disable();
+        rotationAction?.action.Disable();
     }
 
     void Update()
@@ -68,6 +75,11 @@ public class BlockHolder : MonoBehaviour
         if (mode != Mode.None)
         {
             ConfigPosition();
+        }
+        
+        if (rotationAction.action.WasPressedThisFrame())
+        {
+            RotateBlock();
         }
 
         if (mode == Mode.Block)
@@ -99,38 +111,6 @@ public class BlockHolder : MonoBehaviour
             if (isHolding && (OnGround || OnBlock))
             {
                 var canEnd = OnGround || (OnBlock && BlockManager.Instance.IsInputBlock(hit.collider));
-                
-                if (pathStartBlock == null)
-                {
-                    text.text = "pathStartBlock is null";
-                    return;
-                }
-    
-                if (pathStartOutput == null)
-                {
-                    text.text = "pathStartOutput is null";
-                    return;
-                }
-                
-                text.text = $"Path from {pathStartBlock.name} to ";
-                switch (pathStartOutput.GetOutputDirection())
-                {
-                    case WorldDirection.East:
-                        text.text += $"East";
-                        break;
-                    case WorldDirection.West:
-                        text.text += $"West";
-                        break;
-                    case WorldDirection.South:
-                        text.text += $"South";
-                        break;
-                    case WorldDirection.North:
-                        text.text += $"North";
-                        break;
-                    default:
-                        text.text += $"Error";
-                        break;
-                }
                 
                 pathEnd = GridUtils.SnapToDirection(
                     pathStartBlock.transform.position, 
@@ -165,10 +145,12 @@ public class BlockHolder : MonoBehaviour
             
             if (currentBlockType is BlockType.Block or BlockType.Unit or BlockType.Data)
             {
+                OnPlacing?.Invoke(true);
                 mode = Mode.Block;
             }
             else if (currentBlockType is BlockType.Path)
             {
+                OnPlacing?.Invoke(true);
                 mode = Mode.PlacingPath;
             }
             else
@@ -221,7 +203,14 @@ public class BlockHolder : MonoBehaviour
 
     private void PlaceBlock(Vector3 pos)
     {
-        OnPlaceBlock?.Invoke(pos, currentBlock);
+        OnPlaceBlock?.Invoke(pos, currentBlock, currentRotationY);
+    }
+    
+    private void RotateBlock()
+    {
+        currentRotationY += 90f;  // 시계방향으로 90도씩 회전
+        if (currentRotationY >= 360f)
+            currentRotationY = 0f;
     }
 
     private void TryGetStartBlock()
@@ -231,7 +220,8 @@ public class BlockHolder : MonoBehaviour
         if (OnBlock && BlockManager.Instance.IsOutputBlock(hit.collider))
         {
             isHolding = true;
-            pathStartBlock = hit.collider.gameObject;
+            
+            pathStartBlock = BlockManager.Instance.GetBlockFromCollider(hit.collider);
             pathStartOutput = BlockManager.Instance.GetOutputBlock(hit.collider);
         }
         else
@@ -252,7 +242,8 @@ public class BlockHolder : MonoBehaviour
             OnPlaceCorner?.Invoke(
                 pathStartBlock,
                 pathEnd,
-                currentBlock
+                currentBlock,
+                currentRotationY
             );
         }
         
@@ -263,10 +254,12 @@ public class BlockHolder : MonoBehaviour
 
     private void ResetHold()
     {
+        OnPlacing?.Invoke(false);
         OnDestroyPreview?.Invoke();
         currentBlock = null;
         currentBlockType = BlockType.None;
         mode = Mode.None;
         OnGround = OnBlock = false;
+        currentRotationY = 0f;
     }
 }

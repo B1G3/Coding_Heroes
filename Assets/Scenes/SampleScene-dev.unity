@@ -1040,6 +1040,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 867a3f9c6fce7744ab937cdda976014a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  leftBlockHolder: {fileID: 0}
+  rightBlockHolder: {fileID: 0}
+  isPlacing: 0
 --- !u!4 &256544207 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 171850577486596230, guid: d6878e1999eb4b44a9f5a263af86c185, type: 3}
@@ -2386,6 +2389,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   text: {fileID: 1625239419}
   grabAction: {fileID: -6131295136447488360, guid: c348712bda248c246b8c49b3db54643f, type: 3}
+  rotationAction: {fileID: -5982496924579745919, guid: c348712bda248c246b8c49b3db54643f, type: 3}
   holdPoint: {fileID: 713811053}
   groundLayer:
     serializedVersion: 2
@@ -5582,6 +5586,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   text: {fileID: 1625239419}
   grabAction: {fileID: 187161793506945269, guid: c348712bda248c246b8c49b3db54643f, type: 3}
+  rotationAction: {fileID: 83097790271614945, guid: c348712bda248c246b8c49b3db54643f, type: 3}
   holdPoint: {fileID: 2110444446}
   groundLayer:
     serializedVersion: 2
