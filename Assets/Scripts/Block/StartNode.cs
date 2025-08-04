@@ -13,9 +13,11 @@ public class StartNode : IGridNode, IConnectable, ILogicalModule, IOutput
     [SerializeField] private string _next;
     [SerializeField] private string _prev;
 
-    public override void Initialize(Vector3Int gridPos)
+    public override void Initialize(Vector3Int gridPos, float rotationY = 0)
     {
-        base.Initialize(gridPos);
+        base.Initialize(gridPos, rotationY);
+        int steps = DirectionUtils.StepsFromRotationY(rotationY);
+        outputDirection = outputDirection.RotateY(steps);
         state = new IdleState();
         name = "Start";
         _prev = "It is start";

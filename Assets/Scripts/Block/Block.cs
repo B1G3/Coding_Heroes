@@ -10,9 +10,9 @@ public class Block : IGridNode, IConnectable, ILogicalModule
     [SerializeField] private string _next;
     [SerializeField] private string _prev;
     
-    public override void Initialize(Vector3Int gridPos)
+    public override void Initialize(Vector3Int gridPos, float rotationY)
     {
-        base.Initialize(gridPos);
+        base.Initialize(gridPos, rotationY);
         name = "Block";
     }
 

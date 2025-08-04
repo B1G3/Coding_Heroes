@@ -13,9 +13,11 @@ public class DataNode : IGridNode, IConnectable, IOutput
     
     private ITarget target;
     
-    public override void Initialize(Vector3Int gridPos)
+    public override void Initialize(Vector3Int gridPos, float rotationY)
     {
-        base.Initialize(gridPos);
+        base.Initialize(gridPos, rotationY);
+        int steps = DirectionUtils.StepsFromRotationY(rotationY);
+        outputDirection = outputDirection.RotateY(steps);
         target = GameManager.Instance.GetTarget();
         name = "Target";
         prev = "It is target";

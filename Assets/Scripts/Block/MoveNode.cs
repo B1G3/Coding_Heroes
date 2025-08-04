@@ -16,9 +16,12 @@ public class MoveNode : IGridNode, IConnectable, ILogicalModule, IGetData, IOutp
     [SerializeField] private string prev;
     private ITarget target;
     
-    public override void Initialize(Vector3Int gridPos)
+    public override void Initialize(Vector3Int gridPos, float rotationY = 0)
     {
-        base.Initialize(gridPos);
+        base.Initialize(gridPos, rotationY);
+        int steps = DirectionUtils.StepsFromRotationY(rotationY);
+        inputDirection = inputDirection.RotateY(steps);
+        outputDirection = outputDirection.RotateY(steps);
         name = "Move";
     }
 

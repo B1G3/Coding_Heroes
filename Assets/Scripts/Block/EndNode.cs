@@ -15,9 +15,11 @@ public class EndNode : IGridNode, IConnectable, ILogicalModule, IInput
     [SerializeField] private GameObject unit;
     private Unit _unitInstance;
 
-    public override void Initialize(Vector3Int gridPos)
+    public override void Initialize(Vector3Int gridPos, float rotationY = 0)
     {
-        base.Initialize(gridPos);
+        base.Initialize(gridPos, rotationY);
+        int steps = DirectionUtils.StepsFromRotationY(rotationY);
+        inputDirection = inputDirection.RotateY(steps);
         _unitInstance ??= unit.GetComponent<Unit>();
         name = "End";
         _next = "It is end";

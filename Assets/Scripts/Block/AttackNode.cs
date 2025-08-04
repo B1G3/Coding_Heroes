@@ -15,9 +15,12 @@ public class AttackNode : IGridNode, IConnectable, ILogicalModule, IGetData, IOu
     [SerializeField] private string prev;
     private ITarget target;
     
-    public override void Initialize(Vector3Int gridPos)
+    public override void Initialize(Vector3Int gridPos, float rotationY)
     {
-        base.Initialize(gridPos);
+        base.Initialize(gridPos, rotationY);
+        int steps = DirectionUtils.StepsFromRotationY(rotationY);
+        inputDirection = inputDirection.RotateY(steps);
+        outputDirection = outputDirection.RotateY(steps);
         name = "Attack";
     }
 

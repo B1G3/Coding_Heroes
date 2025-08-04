@@ -121,4 +121,21 @@ public static class GridUtils
     {
         return _origin.TransformDirection(originDirection);
     }
+    
+    public static Quaternion RotationFromWorldDirection(BlockConfig.WorldDirection dir)
+    {
+        if (_origin == null) return Quaternion.identity;
+
+        // WorldDirection을 월드 공간 벡터로
+        Vector3 worldDir = DirectionUtils.GetWorldDirectionVector(dir);
+        // origin 로컬 공간 기준 벡터를 월드로 변환한 뒤 LookRotation
+        Vector3 forward = _origin.TransformDirection(Vector3.forward);
+        // worldDir은 origin 기준이 아니라 실제 월드 방향 벡터가 필요하므로
+        // DirectionUtils.GetWorldDirectionVector는 origin 기준으로 해석된 벡터라면 그대로 씀
+        Vector3 targetDir = worldDir.normalized;
+        if (targetDir.sqrMagnitude < 0.0001f) targetDir = forward;
+
+        // y축만 회전하게끔, 위로 벡터를 그대로 유지
+        return Quaternion.LookRotation(targetDir, Vector3.up);
+    }
 }

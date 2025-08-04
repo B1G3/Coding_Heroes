@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using static GridUtils;
+using static BlockConfig;
 
 public class ARGridPlacer : MonoBehaviour
 {
@@ -59,7 +60,7 @@ public class ARGridPlacer : MonoBehaviour
         var grid = block.GetComponent<IGridNode>();
         GridState.Instance.AddOrUpdateNode(cell, grid);
         BlockManager.Instance.RegisterBlock(block);
-        grid.Initialize(cell);
+        grid.Initialize(cell, rotationY);
         
         var start = grid as StartNode;
         if (start)
@@ -79,6 +80,13 @@ public class ARGridPlacer : MonoBehaviour
         
         IGridNode toNode;
         
+        Quaternion cornerRotation = rotation; // fallback
+        if (fromWorldPos.TryGetComponent(out IOutput output))
+        {
+            WorldDirection outDir = output.GetOutputDirection();
+            cornerRotation = RotationFromWorldDirection(outDir);
+        }
+        
         if (GridState.Instance.TryGetNode(to, out toNode))
         {
             // ▶ 블록이 있으면 블록–블록 연결
@@ -88,10 +96,16 @@ public class ARGridPlacer : MonoBehaviour
         {
             // ▶ 블록이 없으면 코너 스폰 후 딕셔너리에 등록, then 연결
             Vector3 cornerWorldPos = CellToWorld(to);
+            // 1) 월드 공간에서의 yaw
+            float worldYaw = cornerRotation.eulerAngles.y;
+            // 2) origin 기준 yaw
+            float originYaw = origin.rotation.eulerAngles.y;
+            // 3) 상대 yaw 계산 (–180~180 범위로도, 0~360 범위로도 좋습니다)
+            float relativeYaw = (worldYaw - originYaw + 360f) % 360f;
             
-            GameObject cornerGO = Instantiate(cornerPrefab, cornerWorldPos, rotation);
+            GameObject cornerGO = Instantiate(cornerPrefab, cornerWorldPos, cornerRotation);
             toNode = cornerGO.GetComponent<IGridNode>();
-            toNode.Initialize(to);
+            toNode.Initialize(to, relativeYaw);
             GridState.Instance.AddOrUpdateNode(to, toNode);
             BlockManager.Instance.RegisterBlock(cornerGO);
         
@@ -106,10 +120,10 @@ public class ARGridPlacer : MonoBehaviour
         {
             Vector3 spawnPos = CellToWorld(p);
             spawnPos.y = fromWorldPos.transform.position.y;
-            var path = Instantiate(pathPrefab, spawnPos, fromWorldPos.transform.rotation);
+            var path = Instantiate(pathPrefab, spawnPos, cornerRotation);
             var grid = path.GetComponent<IGridNode>();
             GridState.Instance.AddOrUpdateNode(p, grid);
-            grid.Initialize(p);
+            grid.Initialize(p, rotationY);
             if (p == to - dir) break;
         }
     }

@@ -14,9 +14,12 @@ public class RotationTile : IGridNode, IConnectable, ILogicalModule, IInput, IOu
     [SerializeField] private string _next;
     [SerializeField] private string _prev;
     
-    public override void Initialize(Vector3Int gridPos)
+    public override void Initialize(Vector3Int gridPos, float rotationY = 0)
     {
-        base.Initialize(gridPos);
+        base.Initialize(gridPos, rotationY);
+        int steps = DirectionUtils.StepsFromRotationY(rotationY);
+        inputDirection = inputDirection.RotateY(steps);
+        outputDirection = outputDirection.RotateY(steps);
         name = "Rotation";
     }
 

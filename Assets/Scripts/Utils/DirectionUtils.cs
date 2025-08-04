@@ -176,4 +176,22 @@ public static class DirectionUtils
         // 입력 방향이 출력 방향의 반대인지 확인
         return inputDir == GetOppositeWorldDirection(outputDir);
     }
+
+    public static LocalDirection RotateY(this LocalDirection direction, int ninetyDegreeSteps )
+    {
+        int current = (int)direction;
+        int rotated = (current + (ninetyDegreeSteps  % 4) + 4) % 4;
+        return (LocalDirection)rotated;
+    }
+
+    public static int StepsFromRotationY(float rotationY)
+    {
+        return Mathf.RoundToInt(rotationY / 90f);
+    }
+
+    public static int StepsFromOrigin(float rotationY)
+    {
+        float originRotationY = GridUtils.GetOrigin().rotation.eulerAngles.y - rotationY;
+        return Mathf.RoundToInt(originRotationY / 90f);   
+    }
 }
