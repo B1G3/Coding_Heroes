@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using static BlockConfig;
 
@@ -46,8 +47,16 @@ public class EndNode : IGridNode, IConnectable, ILogicalModule, IInput
         Prev = null;
     }
 
-    public void OnSignalEnter(List<IUnitState> command)
+    public async UniTaskVoid OnSignalEnter(List<IUnitState> command, List<Gnome> gnomes)
     {
+        foreach (var gnome in gnomes)
+        {
+            if (gnome != null)
+            {
+                GnomePool.Instance.Return(gnome);
+            }
+        }
+        
         var go = Instantiate(unit, transform.position, Quaternion.identity);
         go.transform.localScale *= 0.01f;
         _unitInstance = go.GetComponent<Unit>();

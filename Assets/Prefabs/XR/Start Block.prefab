@@ -2093,6 +2093,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   outputDirection: 0
+  gnomePrefab: {fileID: 2981504189846594989, guid: e83a67d778b8483428e83721bb3d4244, type: 3}
   _next: 
   _prev: 
 --- !u!65 &6792957250283698656

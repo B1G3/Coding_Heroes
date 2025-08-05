@@ -1,5 +1,6 @@
 
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 public class Block : IGridNode, IConnectable, ILogicalModule
@@ -40,8 +41,8 @@ public class Block : IGridNode, IConnectable, ILogicalModule
         _prev = null; 
     }
     
-    public void OnSignalEnter(List<IUnitState> signal)
+    public async UniTaskVoid OnSignalEnter(List<IUnitState> signal, List<Gnome> gnomes)
     {
-        (Next as ILogicalModule)?.OnSignalEnter(signal);
+        (Next as ILogicalModule)?.OnSignalEnter(signal, gnomes);
     }
 }

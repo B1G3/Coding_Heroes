@@ -1,5 +1,8 @@
 
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using static BlockConfig;
 
@@ -15,6 +18,8 @@ public class MoveNode : IGridNode, IConnectable, ILogicalModule, IGetData, IOutp
     [SerializeField] private string next;
     [SerializeField] private string prev;
     private ITarget target;
+    
+    private List<Gnome> currentGnomes = new List<Gnome>();
     
     public override void Initialize(Vector3Int gridPos, float rotationY = 0)
     {
@@ -49,10 +54,20 @@ public class MoveNode : IGridNode, IConnectable, ILogicalModule, IGetData, IOutp
         prev = null; 
     }
     
-    public void OnSignalEnter(List<IUnitState> command)
+    public async UniTaskVoid OnSignalEnter(List<IUnitState> command, List<Gnome> gnomes)
     {
+        currentGnomes = gnomes;
+        Vector3 nextPosition = (Next as MonoBehaviour).transform.position;
+        foreach (var g in currentGnomes)
+        {
+            g.SetTarget(nextPosition);
+            await UniTask.Delay(TimeSpan.FromSeconds(0.3f));
+        }
+
+        await WaitForGnomesToReachNext();
+
         command.Add(state);
-        (Next as ILogicalModule)?.OnSignalEnter(command);
+        (Next as ILogicalModule)?.OnSignalEnter(command, currentGnomes).Forget();
     }
 
     public void GetData(ITarget target)
@@ -70,4 +85,24 @@ public class MoveNode : IGridNode, IConnectable, ILogicalModule, IGetData, IOutp
     {
         return DirectionUtils.LocalToWorldDirection(outputDirection);
     }
+    
+    private async UniTask WaitForGnomesToReachNext()
+    {
+        while (true)
+        {
+            bool allReached = true;
+            foreach (var gnome in currentGnomes)
+            {
+                if (gnome != null && gnome.IsMoving)
+                {
+                    allReached = false;
+                    break;
+                }
+            }
+            
+            if (allReached) break;
+            await UniTask.Yield();
+        }
+    }
+
 }

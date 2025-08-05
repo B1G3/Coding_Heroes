@@ -1,5 +1,8 @@
 
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using static BlockConfig;
 
@@ -13,6 +16,8 @@ public class RotationTile : IGridNode, IConnectable, ILogicalModule, IInput, IOu
 
     [SerializeField] private string _next;
     [SerializeField] private string _prev;
+    
+    private List<Gnome> currentGnomes = new List<Gnome>();
     
     public override void Initialize(Vector3Int gridPos, float rotationY = 0)
     {
@@ -45,9 +50,19 @@ public class RotationTile : IGridNode, IConnectable, ILogicalModule, IInput, IOu
         Prev = null;
     }
     
-    public void OnSignalEnter(List<IUnitState> command)
+    public async UniTaskVoid OnSignalEnter(List<IUnitState> command, List<Gnome> gnomes)
     {
-        (Next as ILogicalModule)?.OnSignalEnter(command);
+        currentGnomes = gnomes;
+        Vector3 nextPosition = (Next as MonoBehaviour).transform.position;
+        foreach (var g in currentGnomes)
+        {
+            g.SetTarget(nextPosition);
+            await UniTask.Delay(TimeSpan.FromSeconds(0.3f));
+        }
+        
+        await WaitForGnomesToReachNext();
+        
+        (Next as ILogicalModule)?.OnSignalEnter(command, currentGnomes).Forget();
     }
     
     public WorldDirection GetInputDirection()
@@ -58,5 +73,24 @@ public class RotationTile : IGridNode, IConnectable, ILogicalModule, IInput, IOu
     public WorldDirection GetOutputDirection()
     {
         return DirectionUtils.LocalToWorldDirection(outputDirection);
+    }
+    
+    private async UniTask WaitForGnomesToReachNext()
+    {
+        while (true)
+        {
+            bool allReached = true;
+            foreach (var gnome in currentGnomes)
+            {
+                if (gnome != null && gnome.IsMoving)
+                {
+                    allReached = false;
+                    break;
+                }
+            }
+            
+            if (allReached) break;
+            await UniTask.Yield();
+        }
     }
 }
