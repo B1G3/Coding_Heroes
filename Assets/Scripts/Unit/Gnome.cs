@@ -18,7 +18,7 @@ public class Gnome : MonoBehaviour
     
     private async UniTaskVoid MoveToTargetAsync()
     {
-        while (isMoving && Vector3.Distance(transform.position, targetPosition) > 0.1f)
+        while (isMoving && Vector3.Distance(transform.position, targetPosition) > 0.01f)
         {
             transform.position = Vector3.MoveTowards(transform.position, targetPosition, moveSpeed * Time.deltaTime);
             await UniTask.Yield();
