@@ -511,6 +511,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: Start Block
       objectReference: {fileID: 0}
+    - target: {fileID: 5718406499638359178, guid: 62699f536ee186f4180dc4f997c0b49c, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 98
+      objectReference: {fileID: 0}
+    - target: {fileID: 5718406499638359178, guid: 62699f536ee186f4180dc4f997c0b49c, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 98
+      objectReference: {fileID: 0}
+    - target: {fileID: 5718406499638359178, guid: 62699f536ee186f4180dc4f997c0b49c, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 98
+      objectReference: {fileID: 0}
     - target: {fileID: 8684299349868431279, guid: 62699f536ee186f4180dc4f997c0b49c, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.38583088

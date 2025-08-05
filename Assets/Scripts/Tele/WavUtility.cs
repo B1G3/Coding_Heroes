@@ -24,7 +24,7 @@ public static class WavUtility {
     }
 
     public static AudioClip ToAudioClip(byte[] pcmBytes, string name) {
-        const int sampleRate = 16000;
+        const int sampleRate = 44100;
         const int channels = 1;
         int sampleCount = pcmBytes.Length / 2;
         float[] samples = new float[sampleCount];
