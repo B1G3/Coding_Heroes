@@ -12,13 +12,13 @@ public class MainUiManager : MonoBehaviour
     public class TutorialQuest
     {
         public AudioClip voiceClip;
-        public GameObject questUI;
+        public Toggle questUI;
     }
 
     [Header("UI")]
     [SerializeField] Image logoPanel;
     [SerializeField] GameObject tutorialPanel;
-    [SerializeField] TMP_Text testText;
+    [SerializeField] CanvasGroup tutorialCanvasGroup;
 
     [Header("Tutorial Settings")]
     [SerializeField] List<TutorialQuest> tutorialQuests;
@@ -60,8 +60,7 @@ public class MainUiManager : MonoBehaviour
         tutorialPanel.SetActive(false);
         foreach (var q in tutorialQuests)
         {
-            if (q.questUI == null) continue;
-            q.questUI.SetActive(false);
+            q.questUI.isOn = false;
         }
     }
 
@@ -82,7 +81,6 @@ public class MainUiManager : MonoBehaviour
         tutorialPanel.SetActive(true);
         
         // --- Quest 0: 자동 완료 (1초 대기 후) ---
-        ShowQuestUI(0);
         PlayVoice(0);
         // await UniTask.Delay(TimeSpan.FromSeconds(1f));
         await UniTask.WaitUntil(() => onLookAround);
@@ -90,13 +88,11 @@ public class MainUiManager : MonoBehaviour
         OnLookAroundComplete?.Invoke();
 
         // --- Quest 1: FollowerAlignment.OnFirstAlignment 이벤트 대기 ---
-        ShowQuestUI(1);
         PlayVoice(1);
         await UniTask.WaitUntil(() => onFirstAlignment);
         CompleteQuest(1);
 
         // --- Quest 2: UI 이동 이벤트 대기 ---
-        ShowQuestUI(2);
         PlayVoice(2);
         await UniTask.WaitUntil(() => onUIMove);
         CompleteQuest(2);
@@ -105,23 +101,14 @@ public class MainUiManager : MonoBehaviour
         
         // 끝나면 패널 숨기기
         PlayVoice(completeVoiceClip);
-        tutorialPanel.SetActive(false);
-        Debug.Log("튜토리얼 전부 완료!");
-    }
-
-    void ShowQuestUI(int idx)
-    {
-        testText.text = $"{idx}";
         
-        // 이전 UI들 끄고
-        foreach (var q in tutorialQuests)
-        {
-            if (q.questUI == null) continue;
-            q.questUI.SetActive(false);
-        }
-        // 이번 것만 켜기
-        if (tutorialQuests[idx].questUI == null) return;
-        tutorialQuests[idx].questUI?.SetActive(true);
+        tutorialCanvasGroup
+            .DOFade(0f, 1f)
+            .SetDelay(1f)
+            .OnComplete(() => tutorialPanel.SetActive(false));
+        
+        OnTutorialComplete?.Invoke();
+        Debug.Log("튜토리얼 전부 완료!");
     }
 
     void PlayVoice(int idx)
@@ -145,8 +132,7 @@ public class MainUiManager : MonoBehaviour
 
     void CompleteQuest(int idx)
     {
-        if (tutorialQuests[idx].questUI == null) return;
-        tutorialQuests[idx].questUI.SetActive(false);
+        tutorialQuests[idx].questUI.isOn = true;
         Debug.Log($"퀘스트 {idx} 완료!");
     }
 
