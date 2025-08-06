@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class GameManager : MonoBehaviour
 {
@@ -14,14 +15,20 @@ public class GameManager : MonoBehaviour
     [Header("Voice Recoder")]
     [SerializeField] private VoiceRecoder voiceRecoder;
     
+    [Header("Input")]
+    [SerializeField] private InputActionReference leftGrabAction;  
+    [SerializeField] private InputActionReference rightGrabAction;  
+    
     public enum GameStateType
     {
         Idle,
         Record,
-        Reposition
+        Reposition,
+        Start,
     }
     
     private IGameState currentState;
+    private StartGameState startGameState;
     private IdleGameState idleGameState;
     private RecordState recordState;
     private RepositionState repositionState;
@@ -36,6 +43,10 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        startGameState = new StartGameState();
+        startGameState.Entered += Enter;
+        startGameState.Exited += Exit;
+        
         idleGameState = new IdleGameState();
         idleGameState.Entered += leftBlockHolder.Enter;
         idleGameState.Entered += rightBlockHolder.Enter;
@@ -65,6 +76,18 @@ public class GameManager : MonoBehaviour
     {
         HomeSpawner.OnHomeSpawned -= SetEnemyPath;
         LeverController.OnLeverMax -= LaunchGame;
+    }
+
+    private void Enter()
+    {
+        leftGrabAction.action.Enable();
+        rightGrabAction.action.Enable();
+    }
+    
+    private void Exit()
+    {
+        leftGrabAction.action.Disable();
+        rightGrabAction.action.Disable();
     }
     
     private void SetState(IGameState newState)
