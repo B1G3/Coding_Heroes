@@ -73,7 +73,7 @@ public class MoveNode : IGridNode, IConnectable, ILogicalModule, IGetData, IOutp
     public void GetData(ITarget target)
     {
         this.target = target;
-        state = new MoveState(this.target);
+        state = new MoveState(this.target, 0f);
     }
     
     public WorldDirection GetInputDirection()

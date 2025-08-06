@@ -3,27 +3,36 @@ using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.Serialization;
 using static BlockConfig;
 
 public class StartNode : IGridNode, IConnectable, ILogicalModule, IOutput
 {
     [SerializeField] private LocalDirection outputDirection = LocalDirection.Forward;
     
-    private IUnitState state;
+    private IUnitState idleState;
+    private IUnitState moveState;
     public IConnectable Next { get; set; }
     public IConnectable Prev { get; set; }
+    
+    private ITarget target;
     
     [SerializeField] private string _next;
     [SerializeField] private string _prev;
     
     private List<Gnome> spawnedGnomes = new List<Gnome>();
 
+    public UnityEvent onSignalEnterEvent;
+
     public override void Initialize(Vector3Int gridPos, float rotationY = 0)
     {
         base.Initialize(gridPos, rotationY);
         int steps = DirectionUtils.StepsFromRotationY(rotationY);
         outputDirection = outputDirection.RotateY(steps);
-        state = new IdleState();
+        target = GameManager.Instance.GetTarget();
+        idleState = new IdleState();
+        moveState = new MoveState(target, 0.75f);
         name = "Start";
         _prev = "It is start";
     }
@@ -62,7 +71,7 @@ public class StartNode : IGridNode, IConnectable, ILogicalModule, IOutput
         await WaitForGnomesToReachNext();
 
         // 예: 애니메이션 등 효과를 먼저 실행해도 좋습니다.
-        (Next as ILogicalModule)?.OnSignalEnter(new List<IUnitState> { state }, spawnedGnomes).Forget();
+        (Next as ILogicalModule)?.OnSignalEnter(new List<IUnitState> { idleState, moveState }, spawnedGnomes).Forget();
     }
     
     public WorldDirection GetOutputDirection()
@@ -79,6 +88,8 @@ public class StartNode : IGridNode, IConnectable, ILogicalModule, IOutput
         
         for (int i = 0; i < 3; i++)
         {
+            onSignalEnterEvent?.Invoke();
+            
             GameObject gnome = GnomePool.Instance.Get();
             gnome.transform.position = spawnPosition; // 옆으로 간격을 두고 배치
             

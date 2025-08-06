@@ -4,9 +4,14 @@ using UnityEngine;
 public class MoveState : IUnitState
 {
     private readonly ITarget _target;
-    private readonly float _heightOffset = 0.1f;
+    private readonly float _heightOffset;
     
-    public MoveState(ITarget target) => _target = target;
+    public MoveState(ITarget target, float offset)
+    {
+        _target = target;
+        _heightOffset = offset;
+    }
+    
     private Vector3 goal;
 
     public void Enter(Unit unit)
@@ -46,38 +51,6 @@ public class MoveState : IUnitState
 
     public void Exit(Unit unit)
     {
-        // 코루틴으로 카메라 바라보게 회전 시작
-        var cam = Camera.main;
-        if (cam != null)
-        {
-            // 카메라와 같은 높이에서 바라보도록 방향 계산
-            Vector3 lookPos = cam.transform.position;
-            lookPos.y = unit.transform.position.y;
-            Vector3 direction = lookPos - unit.transform.position;
-
-            // Unit은 MonoBehaviour이므로 StartCoroutine 호출 가능
-            unit.StartCoroutine(RotateToCamera(unit.transform, direction, unit.RotationSpeed));
-        }
-        
         // 도착 애니메이션 or 이벤트 트리거
-    }
-    
-    private IEnumerator RotateToCamera(Transform mover, Vector3 direction, float rotationSpeed)
-    {
-        Quaternion targetRot = Quaternion.LookRotation(direction.normalized);
-
-        // 목표 회전까지 남은 각도가 충분히 작아질 때까지 매 프레임 회전
-        while (Quaternion.Angle(mover.rotation, targetRot) > 0.5f)
-        {
-            mover.rotation = Quaternion.RotateTowards(
-                mover.rotation,
-                targetRot,
-                rotationSpeed * Time.deltaTime
-            );
-            yield return null;
-        }
-
-        // 끝까지 맞춰주기
-        mover.rotation = targetRot;
     }
 }
