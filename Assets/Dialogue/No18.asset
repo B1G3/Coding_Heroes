@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a488abbd587bec446bca1332da59a0bf, type: 3}
+  m_Name: No18
+  m_EditorClassIdentifier: 
+  text: "\uC6B0\uB9AC Home\uC744 \uD30C\uAD34\uD558\uAC70\uB098, \uC911\uC694\uD55C
+    \uB370\uC774\uD130\uB97C \uBA39\uC5B4\uCE58\uC6CC\uBC84\uB9AC\uAC70\uB098...
+    \uC2EC\uC9C0\uC5B4\uB294 \uB108\uC758 \uAC1C\uC778\uC815\uBCF4\uB97C \uB4E4\uACE0
+    \uB3C4\uB9DD\uAC00\uBC84\uB9B4 \uC218\uB3C4 \uC788\uC5B4!"
+  clip: {fileID: 8300000, guid: 8329c6877bea4cb40a03f3c978ef4cc2, type: 3}
+  shown: 0

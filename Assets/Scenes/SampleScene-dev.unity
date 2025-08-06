@@ -705,6 +705,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dialogueSetup: {fileID: 154376310}
   dialogueNodes:
+  - {fileID: 11400000, guid: 70c98bf95e3604947a446bb808c8a6b4, type: 2}
+  - {fileID: 11400000, guid: 08836660085a36c4c95e73871f0f8508, type: 2}
+  - {fileID: 11400000, guid: d068f69c1ec61964fa1e310bba6b99e3, type: 2}
+  - {fileID: 11400000, guid: 41c9c61a78693474c9ae5cc1866199d6, type: 2}
+  - {fileID: 11400000, guid: fa3ee8010d58da34da5762335708c2f3, type: 2}
+  - {fileID: 11400000, guid: 783f2ee162d99be49b6103fc48ac23d1, type: 2}
+  - {fileID: 11400000, guid: 501aa308aba8e4b43b62419225180d33, type: 2}
+  - {fileID: 11400000, guid: 2b0c27d610f8c114bb82d59408534193, type: 2}
   - {fileID: 11400000, guid: 16fdbf812d2156a4d8bf1c1d36f591f8, type: 2}
   dialogueAfterVoice:
   - {fileID: 11400000, guid: 991ee5aa3ec08654c9ef3230bd641198, type: 2}
@@ -722,6 +730,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dialogueNodes:
   - {fileID: 11400000, guid: 9b05f8fe77ecc934a8c92c1a628e8615, type: 2}
+  - {fileID: 11400000, guid: f9a10d6c6ba8cb64ca8ab3141add8132, type: 2}
+  - {fileID: 11400000, guid: afadbb22976397d43b9b5ade4a747f04, type: 2}
+  - {fileID: 11400000, guid: 4e2693b2896753d43bc2034812b19149, type: 2}
+  - {fileID: 11400000, guid: a759fcde4798a54489583daac3ba8940, type: 2}
+  - {fileID: 11400000, guid: d5815bede45a05a43aac31f60f03e4b7, type: 2}
   - {fileID: 11400000, guid: e77ac323ecc1d6b47b32e8fce51605e5, type: 2}
 --- !u!1 &169138118
 GameObject:

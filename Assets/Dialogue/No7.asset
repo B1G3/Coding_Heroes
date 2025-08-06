@@ -14,9 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   text: "\uC548\uB155? \uB0B4 \uC774\uB984\uC740 \uB809\uC2DC\uC57C!\r\n'Home' \uC5D0
     \uC628 \uAC83\uC744 \uD658\uC601\uD574!"
-  clip: {fileID: 8300000, guid: dc96ce527aa14c14a9c639a525b1ae58, type: 3}
-  condition:
-    onCheck:
-      m_PersistentCalls:
-        m_Calls: []
+  clip: {fileID: 8300000, guid: 1aec563bfd7943445b83058fef3f99da, type: 3}
   shown: 0

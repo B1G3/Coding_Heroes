@@ -10,9 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a488abbd587bec446bca1332da59a0bf, type: 3}
-  m_Name: No13
+  m_Name: No8
   m_EditorClassIdentifier: 
-  text: "\uD1B5\uC2E0 \uB808\uBC84\uB97C \uB2F9\uACA8\uC11C \uB370\uC774\uD130\uB97C
-    \uBC1B\uC544\uBD10!"
-  clip: {fileID: 8300000, guid: 42c030a6eb713864c81c1e31aa3240e8, type: 3}
+  text: "Home\uC740 \uB108\uC758 \uB514\uBC14\uC774\uC2A4 \uC548\uC5D0 \uC788\uC9C0!"
+  clip: {fileID: 8300000, guid: 8ad4f23a911af40479a39920e7c77ea9, type: 3}
   shown: 0
