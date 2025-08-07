@@ -17,7 +17,10 @@ public class GameManager : MonoBehaviour
     
     [Header("Input")]
     [SerializeField] private InputActionReference leftGrabAction;  
-    [SerializeField] private InputActionReference rightGrabAction;  
+    [SerializeField] private InputActionReference rightGrabAction; 
+    
+    [Header("Stage Data")]
+    [SerializeField] private StageConfig currentStage; 
     
     public enum GameStateType
     {
@@ -71,12 +74,14 @@ public class GameManager : MonoBehaviour
     {
         HomeSpawner.OnHomeSpawned += SetEnemyPath;
         LeverController.OnLeverMax += LaunchGame;
+        StageManager.OnStageChanged += SetStage;
     }
 
     private void OnDisable()
     {
         HomeSpawner.OnHomeSpawned -= SetEnemyPath;
         LeverController.OnLeverMax -= LaunchGame;
+        StageManager.OnStageChanged -= SetStage;
     }
 
     private void Enter()
@@ -137,11 +142,16 @@ public class GameManager : MonoBehaviour
     {
         startNodes.Clear();
     }
+    
+    private void SetStage(StageConfig stage)
+    {
+        currentStage = stage;
+    }
 
     private void LaunchGame()
     {
         // text.text = "Launch Game";
-        enemyPath?.StartGame();
+        enemyPath?.StartGame(currentStage);
     }
 
     public void LaunchStartNode()

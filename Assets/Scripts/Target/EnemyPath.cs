@@ -21,7 +21,7 @@ public class EnemyPath : MonoBehaviour, ITarget
         doorAnimator = StartDoorObject.GetComponent<Animator>();
     }
     
-    public void StartGame()
+    public void StartGame(StageConfig stage)
     {
         doorAnimator.SetBool(IsOpenHash, true);
         SpawnDataContainer(StartPos, EndPos);

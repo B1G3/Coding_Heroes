@@ -19,6 +19,7 @@ public class MainUiManager : MonoBehaviour
     [SerializeField] Image logoPanel;
     [SerializeField] GameObject tutorialPanel;
     [SerializeField] CanvasGroup tutorialCanvasGroup;
+    [SerializeField] GameObject WarningPanel;
 
     [Header("Tutorial Settings")]
     [SerializeField] List<TutorialQuest> tutorialQuests;
@@ -27,6 +28,7 @@ public class MainUiManager : MonoBehaviour
     [Header("Audio")]
     [SerializeField] AudioSource audioSource;
     [SerializeField] AudioClip completeVoiceClip;
+    [SerializeField] AudioClip warnigClip;
 
     public static event Action OnLookAroundComplete;
     public static event Action OnTutorialComplete;
@@ -46,18 +48,21 @@ public class MainUiManager : MonoBehaviour
     {
         PassthroughSetup.OnPlaneExist += OnCompleteLookAround;
         FollowerAlignment.OnFirstAlignment += OnTutorialStartedAlignment;
+        StageManager.OnBossStage += Warning;
     }
     
     void OnDisable()
     {
         PassthroughSetup.OnPlaneExist -= OnCompleteLookAround;
         FollowerAlignment.OnFirstAlignment -= OnTutorialStartedAlignment;
+        StageManager.OnBossStage -= Warning;
     }
 
     void InitializeUI()
     {
         logoPanel.enabled = true;
         tutorialPanel.SetActive(false);
+        WarningPanel.SetActive(false);
         foreach (var q in tutorialQuests)
         {
             q.questUI.isOn = false;
@@ -107,6 +112,7 @@ public class MainUiManager : MonoBehaviour
             .SetDelay(1f)
             .OnComplete(() => tutorialPanel.SetActive(false));
         
+        WarningPanel.SetActive(true);
         OnTutorialComplete?.Invoke();
         Debug.Log("튜토리얼 전부 완료!");
     }
@@ -127,6 +133,14 @@ public class MainUiManager : MonoBehaviour
         {
             audioSource.clip = clip;
             audioSource.Play();
+        }
+    }
+
+    void Warning()
+    {
+        if (warnigClip != null)
+        {
+            PlayVoice(warnigClip);
         }
     }
 
