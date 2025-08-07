@@ -20,12 +20,32 @@ public class FunctionArea : IGridNode
     public FunctionEndNode FunctionEnd => functionEnd;
     public Vector2Int AreaSize => areaSize;
     
+    // 🎯 재배치용 헬퍼 메서드들
+    public int GetFunctionId()
+    {
+        return functionId;
+    }
+
+    public void SetFunctionId(int newId)
+    {
+        functionId = newId;
+        if (functionStart != null)
+        {
+            functionStart.SetFunctionId(functionId, functionName);
+        }
+    }
+
+    // 🎯 재배치 시에도 서브 노드들이 제대로 초기화되도록 Override
     public override void Initialize(Vector3Int gridPos, float rotationY = 0)
     {
+        // 기존 서브 노드들을 GridState와 BlockManager에서 해제
+        UnregisterSubNodes();
+        
+        // 부모 초기화 호출
         base.Initialize(gridPos, rotationY);
         gridPosition = gridPos;
         
-        // 🎯 FunctionArea 자체 위치 설정 (IfBlock과 동일한 방식)
+        // FunctionArea 자체 위치 설정
         transform.position = GridUtils.CellToWorld(gridPos);
         
         // Origin 기준 회전 적용
@@ -39,19 +59,30 @@ public class FunctionArea : IGridNode
             transform.rotation = Quaternion.Euler(0, rotationY, 0);
         }
         
-        // 🎯 서브 노드들 초기화 및 등록
+        // 서브 노드들 재초기화 및 등록
         InitializeSubNodes(rotationY);
-        
-        // 🎯 서브 노드들을 BlockManager에 등록
         RegisterSubNodes();
-        
-        // 🎯 FunctionManager에 등록
         RegisterToManager();
-        
-        // 🎯 Start와 End 서로 연결
         ConnectStartAndEnd();
         
         name = $"FunctionArea({functionName})";
+    }
+
+    private void UnregisterSubNodes()
+    {
+        if (functionStart != null)
+        {
+            Vector3Int startPos = GridUtils.WorldToCell(functionStart.transform.position);
+            GridState.Instance.RemoveNode(startPos);
+            BlockManager.Instance.UnregisterBlock(functionStart.gameObject);
+        }
+        
+        if (functionEnd != null)
+        {
+            Vector3Int endPos = GridUtils.WorldToCell(functionEnd.transform.position);
+            GridState.Instance.RemoveNode(endPos);
+            BlockManager.Instance.UnregisterBlock(functionEnd.gameObject);
+        }
     }
     
     private void InitializeSubNodes(float rotationY)
@@ -162,5 +193,53 @@ public class FunctionArea : IGridNode
         {
             FunctionManager.Instance.UnregisterFunction(functionId);
         }
+    }
+    
+    // 🎯 FunctionEnd 이동 시 Area 크기 동적 조정
+    public void UpdateAreaSize(Vector2Int newSize)
+    {
+        areaSize = newSize;
+        name = $"FunctionArea({functionName}) [{areaSize.x}x{areaSize.y}]";
+        
+        Debug.Log($"✅ FunctionArea 크기 업데이트: {areaSize}");
+    }
+
+    // 🎯 현재 Area 크기 확인
+    public Vector2Int GetCurrentAreaSize()
+    {
+        if (functionStart != null && functionEnd != null)
+        {
+            Vector3Int startPos = GridUtils.WorldToCell(functionStart.transform.position);
+            Vector3Int endPos = GridUtils.WorldToCell(functionEnd.transform.position);
+        
+            Vector3Int diff = endPos - startPos;
+            return new Vector2Int(Mathf.Abs(diff.x) + 1, Mathf.Abs(diff.z) + 1);
+        }
+    
+        return areaSize;
+    }
+
+    // 🎯 Area 내부 영역 확인 (다른 블럭 배치 가능 영역)
+    public bool IsInsideArea(Vector3Int gridPos)
+    {
+        if (functionStart == null || functionEnd == null) return false;
+    
+        Vector3Int startPos = GridUtils.WorldToCell(functionStart.transform.position);
+        Vector3Int endPos = GridUtils.WorldToCell(functionEnd.transform.position);
+    
+        Vector3Int minPos = new Vector3Int(
+            Mathf.Min(startPos.x, endPos.x),
+            0,
+            Mathf.Min(startPos.z, endPos.z)
+        );
+    
+        Vector3Int maxPos = new Vector3Int(
+            Mathf.Max(startPos.x, endPos.x),
+            0,
+            Mathf.Max(startPos.z, endPos.z)
+        );
+    
+        return gridPos.x >= minPos.x && gridPos.x <= maxPos.x &&
+               gridPos.z >= minPos.z && gridPos.z <= maxPos.z;
     }
 }

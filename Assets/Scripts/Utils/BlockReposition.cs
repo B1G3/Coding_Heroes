@@ -109,20 +109,86 @@ public class BlockReposition : MonoBehaviour
         selectedGridNode = blockObject.GetComponent<IGridNode>();
         
         if (selectedGridNode == null) return;
+
+        // 🎯 FunctionStartNode는 이동 불가
+        if (selectedGridNode is FunctionStartNode)
+        {
+            Debug.Log("❌ FunctionStart는 이동할 수 없습니다!");
+            selectedBlock = null;
+            selectedGridNode = null;
+            return;
+        }
         
+        // 🎯 FunctionArea 자체도 이동 불가 (End만 움직이게)
+        if (selectedGridNode is FunctionArea)
+        {
+            Debug.Log("❌ FunctionArea는 직접 이동할 수 없습니다. FunctionEnd를 움직여주세요!");
+            selectedBlock = null;
+            selectedGridNode = null;
+            return;
+        }
+
         originalGridPosition = selectedGridNode.GridPosition;
         
-        // 블럭과 연결된 모든 관계를 끊기
-        DisconnectBlock();
+        // 🎯 FunctionEndNode 특별 처리
+        if (selectedGridNode is FunctionEndNode functionEndNode)
+        {
+            DisconnectFunctionEndNode(functionEndNode);
+        }
+        else
+        {
+            // 일반 블럭 처리
+            DisconnectBlock();
+        }
         
         isRepositioning = true;
+    }
+
+    private void DisconnectFunctionEndNode(FunctionEndNode functionEndNode)
+    {
+        // 🎯 FunctionEnd의 연결만 해제
+        if (functionEndNode.Next != null)
+        {
+            originalNext = functionEndNode.Next;
+            functionEndNode.Next.DisconnectPrev();
+            functionEndNode.DisconnectNext();
+        }
         
-        // 시각적 피드백 (블럭을 손에 따라 이동시키거나 하이라이트 등)
-        // TODO: 블럭을 holdPoint 위치로 이동시키는 로직 추가
+        if (functionEndNode.Prev != null)
+        {
+            originalPrev = functionEndNode.Prev;
+            functionEndNode.Prev.DisconnectNext();
+            functionEndNode.DisconnectPrev();
+        }
+        
+        // GridState에서 FunctionEnd 제거
+        GridState.Instance.RemoveNode(originalGridPosition);
+        
+        // BlockManager에서 해제
+        BlockManager.Instance.UnregisterBlock(selectedBlock);
+        
+        // 연결된 패스들 제거
+        RemoveConnectedPaths();
+        
+        Debug.Log("✅ FunctionEnd 연결 해제 완료");
     }
     
     private void DisconnectBlock()
     {
+        // 🎯 FunctionArea 특별 처리 추가
+        if (selectedGridNode is FunctionArea functionArea)
+        {
+            DisconnectFunctionArea(functionArea);
+            return;
+        }
+        
+        // 🎯 FunctionArea의 서브 노드들 특별 처리
+        if (selectedGridNode is FunctionStartNode || selectedGridNode is FunctionEndNode)
+        {
+            Debug.LogError("FunctionArea의 서브 노드는 개별적으로 재배치할 수 없습니다!");
+            return;
+        }
+
         if (selectedGridNode is IConnectable connectable)
         {
             // 기존 연결 정보 저장
@@ -152,6 +218,55 @@ public class BlockReposition : MonoBehaviour
         
         // 연결되어 있던 패스들 제거
         RemoveConnectedPaths();
+    }
+
+    private void DisconnectFunctionArea(FunctionArea functionArea)
+    {
+        // 🎯 FunctionArea의 서브 노드들과의 연결 해제
+        var functionStart = functionArea.FunctionStart;
+        var functionEnd = functionArea.FunctionEnd;
+        
+        if (functionStart != null)
+        {
+            // FunctionStart의 연결 해제
+            originalPrev = functionStart.Prev;
+            if (originalPrev != null)
+            {
+                originalPrev.DisconnectNext();
+                functionStart.DisconnectPrev();
+            }
+            
+            // GridState에서 제거
+            Vector3Int startGridPos = GridUtils.WorldToCell(functionStart.transform.position);
+            GridState.Instance.RemoveNode(startGridPos);
+            BlockManager.Instance.UnregisterBlock(functionStart.gameObject);
+        }
+        
+        if (functionEnd != null)
+        {
+            // FunctionEnd의 연결 해제
+            originalNext = functionEnd.Next;
+            if (originalNext != null)
+            {
+                originalNext.DisconnectPrev();
+                functionEnd.DisconnectNext();
+            }
+            
+            // GridState에서 제거
+            Vector3Int endGridPos = GridUtils.WorldToCell(functionEnd.transform.position);
+            GridState.Instance.RemoveNode(endGridPos);
+            BlockManager.Instance.UnregisterBlock(functionEnd.gameObject);
+        }
+        
+        // FunctionArea 자체도 GridState에서 제거
+        GridState.Instance.RemoveNode(originalGridPosition);
+        
+        // FunctionManager에서 해제
+        if (FunctionManager.Instance != null)
+        {
+            // FunctionArea의 functionId를 가져와서 해제
+            // functionArea.GetFunctionId() 메서드가 필요할 수 있음
+        }
     }
     
     private void RemoveConnectedPaths()
@@ -231,22 +346,102 @@ public class BlockReposition : MonoBehaviour
     
     private void RepositionBlock(Vector3Int newGridPosition)
     {
-        // 월드 좌표로 변환
+        // 🎯 FunctionEndNode 특별 처리
+        if (selectedGridNode is FunctionEndNode functionEndNode)
+        {
+            RepositionFunctionEndNode(functionEndNode, newGridPosition);
+            return;
+        }
+
+        // 일반 블럭 처리
         Vector3 worldPosition = GridUtils.CellToWorld(newGridPosition);
         worldPosition.y = hit.point.y;
         
-        // 블럭 이동
         selectedBlock.transform.position = worldPosition;
         selectedBlock.transform.rotation = GridUtils.GetOriginRotation() * Quaternion.Euler(0f, currentRotationY, 0f);
         
-        // 그리드 상태 업데이트
         selectedGridNode.Initialize(newGridPosition, currentRotationY);
         GridState.Instance.AddOrUpdateNode(newGridPosition, selectedGridNode);
         
-        // BlockManager에 다시 등록
         BlockManager.Instance.RegisterBlock(selectedBlock);
         
-        // 재배치 완료
+        CompleteRepositioning();
+    }
+
+    private void RepositionFunctionEndNode(FunctionEndNode functionEndNode, Vector3Int newGridPosition)
+    {
+        // 🎯 FunctionEnd 새 위치로 이동
+        Vector3 worldPosition = GridUtils.CellToWorld(newGridPosition);
+        worldPosition.y = hit.point.y;
+        
+        selectedBlock.transform.position = worldPosition;
+        selectedBlock.transform.rotation = GridUtils.GetOriginRotation() * Quaternion.Euler(0f, currentRotationY, 0f);
+        
+        // 🎯 FunctionEnd 재초기화
+        functionEndNode.Initialize(newGridPosition, currentRotationY);
+        
+        // 🎯 GridState에 등록
+        GridState.Instance.AddOrUpdateNode(newGridPosition, functionEndNode);
+        
+        // 🎯 BlockManager에 등록
+        BlockManager.Instance.RegisterBlock(selectedBlock);
+        
+        // 🎯 연결된 FunctionStart 찾기
+        var functionStart = functionEndNode.ConnectedFunctionStart;
+        if (functionStart != null)
+        {
+            // 🎯 FunctionArea 범위 업데이트
+            UpdateFunctionAreaSize(functionStart, functionEndNode, newGridPosition);
+        }
+        
+        // 🎯 연결 복원
+        if (originalNext != null)
+        {
+            functionEndNode.ConnectNext(originalNext);
+            originalNext.ConnectPrev(functionEndNode);
+        }
+        
+        if (originalPrev != null)
+        {
+            functionEndNode.ConnectPrev(originalPrev);
+            originalPrev.ConnectNext(functionEndNode);
+        }
+        
+        Debug.Log($"✅ FunctionEnd 재배치 완료: {newGridPosition}");
+        
+        CompleteRepositioning();
+    }
+
+    private void UpdateFunctionAreaSize(FunctionStartNode functionStart, FunctionEndNode functionEnd, Vector3Int newEndPosition)
+    {
+        // 🎯 FunctionArea 찾기
+        var functionArea = functionStart.transform.parent?.GetComponent<FunctionArea>();
+        if (functionArea == null)
+        {
+            Debug.LogError("❌ FunctionArea를 찾을 수 없습니다!");
+            return;
+        }
+        
+        // 🎯 Start와 End 위치 기준으로 새로운 Area 크기 계산
+        Vector3Int startGridPos = GridUtils.WorldToCell(functionStart.transform.position);
+        Vector3Int endGridPos = newEndPosition;
+        
+        // 🎯 새로운 Area 크기 계산
+        Vector3Int sizeDiff = endGridPos - startGridPos;
+        Vector2Int newAreaSize = new Vector2Int(
+        Mathf.Abs(sizeDiff.x) + 1, // +1은 시작점도 포함하기 위해
+        Mathf.Abs(sizeDiff.z) + 1
+        );
+        
+        // 🎯 FunctionArea 크기 업데이트
+        functionArea.UpdateAreaSize(newAreaSize);
+        
+        Debug.Log($"🔄 FunctionArea 크기 업데이트: {newAreaSize}");
+        Debug.Log($"   Start: {startGridPos}, End: {endGridPos}");
+    }
+
+    private void CompleteRepositioning()
+    {
         isRepositioning = false;
         selectedBlock = null;
         selectedGridNode = null;
@@ -254,6 +449,10 @@ public class BlockReposition : MonoBehaviour
         
         // 제거된 패스들 정리
         CleanupDisconnectedPaths();
+        
+        // 원래 연결 정보 초기화
+        originalNext = null;
+        originalPrev = null;
     }
     
     private void RestoreBlockToOriginalPosition()
