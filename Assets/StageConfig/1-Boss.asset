@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2ce7401fca69ce4e9bd9695842aff02, type: 3}
   m_Name: 1-Boss
   m_EditorClassIdentifier: 
-  stageInfo: "\uBCF4\uC2A4 \uC2A4\uD14C\uC774\uC9C0\uC784"
+  stageInfo: "\uC6DC x 2, \uD2B8\uB85C\uC774 x 2"
   descriptions:
   - text: "\uAC15\uB825\uD55C \uBCF4\uC2A4\uAC00 \uB098\uD0C0\uB0AC\uC5B4!"
     audioClip: {fileID: 8300000, guid: 50c2fd2dba6d3fc4fb6d2837596179af, type: 3}
@@ -26,6 +26,6 @@ MonoBehaviour:
     count: 2
   targetEntries:
   - prefab: {fileID: 2044190897800324374, guid: 3c9d7e6e23d45f44dbd4c2e6434fd83c, type: 3}
-    count: 1
+    count: 2
   - prefab: {fileID: 655895539706403280, guid: 4eabd30aed26a6349940012f1bb87f72, type: 3}
-    count: 1
+    count: 2
