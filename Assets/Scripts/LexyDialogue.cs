@@ -14,6 +14,9 @@ public class LexyDialogue : MonoBehaviour
     
     [SerializeField] private GameObject dialogueObject;
     [SerializeField] private TMP_Text dialogueText;
+    [SerializeField] private float indicatorSpeed = 0.5f;
+    private Coroutine indicatorCoroutine;
+    
     [SerializeField] private AudioSource audioSource;
     [SerializeField] private Material faceMaterial;
     [SerializeField] private Sprite[] faceSprite;
@@ -28,6 +31,9 @@ public class LexyDialogue : MonoBehaviour
     private void OnEnable()
     {
         VoiceInteractionManager.OnResponseReceived += GetResponse;
+        StageManager.OnStageChanged += GetResponse;
+        VoiceRecoder.OnVoiceRecordComplete += OnRecordComplete;
+        
         if (leftGrabAction != null)
         {
             leftGrabAction.action.performed += OnSkip; 
@@ -44,6 +50,9 @@ public class LexyDialogue : MonoBehaviour
     private void OnDisable()
     {
         VoiceInteractionManager.OnResponseReceived -= GetResponse;
+        StageManager.OnStageChanged -= GetResponse;
+        VoiceRecoder.OnVoiceRecordComplete -= OnRecordComplete;
+        
         if (leftGrabAction != null)
         {
             leftGrabAction.action.performed -= OnSkip;
@@ -54,6 +63,39 @@ public class LexyDialogue : MonoBehaviour
         {
             rightGrabAction.action.performed -= OnSkip; 
             rightGrabAction.action.Disable();
+        }
+    }
+
+    private void OnRecordComplete(AudioClip clip)
+    {
+        // 타입라이팅/페이지 순서를 건너뛰게 하고...
+        skipRequested = true;
+
+        // 인디케이터 실행
+        if (indicatorCoroutine != null)
+            StopCoroutine(indicatorCoroutine);
+        indicatorCoroutine = StartCoroutine(ShowResponseIndicator());
+    }
+
+    private IEnumerator ShowResponseIndicator()
+    {
+        dialogueObject.SetActive(true);
+        dialogueText.gameObject.SetActive(true);
+        
+        const string baseMsg = "답변 생성중";
+        int dotCount = 0;
+        var sb = new StringBuilder();
+
+        while (true)
+        {
+            sb.Clear();
+            sb.Append(baseMsg);
+            for (int i = 0; i < dotCount; i++)
+                sb.Append('.');
+            dialogueText.text = sb.ToString();
+
+            dotCount = (dotCount + 1) % 5;
+            yield return new WaitForSeconds(indicatorSpeed);
         }
     }
     
@@ -80,6 +122,19 @@ public class LexyDialogue : MonoBehaviour
         SetNewDialogue(new[] { node });
     }
 
+    private void GetResponse(StageConfig stage)
+    {
+        var nodes = new DialogueNode[stage.descriptions.Count];
+        for (int i = 0; i < stage.descriptions.Count; i++)
+        {
+            var entry = stage.descriptions[i];
+            nodes[i] = DialogueNode.Create(entry.text, entry.audioClip);
+        }
+
+        // 생성된 노드들로 다이얼로그 실행
+        SetNewDialogue(nodes);
+    }
+
     private IEnumerator RunDialogue()
     {
         foreach (var node in nodes)
@@ -98,10 +153,19 @@ public class LexyDialogue : MonoBehaviour
         skipRequested = false;
         dialogueObject.SetActive(true);
         dialogueText.gameObject.SetActive(true);
+        
+        if (indicatorCoroutine != null)
+        {
+            StopCoroutine(indicatorCoroutine);
+            indicatorCoroutine = null;
+        }
 
         // 1) 오디오 재생
-        audioSource.clip = node.clip;
-        audioSource.Play();
+        if (node.clip != null)
+        {
+            audioSource.clip = node.clip;
+            audioSource.Play();
+        }
 
         // 2) 문장→페이지 분할
         var pages    = BuildPages(SplitToSentences(node.text));

@@ -12,7 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2ce7401fca69ce4e9bd9695842aff02, type: 3}
   m_Name: 1-1
   m_EditorClassIdentifier: 
-  stageInfo: "1\uBC88 \uC2A4\uD14C\uC774\uC9C0\uC784"
+  stageInfo: "'\uC774\uB3D9\uD55C\uB2E4' \uBE14\uB85D\uACFC '\uACF5\uACA9\uD55C\uB2E4'
+    \uBE14\uB85D\uC744 \uC774\uC6A9\uD574\uC11C \uBC14\uC774\uB7EC\uC2A4\uB97C \uC7A1\uC544
+    \uBCF4\uC790!"
+  descriptions:
+  - text: "'\uC774\uB3D9\uD55C\uB2E4' \uBE14\uB85D\uACFC '\uACF5\uACA9\uD55C\uB2E4'
+      \uBE14\uB85D\uC744 \uC774\uC6A9\uD574\uC11C \uBC14\uC774\uB7EC\uC2A4\uB97C
+      \uC7A1\uC544 \uBCF4\uC790!"
+    audioClip: {fileID: 8300000, guid: 5ac942eb06960744a8bc9d56e55ab51c, type: 3}
   dummyEntries:
   - prefab: {fileID: 3060869569163377651, guid: 479db0ba2d3d0604dbb7d292175cb52e, type: 3}
     count: 3

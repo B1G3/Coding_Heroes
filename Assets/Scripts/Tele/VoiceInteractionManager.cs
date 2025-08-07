@@ -77,8 +77,6 @@ public class VoiceInteractionManager : MonoBehaviour
         // 3) 정상 응답 처리
         if (chatResp != null)
         {
-            OnBotTextReceived?.Invoke(chatResp.answer);
-
             byte[] audioBytes = Convert.FromBase64String(chatResp.audio);
             var ttsClip = WavUtility.ToAudioClip(audioBytes, "NPCVoice");
             OnResponseReceived?.Invoke(chatResp.answer, ttsClip);

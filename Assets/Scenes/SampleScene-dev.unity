@@ -10670,6 +10670,7 @@ GameObject:
   - component: {fileID: 1798949852}
   - component: {fileID: 1798949854}
   - component: {fileID: 1798949853}
+  - component: {fileID: 1798949855}
   m_Layer: 5
   m_Name: Text (TMP)
   m_TagString: Untagged
@@ -10795,6 +10796,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1798949851}
   m_CullTransparentMesh: 1
+--- !u!114 &1798949855
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1798949851}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c996eb14b54d1274e889b4035dadb2fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  text: {fileID: 1798949853}
+  typingSpeed: 0.05
+  indicatorSpeed: 0.5
 --- !u!1 &1820263285
 GameObject:
   m_ObjectHideFlags: 0
@@ -18276,7 +18292,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 396e949515002854ebc262480ead5718, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  recordAction: {fileID: 83097790271614945, guid: c348712bda248c246b8c49b3db54643f, type: 3}
+  leftRecordAction: {fileID: -5982496924579745919, guid: c348712bda248c246b8c49b3db54643f, type: 3}
+  rightRecordAction: {fileID: 83097790271614945, guid: c348712bda248c246b8c49b3db54643f, type: 3}
   sampleRate: 16000
 --- !u!1660057539 &9223372036854775807
 SceneRoots:

@@ -13,6 +13,14 @@ MonoBehaviour:
   m_Name: 1-Boss
   m_EditorClassIdentifier: 
   stageInfo: "\uBCF4\uC2A4 \uC2A4\uD14C\uC774\uC9C0\uC784"
+  descriptions:
+  - text: "\uAC15\uB825\uD55C \uBCF4\uC2A4\uAC00 \uB098\uD0C0\uB0AC\uC5B4!"
+    audioClip: {fileID: 8300000, guid: 50c2fd2dba6d3fc4fb6d2837596179af, type: 3}
+  - text: "\uC774\uBC88\uC5D0\uB294 \uC6DC\uACFC \uD2B8\uB85C\uC774\uAC00 \uB098\uD0C0\uB098\uB824\uB098\uBD10!"
+    audioClip: {fileID: 8300000, guid: 8421f0c431bdaa04bab8a3086c4e4b99, type: 3}
+  - text: "\uB370\uC774\uD130\uAC00 \uB2E4\uCE58\uC9C0 \uC54A\uAC8C \uC870\uC2EC\uD558\uBA74\uC11C
+      \uCF54\uB529\uD574 \uBCF4\uC790! \uC751\uC6D0\uD560\uAC8C!"
+    audioClip: {fileID: 8300000, guid: da938dfe1ad39804fa3648ec94bcee93, type: 3}
   dummyEntries:
   - prefab: {fileID: 3060869569163377651, guid: 479db0ba2d3d0604dbb7d292175cb52e, type: 3}
     count: 2

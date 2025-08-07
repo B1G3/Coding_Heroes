@@ -5,7 +5,8 @@ using UnityEngine.InputSystem;
 public class VoiceRecoder : MonoBehaviour
 {
     [Header("녹음 토글 액션")]
-    [SerializeField] private InputActionReference recordAction;
+    [SerializeField] private InputActionReference leftRecordAction;
+    [SerializeField] private InputActionReference rightRecordAction;
 
     [Tooltip("샘플 레이트")] public int sampleRate = 16000;
     
@@ -17,16 +18,22 @@ public class VoiceRecoder : MonoBehaviour
 
     public void Enter()
     {
-        recordAction.action.Enable();
-        recordAction.action.performed += OnRecordStarted;
-        recordAction.action.canceled  += OnRecordStopped;
+        leftRecordAction.action.Enable();
+        leftRecordAction.action.performed += OnRecordStarted;
+        leftRecordAction.action.canceled  += OnRecordStopped;
+        rightRecordAction.action.Enable();
+        rightRecordAction.action.performed += OnRecordStarted;
+        rightRecordAction.action.canceled  += OnRecordStopped;
     }
 
     public void Exit()
     {
-        recordAction.action.performed -= OnRecordStarted;
-        recordAction.action.canceled  -= OnRecordStopped;
-        recordAction.action.Disable();
+        leftRecordAction.action.performed -= OnRecordStarted;
+        leftRecordAction.action.canceled  -= OnRecordStopped;
+        leftRecordAction.action.Disable();
+        rightRecordAction.action.performed -= OnRecordStarted;
+        rightRecordAction.action.canceled  -= OnRecordStopped;
+        rightRecordAction.action.Disable();
     }
     
     private void OnRecordStarted(InputAction.CallbackContext ctx)
