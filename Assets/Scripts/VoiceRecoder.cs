@@ -6,23 +6,14 @@ public class VoiceRecoder : MonoBehaviour
 {
     [Header("녹음 토글 액션")]
     [SerializeField] private InputActionReference recordAction;
+
+    [Tooltip("샘플 레이트")] public int sampleRate = 16000;
     
-    [Header("녹음 설정")] [Tooltip("녹음할 최대 길이 (초)")]
-    public int maxRecordSeconds = 10;
-
-    [Tooltip("샘플 레이트")] public int sampleRate = 44100;
-
-    private AudioSource audioSource;
-    private AudioClip recordingClip;
+    private AudioClip clip;
     private bool isRecording;
 
     public static event Action OnVoiceRecordStart;
-    public static event Action OnVoiceRecordStop;
-    
-    void Awake()
-    {
-        audioSource = GetComponent<AudioSource>();
-    }
+    public static event Action<AudioClip> OnVoiceRecordComplete;
 
     public void Enter()
     {
@@ -47,58 +38,48 @@ public class VoiceRecoder : MonoBehaviour
     private void OnRecordStopped(InputAction.CallbackContext ctx)
     {
         if (isRecording)
-            StopAndRecognize();
+        {
+            clip = StopAndRecognize();
+            OnVoiceRecordComplete?.Invoke(clip);
+        }
     }
 
     private void StartVoiceRecording()
     {
-        if (Microphone.devices.Length == 0)
-        {
-            Debug.LogWarning("녹음할 마이크가 없습니다.");
-            return;
-        }
-
-        // 마이크 디바이스(기본)로 녹음 시작
-        recordingClip = Microphone.Start(
-            null, // 디바이스 이름 (null = 기본)
-            false, // loop? (false = 한 번만)
-            maxRecordSeconds, // 녹음 길이
-            sampleRate // 샘플 레이트
-        );
+        if (Microphone.devices.Length == 0) return;
+        clip = Microphone.Start(
+            null, 
+            false, 
+            300, 
+            sampleRate);
         isRecording = true;
-        Debug.Log("녹음 시작...");
+        Debug.Log("녹음 시작");
         
         OnVoiceRecordStart?.Invoke();
     }
 
-    private void StopAndRecognize()
+    private AudioClip StopAndRecognize()
     {
-        if (!isRecording) return;
-
-        // 녹음 종료
+        if (!isRecording) return null;
+    
+        int lastSample = Microphone.GetPosition(null);
         Microphone.End(null);
         isRecording = false;
-        Debug.Log("녹음 종료!");
-
-        // 👉 AudioSource에 연결해서 바로 재생해 볼 수 있습니다.
-        audioSource.clip = recordingClip;
-        audioSource.Play();
+    
+        // 실제 녹음된 길이만큼 AudioClip 트림
+        if (lastSample > 0) {
+            float[] samples = new float[lastSample * clip.channels];
+            clip.GetData(samples, 0);
         
-        OnVoiceRecordStop?.Invoke();
-
-        // 👉 원하면 파일로 저장
-        // SaveWavFile(recordingClip, "RecordedAudio.wav");
-    }
-
-    private void SaveWavFile(AudioClip clip, string filename)
-    {
-        // if (clip == null) return;
-        // string path = Path.Combine(Application.persistentDataPath, filename);
-        //
-        // // SavWav 유틸리티가 프로젝트에 들어 있다면 이렇게 호출
-        // bool ok = SavWav.Save(path, clip);
-        // Debug.Log(ok
-        //     ? $"WAV 파일 저장 완료: {path}"
-        //     : "WAV 파일 저장 실패");
+            AudioClip trimmedClip = AudioClip.Create("RecordedAudio", 
+                lastSample, clip.channels, clip.frequency, false);
+            trimmedClip.SetData(samples, 0);
+        
+            Debug.Log($"녹음 종료 - 실제 샘플: {lastSample}, 주파수: {clip.frequency}Hz");
+            return trimmedClip;
+        }
+    
+        Debug.Log("녹음 종료");
+        return clip;
     }
 }

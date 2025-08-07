@@ -22,8 +22,9 @@ public class GameManager : MonoBehaviour
     public enum GameStateType
     {
         Idle,
-        Record,
+        Road,
         Reposition,
+        Record,
         Start,
     }
     

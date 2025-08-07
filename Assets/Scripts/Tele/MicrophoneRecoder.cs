@@ -1,16 +1,12 @@
 using System;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class MicrophoneRecorder : MonoBehaviour {
+    
     [SerializeField] int sampleRate = 16000;
-    // private AudioSource audioSource;
     private AudioClip clip;
     private bool isRecording;
-
-    // private void Awake()
-    // {
-    //     audioSource = GetComponent<AudioSource>();
-    // }
 
     public void StartRecording() {
         if (isRecording || Microphone.devices.Length == 0) return;
