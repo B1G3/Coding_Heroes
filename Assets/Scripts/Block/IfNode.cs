@@ -74,9 +74,7 @@ public class IfNode : IGridNode, IConnectable, ILogicalModule, IOutput, IInput, 
         if (Prev is WhileNode)
         {
             // WhileState 생성 후 추가
-            System.Func<Unit, bool> condition = (unit) => CheckIfCondition(unit);
-            List<IUnitState> loopStates = CollectNextStates();
-            var whileState = new WhileState(loopStates);
+            var whileState = new WhileState();
             command.Add(whileState);
         }
         else

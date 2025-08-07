@@ -20,6 +20,14 @@ public class BlockTypeHandler : MonoBehaviour
     
     private int currentTypeIndex = 0;
     
+    private void Start()
+    {
+        for (int i = 0; i < typeList.Count; i++)
+        {
+            typeList[i].typeObject.SetActive(i == currentTypeIndex);
+        }
+    }
+    
     public void SetType(int index)
     {
         typeList[currentTypeIndex].typeObject.SetActive(false);

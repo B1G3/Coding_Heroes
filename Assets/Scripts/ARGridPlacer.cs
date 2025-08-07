@@ -126,6 +126,9 @@ public class ARGridPlacer : MonoBehaviour
         dir.x = Mathf.Clamp(dir.x, -1, 1);
         dir.z = Mathf.Clamp(dir.z, -1, 1);
         
+        if (from + dir == to)
+            return;
+        
         for (var p = from + dir; ; p += dir)
         {
             Vector3 spawnPos = CellToWorld(p);

@@ -45,15 +45,19 @@ public class Unit : MonoBehaviour
     
     /// <summary>
     /// 상태 리스트를 순차적으로 실행하고, 각 상태의 IsCompleted가 true 될 때까지 대기합니다.
+    /// WhileState 뒤의 Move/Attack State들은 자동으로 완료 처리합니다.
     /// </summary>
     public async UniTaskVoid StartUnitAsync(List<IUnitState> command)
     {
         _command = command;
         _currentStateIndex = -1;
         
+        // 🎯 WhileState 뒤의 Move/Attack State들을 완료 상태로 변경
+        ProcessWhileStates(command);
+        
         for (int i = 0; i < command.Count; i++)
         {
-            _currentStateIndex = i; // 현재 실행 중인 state 인덱스 업데이트
+            _currentStateIndex = i;
             var state = command[i];
             
             // text.text = $"{state}";
@@ -62,8 +66,40 @@ public class Unit : MonoBehaviour
             CurrentState?.Exit(this);
         }
 
-        _currentStateIndex = -1; // 완료 후 초기화
+        _currentStateIndex = -1;
         FinishCommandAsync().Forget();
+    }
+
+    /// <summary>
+    /// WhileState 뒤의 Move/Attack State들을 CompletedState로 교체
+    /// </summary>
+    private void ProcessWhileStates(List<IUnitState> command)
+    {
+        bool foundWhile = false;
+        
+        for (int i = 0; i < command.Count; i++)
+        {
+            if (command[i] is WhileState)
+            {
+                foundWhile = true;
+                Debug.Log($"Unit: WhileState 발견 (인덱스 {i})");
+                continue;
+            }
+        
+            // WhileState 다음에 오는 Move/Attack State들을 CompletedState로 교체
+            if (foundWhile && (command[i] is MoveState || command[i] is AttackState))
+            {
+                string originalName = command[i].GetType().Name;
+                command[i] = new CompletedState(originalName);
+                Debug.Log($"Unit: {originalName}를 CompletedState로 교체");
+            }
+            else if (foundWhile && !(command[i] is MoveState) && !(command[i] is AttackState))
+            {
+                // 다른 종류의 State (If, 다른 While 등)를 만나면 While 블록 종료
+                foundWhile = false;
+                Debug.Log($"Unit: While 블록 종료 - {command[i].GetType().Name} 발견");
+            }
+        }
     }
 
     // 현재 진행중인 state 뒤에 있는 state들만 반환

@@ -7,6 +7,11 @@ public class DataContainer : MonoBehaviour, IAttackable
     private DataContainerMover mover;
     private bool isDead = false;
     
+    public bool IsDead()
+    {
+        return isDead;
+    }
+    
     // ITarget 구현 - Position 프로퍼티 수정
     public Vector3 Position => transform.position;
     
@@ -31,9 +36,11 @@ public class DataContainer : MonoBehaviour, IAttackable
     
     public virtual void OnAttack()
     {
-        if (isDead) return;
+        if (isDead) return; // 이미 죽었으면 무시
+        
         isDead = true;
-
+        Debug.Log($"DataContainer {name}: OnAttack 호출됨");
+        
         // 1) 이동 취소
         mover?.CancelMovement();
         
@@ -62,5 +69,11 @@ public class DataContainer : MonoBehaviour, IAttackable
     {
         // 공통 이펙트나 사운드 등
         Destroy(gameObject);
+    }
+    
+    // 풀로 돌아갈 때 상태 초기화
+    public void ResetState()
+    {
+        isDead = false;
     }
 }
