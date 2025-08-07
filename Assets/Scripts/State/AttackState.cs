@@ -1,11 +1,15 @@
+using System;
 using UnityEngine;
 
 public class AttackState : IUnitState
 {
-    private readonly IAttackable _specificTarget; // 특정 타겟 (If에서 지정된 경우)
+    private IAttackable _specificTarget; // 특정 타겟 (If에서 지정된 경우)
     private readonly int _maxHits;
     private int _hitCount;
     private readonly bool _attackAnyTarget; // 아무 타겟이나 공격할지 여부
+    
+    // 데이터 필터 함수 추가
+    private Func<DataContainer, bool> _dataFilter;
 
     /// <param name="specificTarget">특정 타겟 (null이면 아무 적이나 공격)</param>
     /// <param name="maxHits">최대 공격 횟수</param>
@@ -23,13 +27,24 @@ public class AttackState : IUnitState
         unit.OnAttackHit += OnHit;
     }
 
+    public void SetTarget(IAttackable target)
+    {
+        _specificTarget = target;
+    }
+    
+    // 데이터 필터 설정
+    public void SetDataFilter(Func<DataContainer, bool> filter)
+    {
+        _dataFilter = filter;
+    }
+
     private void OnHit(GameObject target)
     {
         bool shouldAttack = false;
 
         if (_attackAnyTarget)
         {
-            // 아무 적이나 공격 (태그나 컴포넌트로 적인지 확인)
+            // 아무 적이나 공격 (하지만 필터가 있으면 필터 적용)
             shouldAttack = IsValidEnemy(target);
         }
         else if (_specificTarget != null)
@@ -53,9 +68,16 @@ public class AttackState : IUnitState
 
     private bool IsValidEnemy(GameObject target)
     {
-        // 적으로 간주할 수 있는 오브젝트인지 확인
+        // DataContainer 컴포넌트 확인
+        var dataContainer = target.GetComponent<DataContainer>();
+        if (dataContainer != null)
+        {
+            // 필터가 있으면 필터로 확인, 없으면 모든 DataContainer 허용
+            return _dataFilter?.Invoke(dataContainer) ?? true;
+        }
+        
+        // 기존 로직
         return target.CompareTag("Enemy") || 
-               target.GetComponent<DataContainer>() != null ||
                target.GetComponent<IAttackable>() != null;
     }
 

@@ -52,12 +52,8 @@ public class WhileNode : IGridNode, IConnectable, ILogicalModule, IOutput, IInpu
     public async UniTaskVoid OnSignalEnter(List<IUnitState> command, List<Gnome> gnomes)
     {
         currentGnomes = gnomes;
-        
-        // WhileState를 command에 추가
-        System.Func<Unit, bool> condition = (unit) => CheckWhileCondition(unit);
-        var whileState = new WhileState(condition, new List<IUnitState>());
-        command.Add(whileState);
-        
+    
+        // WhileNode는 그냥 다음으로 넘기기만 함
         // 노움들을 Next 노드 위치로 이동
         if (Next != null)
         {
@@ -69,21 +65,9 @@ public class WhileNode : IGridNode, IConnectable, ILogicalModule, IOutput, IInpu
             }
             await WaitForGnomesToReachNext();
         }
-        
-        // 다음 노드로 신호 전파
-        (Next as ILogicalModule)?.OnSignalEnter(command, currentGnomes).Forget();
-    }
     
-    private bool CheckWhileCondition(Unit unit)
-    {
-        // 주변에 적이 있는지 검사
-        Collider[] enemies = Physics.OverlapSphere(unit.transform.position, 3f);
-        foreach (var enemy in enemies)
-        {
-            if (enemy.CompareTag("Enemy"))
-                return true;
-        }
-        return false;
+        // 다음 노드로 신호 전파 (그냥 전달만)
+        (Next as ILogicalModule)?.OnSignalEnter(command, currentGnomes).Forget();
     }
     
     private async UniTask WaitForGnomesToReachNext()

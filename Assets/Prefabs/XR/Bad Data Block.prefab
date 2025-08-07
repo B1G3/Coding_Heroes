@@ -9,9 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4022070574440108851}
-  - component: {fileID: -2585929269903047908}
+  - component: {fileID: 1862290672186961976}
   m_Layer: 6
-  m_Name: Data Block
+  m_Name: Bad Data Block
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -33,7 +33,7 @@ Transform:
   - {fileID: 4674550361506241979}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &-2585929269903047908
+--- !u!114 &1862290672186961976
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -42,10 +42,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1709663714544518961}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 99bb824ade74fd145aeea79c62bf0c08, type: 3}
+  m_Script: {fileID: 11500000, guid: e579597a36b91d447a0fa59db70b1fdc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputDirection: 0
+  outputDirection: 0
   next: 
   prev: 
 --- !u!1001 &4674550361506629435

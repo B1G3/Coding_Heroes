@@ -69,13 +69,26 @@ public class IfNode : IGridNode, IConnectable, ILogicalModule, IOutput, IInput, 
     public async UniTaskVoid OnSignalEnter(List<IUnitState> command, List<Gnome> gnomes)
     {
         currentGnomes = gnomes;
-        
-        // 조건 검사를 위한 IfState 생성 후 command에 추가
-        System.Func<Unit, bool> condition = (unit) => CheckIfCondition(unit);
-        var ifState = new IfState(condition, new List<IUnitState>(), new List<IUnitState>());
-        command.Add(ifState);
-        
-        // 노움들을 Next 노드 위치로 이동 (일단 True 분기로)
+    
+        // 이전 노드가 WhileNode인지 확인
+        if (Prev is WhileNode)
+        {
+            // WhileState 생성 후 추가
+            System.Func<Unit, bool> condition = (unit) => CheckIfCondition(unit);
+            List<IUnitState> loopStates = CollectNextStates();
+            var whileState = new WhileState(loopStates);
+            command.Add(whileState);
+        }
+        else
+        {
+            // IfState 생성 후 추가 (True일 때만 실행)
+            System.Func<Unit, bool> condition = (unit) => CheckIfCondition(unit);
+            List<IUnitState> trueStates = CollectNextStates();
+            var ifState = new IfState(condition, trueStates);
+            command.Add(ifState);
+        }
+    
+        // 노움들을 Next 노드 위치로 이동
         if (Next != null)
         {
             Vector3 nextPosition = (Next as MonoBehaviour).transform.position;
@@ -86,9 +99,25 @@ public class IfNode : IGridNode, IConnectable, ILogicalModule, IOutput, IInput, 
             }
             await WaitForGnomesToReachNext();
         }
-        
+    
         // 다음 노드로 신호 전파
         (Next as ILogicalModule)?.OnSignalEnter(command, currentGnomes).Forget();
+    }
+
+    private List<IUnitState> CollectNextStates()
+    {
+        List<IUnitState> states = new List<IUnitState>();
+    
+        if (Next is MoveNode)
+        {
+            states.Add(new MoveState(null, 0f)); // 템플릿
+        }
+        else if (Next is AttackNode)
+        {
+            states.Add(new AttackState(null, 1)); // 템플릿
+        }
+    
+        return states;
     }
     
     private bool CheckIfCondition(Unit unit)

@@ -1,40 +1,73 @@
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
+using UnityEngine;
 
 public class WhileState : IUnitState
 {
-    private readonly System.Func<Unit, bool> _condition;
     private readonly List<IUnitState> _loopStates;
     private bool _isCompleted = false;
 
-    public WhileState(System.Func<Unit, bool> condition, List<IUnitState> loopStates)
+    public WhileState(List<IUnitState> loopStates)
     {
-        _condition = condition;
         _loopStates = new List<IUnitState>(loopStates);
     }
 
     public void Enter(Unit unit)
     {
         _isCompleted = false;
-        ExecuteLoop(unit).Forget();
+        WaitForTarget(unit).Forget();
     }
 
-    private async UniTaskVoid ExecuteLoop(Unit unit)
+    private async UniTaskVoid WaitForTarget(Unit unit)
     {
-        while (_condition(unit))
+        ITarget detectedTarget = null;
+    
+        // DataContainer가 감지될 때까지 대기
+        while (detectedTarget == null)
         {
-            // 루프 내부 상태들을 순차 실행
-            foreach (var state in _loopStates)
+            Collider[] containers = Physics.OverlapSphere(unit.transform.position, 0.1f);
+            foreach (var container in containers)
             {
-                state.Enter(unit);
-                await UniTask.WaitUntil(() => state.IsCompleted(unit));
-                state.Exit(unit);
+                if (container.TryGetComponent<DataContainer>(out var dataContainer))
+                {
+                    dataContainer.OnStop();
+                    detectedTarget = dataContainer;
+                    break;
+                }
             }
-            
-            await UniTask.Yield(); // 한 프레임 대기
-        }
         
+            await UniTask.Yield();
+        }
+    
+        // 타겟을 발견했으면, 기존 command의 State들 타겟 업데이트
+        UpdateExistingStates(unit, detectedTarget);
+    
         _isCompleted = true;
+    }
+
+    
+    private void UpdateExistingStates(Unit unit, ITarget target)
+    {
+        var unitCommands = unit.GetRemainingCommand(); 
+    
+        // null 체크 추가!
+        if (unitCommands == null || unitCommands.Count == 0)
+        {
+            Debug.LogWarning("Unit의 command가 아직 설정되지 않음");
+            return;
+        }
+    
+        foreach (var state in unitCommands)
+        {
+            if (state is MoveState moveState)
+            {
+                moveState.SetTarget(target);
+            }
+            else if (state is AttackState attackState)
+            {
+                attackState.SetTarget(target as IAttackable);
+            }
+        }
     }
 
     public void Update(Unit unit) { }

@@ -1,9 +1,11 @@
+
+using System;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using static BlockConfig;
 
-public class AttackNode : IGridNode, IConnectable, ILogicalModule, IGetData, IOutput, IInput
+public class AttackNode : IGridNode, IConnectable, ILogicalModule, IGetDataFilter, IInput, IGetData, IOutput
 {
     [SerializeField] private LocalDirection inputDirection = LocalDirection.Back;
     [SerializeField] private LocalDirection outputDirection = LocalDirection.Forward;
@@ -17,6 +19,8 @@ public class AttackNode : IGridNode, IConnectable, ILogicalModule, IGetData, IOu
     private ITarget target; // If 노드에서 받은 특정 타겟
     
     private List<Gnome> currentGnomes = new List<Gnome>();
+    
+    private Func<DataContainer, bool> dataFilter;
     
     public override void Initialize(Vector3Int gridPos, float rotationY = 0)
     {
@@ -33,13 +37,13 @@ public class AttackNode : IGridNode, IConnectable, ILogicalModule, IGetData, IOu
     public void ConnectNext(IConnectable next)
     {
         Next = next;
-        this.next = next.ToString();
+        this.next = next?.ToString();
     }
 
     public void ConnectPrev(IConnectable prev)
     {
         Prev = prev;
-        this.prev = prev.ToString();
+        this.prev = prev?.ToString();
     }
 
     public void DisconnectNext()
@@ -54,21 +58,14 @@ public class AttackNode : IGridNode, IConnectable, ILogicalModule, IGetData, IOu
         prev = null;
     }
     
-    public async UniTaskVoid OnSignalEnter(List<IUnitState> command, List<Gnome> gnomes)
+    // 데이터 필터 받기 (BadDataNode에서 전달)
+    public void GetDataFilter(Func<DataContainer, bool> filter)
     {
-        currentGnomes = gnomes;
-        
-        // 공격 상태 추가
-        command.Add(state);
-        
-        // 잠시 대기 (공격 시간)
-        await UniTask.Delay(System.TimeSpan.FromSeconds(0.1f));
-        
-        // 다음 노드로 신호 전파
-        (Next as ILogicalModule)?.OnSignalEnter(command, currentGnomes).Forget();
+        dataFilter = filter;
     }
-
-    public void GetData(ITarget target)
+    
+    // 타겟 데이터 받기 (DataNode에서 전달)
+    public void GetData(ITarget target = null)
     {
         this.target = target;
         
@@ -81,6 +78,53 @@ public class AttackNode : IGridNode, IConnectable, ILogicalModule, IGetData, IOu
         {
             // 타겟이 없으면 아무 적이나 공격
             state = new AttackState(null, 1);
+        }
+    }
+    
+    public async UniTaskVoid OnSignalEnter(List<IUnitState> command, List<Gnome> gnomes)
+    {
+        currentGnomes = gnomes;
+        
+        // AttackState 생성 시 필터 적용
+        var attackState = new AttackState(target as IAttackable, 1);
+        if (dataFilter != null)
+        {
+            attackState.SetDataFilter(dataFilter);
+        }
+        
+        command.Add(attackState);
+        
+        if (Next != null)
+        {
+            Vector3 nextPosition = (Next as MonoBehaviour).transform.position;
+            foreach (var gnome in currentGnomes)
+            {
+                gnome.SetTarget(nextPosition);
+                await UniTask.Delay(System.TimeSpan.FromSeconds(0.3f));
+            }
+            await WaitForGnomesToReachNext();
+        }
+        
+        // 다음 노드로 신호 전파
+        (Next as ILogicalModule)?.OnSignalEnter(command, currentGnomes).Forget();
+    }
+    
+    private async UniTask WaitForGnomesToReachNext()
+    {
+        while (true)
+        {
+            bool allReached = true;
+            foreach (var gnome in currentGnomes)
+            {
+                if (gnome != null && gnome.IsMoving)
+                {
+                    allReached = false;
+                    break;
+                }
+            }
+            
+            if (allReached) break;
+            await UniTask.Yield();
         }
     }
     

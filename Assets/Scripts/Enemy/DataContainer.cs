@@ -6,7 +6,9 @@ public class DataContainer : MonoBehaviour, IAttackable
     private Animator animator;
     private DataContainerMover mover;
     private bool isDead = false;
-    public Vector3 Position { get; }
+    
+    // ITarget 구현 - Position 프로퍼티 수정
+    public Vector3 Position => transform.position;
     
     private static readonly int IsWalkingHash = Animator.StringToHash("isWalking");
     private static readonly int DieTriggerHash = Animator.StringToHash("Die");
@@ -20,6 +22,11 @@ public class DataContainer : MonoBehaviour, IAttackable
     public void SetMover(DataContainerMover mover)
     {
         this.mover = mover;
+    }
+
+    public virtual void OnStop()
+    {
+        mover?.CancelMovement();
     }
     
     public virtual void OnAttack()
@@ -56,6 +63,4 @@ public class DataContainer : MonoBehaviour, IAttackable
         // 공통 이펙트나 사운드 등
         Destroy(gameObject);
     }
-
-    
 }
