@@ -10,6 +10,9 @@ public class VoiceInteractionManager : MonoBehaviour
 
     [Header("Dependencies")]
     [SerializeField] VoiceRecoder recorder;
+    
+    [Header("Audio")]
+    [SerializeField] AudioClip errorAudioClip;
 
     private IServerClient client;
 
@@ -44,16 +47,38 @@ public class VoiceInteractionManager : MonoBehaviour
         byte[] wavData = WavUtility.AudioClipToWav(clip);
 
         // 1) STT 호출
-        string userText = await client.SendSTT(wavData);
-        Debug.Log(userText);
+        string userText;
+        try
+        {
+            userText = await client.SendSTT(wavData);
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"STT 호출 실패: {ex}");
+            OnSttTextReceived?.Invoke("연결을 확인해주세요.");
+            return;
+        }
+
         OnSttTextReceived?.Invoke(userText);
 
         // 2) QA 챗봇 호출
-        var chatResp = await client.SendChat(userText);
-        Debug.Log(chatResp.answer);
-        
-        if (chatResp != null) {
-            // 3) base64 음성 디코딩 및 재생
+        ChatbotResponse chatResp;
+        try
+        {
+            chatResp = await client.SendChat(userText);
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"Chat 호출 실패: {ex}");
+            OnResponseReceived?.Invoke("네트워크 통신이 잘 안되는 것 같아", errorAudioClip);
+            return;
+        }
+
+        // 3) 정상 응답 처리
+        if (chatResp != null)
+        {
+            OnBotTextReceived?.Invoke(chatResp.answer);
+
             byte[] audioBytes = Convert.FromBase64String(chatResp.audio);
             var ttsClip = WavUtility.ToAudioClip(audioBytes, "NPCVoice");
             OnResponseReceived?.Invoke(chatResp.answer, ttsClip);
