@@ -15,7 +15,7 @@ public class VoiceInteractionManager : MonoBehaviour
 
     public static event Action<string> OnSttTextReceived;
     public static event Action<string> OnBotTextReceived;
-    public static event Action<AudioClip> OnAudioReceived;
+    public static event Action<string, AudioClip> OnResponseReceived;
 
     void Awake() {
         if (string.IsNullOrEmpty(apiBaseUrl))
@@ -53,12 +53,10 @@ public class VoiceInteractionManager : MonoBehaviour
         Debug.Log(chatResp.answer);
         
         if (chatResp != null) {
-            OnBotTextReceived?.Invoke(chatResp.answer);
-
             // 3) base64 음성 디코딩 및 재생
             byte[] audioBytes = Convert.FromBase64String(chatResp.audio);
             var ttsClip = WavUtility.ToAudioClip(audioBytes, "NPCVoice");
-            OnAudioReceived?.Invoke(ttsClip);
+            OnResponseReceived?.Invoke(chatResp.answer, ttsClip);
         }
     }
 }

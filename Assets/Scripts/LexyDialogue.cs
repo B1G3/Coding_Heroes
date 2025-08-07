@@ -18,6 +18,16 @@ public class LexyDialogue : MonoBehaviour
     [SerializeField] private float pageDelay = 1.5f;
 
     private DialogueNode[] nodes;
+
+    private void OnEnable()
+    {
+        VoiceInteractionManager.OnResponseReceived += GetResponse;
+    }
+    
+    private void OnDisable()
+    {
+        VoiceInteractionManager.OnResponseReceived -= GetResponse;
+    }
     
     public void Initialize(DialogueNode[] nodes)
     {
@@ -29,6 +39,12 @@ public class LexyDialogue : MonoBehaviour
     {
         this.nodes = nodes;
         StartCoroutine(RunDialogue());
+    }
+
+    private void GetResponse(string text, AudioClip clip)
+    {
+        var node = DialogueNode.Create(text, clip);
+        SetNewDialogue(new[] { node });
     }
 
     private IEnumerator RunDialogue()
