@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 4014268268774545222}
   m_Layer: 21
   m_Name: Warm_Angry
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

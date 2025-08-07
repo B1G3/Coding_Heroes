@@ -59,8 +59,14 @@ public class ARGridPlacer : MonoBehaviour
         // 4) Instantiate & 정렬
         var block = Instantiate(blockPrefab, spawnPos, rotation);
         var grid = block.GetComponent<IGridNode>();
+        
+        // GridState 등록
         GridState.Instance.AddOrUpdateNode(cell, grid);
+        
+        // BlockManager 등록
         BlockManager.Instance.RegisterBlock(block);
+        
+        // Initialize 호출 (IfBlock의 경우 내부적으로 서브노드들도 등록됨)
         grid.Initialize(cell, rotationY);
         
         var start = grid as StartNode;
@@ -68,8 +74,7 @@ public class ARGridPlacer : MonoBehaviour
         {
             GameManager.Instance.SaveStartNode(start);
         }
-        
-    }
+}
     
     // 코너 설치는 이런 식으로 하면 될 듯
     // 근데 두번 째 값에 좌표가 들어오긴 해야함
@@ -135,15 +140,41 @@ public class ARGridPlacer : MonoBehaviour
     
     private void ConnectNode(IGridNode fromNode, IGridNode toNode)
     {
-        if (fromNode is IConnectable from && toNode is IConnectable to)
+        // IfBlock의 경우 적절한 서브노드와 연결
+        IConnectable from = GetConnectableOutput(fromNode);
+        IConnectable to = GetConnectableInput(toNode);
+        
+        if (from != null && to != null)
         {
-            from?.ConnectNext(to);
-            to?.ConnectPrev(from);
+            from.ConnectNext(to);
+            to.ConnectPrev(from);
         }
     }
     
     private Quaternion GetSpawnRotation(float rotationY)
     {
         return origin.rotation * Quaternion.Euler(0f, rotationY, 0f);
+    }
+    
+    private IConnectable GetConnectableOutput(IGridNode node)
+    {
+        // IfBlock의 경우 IfNode가 출력 담당
+        if (node is IfBlock ifBlock)
+        {
+            return ifBlock.GetIfNode() as IConnectable;
+        }
+        
+        return node as IConnectable;
+    }
+
+    private IConnectable GetConnectableInput(IGridNode node)
+    {
+        // IfBlock의 경우 DataCollectorNode가 입력 담당
+        if (node is IfBlock ifBlock)
+        {
+            return ifBlock.GetDataCollectorNode() as IConnectable;
+        }
+        
+        return node as IConnectable;
     }
 }

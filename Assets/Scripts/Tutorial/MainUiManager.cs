@@ -107,6 +107,7 @@ public class MainUiManager : MonoBehaviour
         
         // 끝나면 패널 숨기기
         PlayVoice(completeVoiceClip);
+        await UniTask.WaitWhile(() => audioSource.isPlaying);
         
         tutorialCanvasGroup
             .DOFade(0f, 1f)

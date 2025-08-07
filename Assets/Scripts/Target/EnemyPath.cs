@@ -1,30 +1,32 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class EnemyPath : MonoBehaviour, ITarget
 {
-    [SerializeField] private GameObject target;
-    [SerializeField] private GameObject StartDoorObject;
-    [SerializeField] private GameObject EndObject;
     [SerializeField] private GameObject dataContainerPrefab;
+    [SerializeField] private GameObject target;
+    [SerializeField] private GameObject startDoorObject;
+    [SerializeField] private GameObject endObject;
+    
+    [SerializeField] private float spawnInterval = 0.5f;
 
-    public Vector3 Position { get; private set; }
-    public Vector3 StartPos { get; private set; }
-    public Vector3 EndPos   { get; private set; }
-
-    // prefab 별 풀 관리
-    private Dictionary<GameObject, Queue<GameObject>> _pools = new();
+    public Vector3 Position => target.transform.position;
+    public Vector3 StartPos  => startDoorObject.transform.position;
+    public Vector3 EndPos    => endObject.transform.position;
+    
+    private int remainingCount;
 
     private Animator doorAnimator;
     private static readonly int IsOpenHash = Animator.StringToHash("isOpen");
 
+    // prefab별 오브젝트 풀
+    private readonly Dictionary<GameObject, Queue<GameObject>> pools = new();
+
     private void Awake()
     {
-        // Start 대신 Awake로 초기화하여 미리 준비
-        Position = target.transform.position;
-        StartPos = StartDoorObject.transform.position;
-        EndPos   = EndObject.transform.position;
-        doorAnimator = StartDoorObject.GetComponent<Animator>();
+        doorAnimator = startDoorObject.GetComponent<Animator>();
     }
 
     /// <summary>
@@ -32,71 +34,119 @@ public class EnemyPath : MonoBehaviour, ITarget
     /// </summary>
     public void StartGame(StageConfig stage)
     {
-        if (stage == null) return;
-
         doorAnimator.SetBool(IsOpenHash, true);
-        SpawnDataContainer(StartPos, EndPos);
-    }
-
-    private void SpawnDataContainer(Vector3 start, Vector3 end)
-    {
-        // 풀에서 꺼내거나 새로 생성
-        var worm = GetFromPool(dataContainerPrefab);
-        worm.transform.position = start;
-        worm.SetActive(true);
-
-        // 이동 컴포넌트 초기화
-        var mover = worm.GetComponent<DataContainerMover>() ?? worm.AddComponent<DataContainerMover>();
-        mover.Initialize(worm, start, end);
-
-        // DataContainer에 mover 주입
-        if (worm.TryGetComponent<DataContainer>(out var container))
-            container.SetMover(mover);
-
-        // 이동 완료 시 문 닫기 및 풀 복귀
-        mover.OnMoveComplete -= OnContainerArrived;
-        mover.OnMoveComplete += OnContainerArrived;
-    }
-
-    private GameObject GetFromPool(GameObject prefab)
-    {
-        if (!_pools.TryGetValue(prefab, out var queue))
+        
+        List<GameObject> spawnList;
+        if (!stage)
         {
-            queue = new Queue<GameObject>();
-            _pools[prefab] = queue;
-        }
-        if (queue.Count > 0)
-        {
-            return queue.Dequeue();
+            spawnList = new List<GameObject> { dataContainerPrefab };
         }
         else
         {
-            // 새 인스턴스 생성
-            var go = Instantiate(prefab);
-            return go;
+            spawnList = CreateSpawnList(stage);
+            Shuffle(spawnList);
+        }
+
+        // 1) 전달된 stage 정보로 Flat List 생성·셔플
+        spawnList = CreateSpawnList(stage);
+        Shuffle(spawnList);
+        
+        // 남은 도착 횟수 초기화
+        remainingCount = spawnList.Count;
+
+        // 2) 섞인 순서대로 스폰
+        StartCoroutine(SpawnSequence(spawnList));
+    }
+    
+    private IEnumerator SpawnSequence(List<GameObject> spawnList)
+    {
+        foreach (var prefab in spawnList)
+        {
+            Spawn(prefab);
+            yield return new WaitForSeconds(spawnInterval);
         }
     }
 
-    private void OnContainerArrived(GameObject worm)
+    private void Spawn(GameObject prefab)
     {
-        // 문 닫기
-        doorAnimator.SetBool(IsOpenHash, false);
+        var instance = GetFromPool(prefab);
+        instance.transform.position = StartPos;
+        instance.SetActive(true);
 
+        // DataContainerMover 초기화
+        var mover = instance.GetComponent<DataContainerMover>()
+                    ?? instance.AddComponent<DataContainerMover>();
+        
+        // ← 재사용 전 정리!
+        mover.CancelMovement();                         // 이전 코루틴 중단
+        mover.OnMoveComplete -= OnContainerArrived;     // 이벤트 구독 제거
+        
+        // 새 이동 초기화
+        mover.Initialize(prefab, StartPos, EndPos);
+        mover.OnMoveComplete += OnContainerArrived;
+    }
+    
+
+    private void OnContainerArrived(GameObject instance)
+    {
         // 풀에 반환
-        ReturnToPool(worm);
+        ReturnToPool(instance);
+        
+        // 도착 카운터 감소
+        remainingCount--;
+
+        // 마지막 하나가 도착했을 때만 문 닫기
+        if (remainingCount <= 0)
+        {
+            doorAnimator.SetBool(IsOpenHash, false);
+        }
     }
 
-    private void ReturnToPool(GameObject worm)
+    // StageConfig의 dummyEntries, targetEntries → Flat list
+    private List<GameObject> CreateSpawnList(StageConfig stage)
     {
-        worm.SetActive(false);
+        var list = new List<GameObject>();
 
-        // 원본 prefab 식별을 위해 DataContainerMover의 Prefab 프로퍼티 사용
-        var mover = worm.GetComponent<DataContainerMover>();
-        var prefab = mover != null ? mover.Prefab : dataContainerPrefab;
+        foreach (var entry in stage.dummyEntries)
+            for (int i = 0; i < entry.count; i++)
+                list.Add(entry.prefab);
 
-        if (!_pools.TryGetValue(prefab, out var queue))
-            _pools[prefab] = queue = new Queue<GameObject>();
+        foreach (var entry in stage.targetEntries)
+            for (int i = 0; i < entry.count; i++)
+                list.Add(entry.prefab);
 
-        queue.Enqueue(worm);
+        return list;
+    }
+
+    // Fisher–Yates 셔플
+    private void Shuffle(List<GameObject> list)
+    {
+        for (int i = list.Count - 1; i > 0; i--)
+        {
+            int j = UnityEngine.Random.Range(0, i + 1);
+            (list[i], list[j]) = (list[j], list[i]);
+        }
+    }
+
+    // 풀에서 꺼내기 또는 신규 생성
+    private GameObject GetFromPool(GameObject prefab)
+    {
+        if (!pools.TryGetValue(prefab, out var q))
+            pools[prefab] = q = new Queue<GameObject>();
+
+        return q.Count > 0 ? q.Dequeue() : Instantiate(prefab);
+    }
+
+    // 비활성화 후 풀에 반환
+    private void ReturnToPool(GameObject instance)
+    {
+        instance.SetActive(false);
+
+        var mover = instance.GetComponent<DataContainerMover>();
+        var prefab = mover.Prefab;
+        if (!pools.TryGetValue(prefab, out var q))
+            pools[prefab] = q = new Queue<GameObject>();
+
+        q.Enqueue(instance);
     }
 }

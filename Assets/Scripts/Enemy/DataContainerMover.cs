@@ -22,6 +22,7 @@ public class DataContainerMover : MonoBehaviour
         Prefab           = prefab;          // 풀 식별용 원본 프리팹 저장
         transform.position = start;
         _targetPosition    = end;
+        _cancelled = false;
 
         // ▶ start → end 방향을 바라보도록
         transform.LookAt(_targetPosition);

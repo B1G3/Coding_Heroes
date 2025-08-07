@@ -242,7 +242,6 @@ public class BlockHolder : MonoBehaviour
         else
         {
             isHolding = false;
-            ResetHold(); // 이거 초기화 안하면 무한으로 설치 가능 >> 이거를 나중에 바꿔서 무한으로 설치하도록
         }
     }
 
@@ -261,6 +260,8 @@ public class BlockHolder : MonoBehaviour
                 currentRotationY
             );
         }
+        
+        OnDestroyPreview?.Invoke();
     }
 
     private void ResetHold()

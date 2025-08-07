@@ -56,6 +56,7 @@ public class VoiceInteractionManager : MonoBehaviour
         {
             Debug.LogError($"STT 호출 실패: {ex}");
             OnSttTextReceived?.Invoke("연결을 확인해주세요.");
+            OnResponseReceived?.Invoke("네트워크 통신이 잘 안되는 것 같아", errorAudioClip);
             return;
         }
 
@@ -70,7 +71,6 @@ public class VoiceInteractionManager : MonoBehaviour
         catch (Exception ex)
         {
             Debug.LogError($"Chat 호출 실패: {ex}");
-            OnResponseReceived?.Invoke("네트워크 통신이 잘 안되는 것 같아", errorAudioClip);
             return;
         }
 

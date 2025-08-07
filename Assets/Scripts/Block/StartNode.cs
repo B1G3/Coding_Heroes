@@ -32,7 +32,7 @@ public class StartNode : IGridNode, IConnectable, ILogicalModule, IOutput
         outputDirection = outputDirection.RotateY(steps);
         target = GameManager.Instance.GetTarget();
         idleState = new IdleState();
-        moveState = new MoveState(target, 0.75f);
+        moveState = new MoveState(target, 0f);
         name = "Start";
         _prev = "It is start";
     }
