@@ -37,7 +37,7 @@ public class LeverController : MonoBehaviour
         {
             float angle = transform.localRotation.eulerAngles.x;
             // 오차범위 0.5도 이내면 max 도달로 간주
-            if (Mathf.Abs(Mathf.DeltaAngle(angle, minAngle)) < 0.5f)
+            if (Mathf.Abs(Mathf.DeltaAngle(angle, maxAngle)) < 0.5f)
             {
                 maxReached = true;
                 OnLeverMax?.Invoke();
