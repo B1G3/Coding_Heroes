@@ -13,5 +13,9 @@ MonoBehaviour:
   m_Name: 1-1
   m_EditorClassIdentifier: 
   stageInfo: "1\uBC88 \uC2A4\uD14C\uC774\uC9C0\uC784"
-  dummyEntries: []
-  targetEntries: []
+  dummyEntries:
+  - prefab: {fileID: 3060869569163377651, guid: 479db0ba2d3d0604dbb7d292175cb52e, type: 3}
+    count: 3
+  targetEntries:
+  - prefab: {fileID: 2044190897800324374, guid: 3c9d7e6e23d45f44dbd4c2e6434fd83c, type: 3}
+    count: 1

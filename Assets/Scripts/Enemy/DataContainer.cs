@@ -1,17 +1,59 @@
+using System.Collections;
 using UnityEngine;
 
 public class DataContainer : MonoBehaviour, IAttackable
 {
+    private Animator animator;
+    private DataContainerMover mover;
+    private bool isDead = false;
     public Vector3 Position { get; }
+    
+    private static readonly int IsWalkingHash = Animator.StringToHash("isWalking");
+    private static readonly int DieTriggerHash = Animator.StringToHash("Die");
+
+    private void Awake()
+    {
+        if (TryGetComponent<Animator>(out var anim))
+            animator = anim;
+    }
+
+    public void SetMover(DataContainerMover mover)
+    {
+        this.mover = mover;
+    }
     
     public virtual void OnAttack()
     {
-        Die();
+        if (isDead) return;
+        isDead = true;
+
+        // 1) 이동 취소
+        mover?.CancelMovement();
+        
+        if (animator != null)
+        {
+            animator.SetBool(IsWalkingHash, false);
+            animator.SetTrigger(DieTriggerHash);
+            StartCoroutine(DieAfterAnimation());
+        }
+        else
+        {
+            // Animator가 없으면 즉시 삭제
+            Die();
+        }
     }
 
+    private IEnumerator DieAfterAnimation()
+    {
+        // 현재 재생 중인 상태의 길이만큼 대기
+        var stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+        yield return new WaitForSeconds(stateInfo.length);
+        Die();
+    }
+    
     protected virtual void Die()
     {
-        // 공통 사망 로직 (이펙트, 사운드 등)
+        // 공통 이펙트나 사운드 등
         Destroy(gameObject);
     }
 

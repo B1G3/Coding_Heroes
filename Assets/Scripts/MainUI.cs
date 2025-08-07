@@ -61,8 +61,9 @@ public class MainUI : MonoBehaviour
     {
         // 트윈 애니메이션 모두 정리
         canvasGroup.DOKill();
-        canvasGroup.alpha = 0f;
-        canvas.enabled = false;
+        canvasGroup
+            .DOFade(0f, delay)
+            .OnComplete(() => canvas.enabled = false);
     }
     
     private void DisableCanvas()

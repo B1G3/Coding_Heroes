@@ -13,5 +13,11 @@ MonoBehaviour:
   m_Name: 1-Boss
   m_EditorClassIdentifier: 
   stageInfo: "\uBCF4\uC2A4 \uC2A4\uD14C\uC774\uC9C0\uC784"
-  dummyEntries: []
-  targetEntries: []
+  dummyEntries:
+  - prefab: {fileID: 3060869569163377651, guid: 479db0ba2d3d0604dbb7d292175cb52e, type: 3}
+    count: 2
+  targetEntries:
+  - prefab: {fileID: 2044190897800324374, guid: 3c9d7e6e23d45f44dbd4c2e6434fd83c, type: 3}
+    count: 1
+  - prefab: {fileID: 655895539706403280, guid: 4eabd30aed26a6349940012f1bb87f72, type: 3}
+    count: 1
