@@ -15,10 +15,6 @@ public class GameManager : MonoBehaviour
     [Header("Voice Recoder")]
     [SerializeField] private VoiceRecoder voiceRecoder;
     
-    [Header("Input")]
-    [SerializeField] private InputActionReference leftGrabAction;  
-    [SerializeField] private InputActionReference rightGrabAction; 
-    
     [Header("Stage Data")]
     [SerializeField] private StageConfig currentStage; 
     
@@ -28,11 +24,10 @@ public class GameManager : MonoBehaviour
         Road,
         Reposition,
         Record,
-        Start,
     }
     
     private IGameState currentState;
-    private StartGameState startGameState;
+    private RoadState roadState;
     private IdleGameState idleGameState;
     private RecordState recordState;
     private RepositionState repositionState;
@@ -47,10 +42,6 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        startGameState = new StartGameState();
-        startGameState.Entered += Enter;
-        startGameState.Exited += Exit;
-        
         idleGameState = new IdleGameState();
         idleGameState.Entered += leftBlockHolder.Enter;
         idleGameState.Entered += rightBlockHolder.Enter;
@@ -67,6 +58,16 @@ public class GameManager : MonoBehaviour
         repositionState.Exited += leftBlockReposition.Exit;
         repositionState.Exited += rightBlockReposition.Exit;
         
+        roadState = new RoadState();
+        roadState.Entered += leftBlockHolder.Enter;
+        roadState.Entered += rightBlockHolder.Enter;
+        roadState.Exited += leftBlockHolder.Exit;
+        roadState.Exited += rightBlockHolder.Exit;
+        roadState.Entered += leftBlockHolder.PlacePathEnter;
+        roadState.Entered += rightBlockHolder.PlacePathEnter;
+        roadState.Exited += leftBlockHolder.PlacePathExit;
+        roadState.Exited += rightBlockHolder.PlacePathExit;
+        
         SetState(idleGameState);
     }
 
@@ -82,18 +83,6 @@ public class GameManager : MonoBehaviour
         HomeSpawner.OnHomeSpawned -= SetEnemyPath;
         LeverController.OnLeverMax -= LaunchGame;
         StageManager.OnStageChanged -= SetStage;
-    }
-
-    private void Enter()
-    {
-        leftGrabAction.action.Enable();
-        rightGrabAction.action.Enable();
-    }
-    
-    private void Exit()
-    {
-        leftGrabAction.action.Disable();
-        rightGrabAction.action.Disable();
     }
     
     private void SetState(IGameState newState)
@@ -116,6 +105,9 @@ public class GameManager : MonoBehaviour
                 break;
             case GameStateType.Reposition:
                 SetState(repositionState);
+                break;
+            case GameStateType.Road:
+                SetState(roadState);
                 break;
             default:
                 break;

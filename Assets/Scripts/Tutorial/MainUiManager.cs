@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System;
 using System.Collections.Generic;
+using UnityEngine.Serialization;
 
 public class MainUiManager : MonoBehaviour
 {
@@ -19,7 +20,7 @@ public class MainUiManager : MonoBehaviour
     [SerializeField] Image logoPanel;
     [SerializeField] GameObject tutorialPanel;
     [SerializeField] CanvasGroup tutorialCanvasGroup;
-    [SerializeField] GameObject WarningPanel;
+    [SerializeField] GameObject warningPanel;
 
     [Header("Tutorial Settings")]
     [SerializeField] List<TutorialQuest> tutorialQuests;
@@ -62,7 +63,7 @@ public class MainUiManager : MonoBehaviour
     {
         logoPanel.enabled = true;
         tutorialPanel.SetActive(false);
-        WarningPanel.SetActive(false);
+        warningPanel.SetActive(false);
         foreach (var q in tutorialQuests)
         {
             q.questUI.isOn = false;
@@ -112,7 +113,7 @@ public class MainUiManager : MonoBehaviour
             .SetDelay(1f)
             .OnComplete(() => tutorialPanel.SetActive(false));
         
-        WarningPanel.SetActive(true);
+        warningPanel.SetActive(true);
         OnTutorialComplete?.Invoke();
         Debug.Log("튜토리얼 전부 완료!");
     }

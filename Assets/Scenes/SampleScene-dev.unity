@@ -1643,8 +1643,6 @@ MonoBehaviour:
   leftBlockReposition: {fileID: 1050120308}
   rightBlockReposition: {fileID: 1775038491}
   voiceRecoder: {fileID: 9157102152048668263}
-  leftGrabAction: {fileID: 0}
-  rightGrabAction: {fileID: 0}
   currentStage: {fileID: 0}
 --- !u!4 &256544207 stripped
 Transform:
@@ -4232,6 +4230,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   placementCheckDistance: 0.2
+  pathBlockPrefab: {fileID: 7026479500113872209, guid: 0a20609d83309b448856878ef5ee5c89, type: 3}
 --- !u!114 &720915285 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2942156198692655549, guid: d6878e1999eb4b44a9f5a263af86c185, type: 3}
@@ -9188,7 +9187,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf1f90b02496e4d4cab8228921bcf046, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  stages: []
+  stages:
+  - {fileID: 11400000, guid: b60e2ec7185a9bc4ab8d69168474de8a, type: 2}
+  - {fileID: 11400000, guid: a769e7ebe7a41cf40b00cac5d2308256, type: 2}
   bossStageIndex: -1
   stageText: {fileID: 1137815750}
   fillImages:
@@ -9198,7 +9199,7 @@ MonoBehaviour:
   circleImages:
   - {fileID: 478360998}
   - {fileID: 789537249}
-  fillDuration: 0.5
+  fillDuration: 1
   circleScaleDuration: 0.3
   circleScaleFactor: 1.3
   highlightColor: {r: 0.4, g: 0.83137256, b: 0.45882353, a: 1}
@@ -10518,10 +10519,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   followerAlignment: {fileID: 995546651}
   canvas: {fileID: 1180879495}
-  canvasGroup: {fileID: 0}
+  canvasGroup: {fileID: 1784034862}
   delay: 0.5
-  warningDuration: 3
-  warningBlinkInterval: 0.5
+  warningDuration: 3.5
+  warningBlinkInterval: 1
 --- !u!114 &1784034860
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10537,7 +10538,7 @@ MonoBehaviour:
   logoPanel: {fileID: 1346642513}
   tutorialPanel: {fileID: 379203562}
   tutorialCanvasGroup: {fileID: 379203567}
-  WarningPanel: {fileID: 502789296}
+  warningPanel: {fileID: 502789296}
   tutorialQuests:
   - voiceClip: {fileID: 8300000, guid: 05d618f54753aa641bdcea5af88235d4, type: 3}
     questUI: {fileID: 1781164751}
@@ -10715,12 +10716,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-    tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-    quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-    Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore
-    eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt
-    in culpa qui officia deserunt mollit anim id est laborum.
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 81cd7b59eab0d8b40b3947ee437918ed, type: 2}
   m_sharedMaterial: {fileID: 6228799333173215690, guid: 81cd7b59eab0d8b40b3947ee437918ed, type: 2}
@@ -12781,6 +12777,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   placementCheckDistance: 0.2
+  pathBlockPrefab: {fileID: 7026479500113872209, guid: 0a20609d83309b448856878ef5ee5c89, type: 3}
 --- !u!54 &2110444448
 Rigidbody:
   m_ObjectHideFlags: 0

@@ -10,7 +10,7 @@ public class MainUI : MonoBehaviour
     [SerializeField] private CanvasGroup canvasGroup;
     [SerializeField] private float delay = 0.5f;
     [SerializeField] private float warningDuration = 3f;
-    [SerializeField] private float warningBlinkInterval = 0.5f;
+    [SerializeField] private float warningBlinkInterval = 1f;
 
     private void OnEnable()
     {

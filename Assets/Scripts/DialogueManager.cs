@@ -29,5 +29,6 @@ public class DialogueManager : MonoBehaviour
     private void HandleLeverTriggered()
     {
         lexyDialogue.SetNewDialogue(dialogueNodes);
+        LeverController.OnLeverMax -= HandleLeverTriggered;
     }
 }

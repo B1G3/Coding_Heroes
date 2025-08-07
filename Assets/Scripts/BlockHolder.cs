@@ -24,6 +24,7 @@ public class BlockHolder : MonoBehaviour
     
     [Header("Placement")]
     [SerializeField] private float placementCheckDistance = 0.2f;
+    [SerializeField] private GameObject pathBlockPrefab;
     
     private enum Mode { None, Block, PlacingPath }
     private Mode mode = Mode.None;
@@ -69,6 +70,21 @@ public class BlockHolder : MonoBehaviour
         hitCollider.enabled = false;
         grabAction.action.Disable();
         rotationAction?.action.Disable();
+    }
+
+    public void PlacePathEnter()
+    {
+        OnPlacing?.Invoke(true);
+        currentBlock = pathBlockPrefab;
+        currentBlockType = BlockType.Path;
+        mode = Mode.PlacingPath;
+    }
+    
+    public void PlacePathExit()
+    {
+        pathStartBlock = null;
+        pathStartOutput = null;
+        ResetHold();
     }
 
     void Update()
@@ -151,11 +167,6 @@ public class BlockHolder : MonoBehaviour
             {
                 OnPlacing?.Invoke(true);
                 mode = Mode.Block;
-            }
-            else if (currentBlockType is BlockType.Path)
-            {
-                OnPlacing?.Invoke(true);
-                mode = Mode.PlacingPath;
             }
             else
             {
@@ -250,10 +261,6 @@ public class BlockHolder : MonoBehaviour
                 currentRotationY
             );
         }
-        
-        pathStartBlock = null;
-        pathStartOutput = null;
-        ResetHold();
     }
 
     private void ResetHold()

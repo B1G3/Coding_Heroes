@@ -4,9 +4,14 @@ using System.Text;
 using System.Text.RegularExpressions;
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class LexyDialogue : MonoBehaviour
 {
+    [Header("Input")]
+    [SerializeField] private InputActionReference leftGrabAction;
+    [SerializeField] private InputActionReference rightGrabAction;
+    
     [SerializeField] private GameObject dialogueObject;
     [SerializeField] private TMP_Text dialogueText;
     [SerializeField] private AudioSource audioSource;
@@ -18,15 +23,43 @@ public class LexyDialogue : MonoBehaviour
     [SerializeField] private float pageDelay = 1.5f;
 
     private DialogueNode[] nodes;
+    private bool skipRequested;
 
     private void OnEnable()
     {
         VoiceInteractionManager.OnResponseReceived += GetResponse;
+        if (leftGrabAction != null)
+        {
+            leftGrabAction.action.performed += OnSkip; 
+            leftGrabAction.action.Enable();
+        }
+        
+        if (rightGrabAction != null)
+        {
+            rightGrabAction.action.performed += OnSkip; 
+            rightGrabAction.action.Enable();
+        }
     }
     
     private void OnDisable()
     {
         VoiceInteractionManager.OnResponseReceived -= GetResponse;
+        if (leftGrabAction != null)
+        {
+            leftGrabAction.action.performed -= OnSkip;
+            leftGrabAction.action.Disable();
+        }
+        
+        if (rightGrabAction != null)
+        {
+            rightGrabAction.action.performed -= OnSkip; 
+            rightGrabAction.action.Disable();
+        }
+    }
+    
+    private void OnSkip(InputAction.CallbackContext ctx)
+    {
+        skipRequested = true;
     }
     
     public void Initialize(DialogueNode[] nodes)
@@ -61,6 +94,8 @@ public class LexyDialogue : MonoBehaviour
 
     private IEnumerator PlayNode(DialogueNode node)
     {
+        // 초기화
+        skipRequested = false;
         dialogueObject.SetActive(true);
         dialogueText.gameObject.SetActive(true);
 
@@ -68,32 +103,48 @@ public class LexyDialogue : MonoBehaviour
         audioSource.clip = node.clip;
         audioSource.Play();
 
-        // 2) 텍스트를 문장으로 쪼개고, 페이지로 묶기
-        var sentences = SplitToSentences(node.text);
-        var pages     = BuildPages(sentences);
+        // 2) 문장→페이지 분할
+        var pages    = BuildPages(SplitToSentences(node.text));
 
-        // 3) 각 페이지별로 타입라이팅 & 페이지 전환
+        // 3) 각 페이지 타입라이팅 & 페이지 대기
         foreach (var page in pages)
         {
             dialogueText.text = "";
-            
+            var sb = new StringBuilder();
+
             // 타입라이팅
-            var sb = new System.Text.StringBuilder();
             foreach (var c in page)
             {
+                if (skipRequested)
+                {
+                    dialogueText.text = page;
+                    break;
+                }
                 sb.Append(c);
                 dialogueText.text = sb.ToString();
                 yield return new WaitForSeconds(typingSpeed);
             }
 
-            // 페이지 끝나면 잠깐 멈추기 (0.5~1초)
-            yield return new WaitForSeconds(pageDelay);
+            skipRequested = false;
+
+            // 페이지 끝 대기 (직접 프레임 단위로 체크)
+            float timer = 0f;
+            while (timer < pageDelay && !skipRequested)
+            {
+                timer += Time.deltaTime;
+                yield return null;
+            }
+
+            skipRequested = false;
         }
 
-        // 4) 마지막 페이지 대기 후, 음성 끝날 때까지
-        yield return new WaitUntil(() => !audioSource.isPlaying);
+        // 4) 마지막 페이지 대기 후, 음성 끝날 때까지 (스킵 가능)
+        while (audioSource.isPlaying && !skipRequested)
+            yield return null;
 
-        
+        skipRequested = false;
+
+        // 5) UI 닫기
         dialogueText.gameObject.SetActive(false);
         dialogueObject.SetActive(false);
     }

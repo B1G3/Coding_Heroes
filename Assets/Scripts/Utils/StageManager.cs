@@ -35,7 +35,16 @@ public class StageManager : MonoBehaviour
     
     // 지금까지 진행된 프로그래스 단계 (0부터 시작)
     private int progressStep = 0;
+
+    private void OnEnable()
+    {
+        MainUiManager.OnTutorialComplete += NextStage;
+    }
     
+    private void OnDisable()
+    {
+        MainUiManager.OnTutorialComplete -= NextStage;
+    }
     
     /// <summary>다음 스테이지로 이동</summary>
     public void NextStage()

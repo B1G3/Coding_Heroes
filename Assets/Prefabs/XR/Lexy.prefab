@@ -226,9 +226,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a265e1e3f5e52340b1a8465b5cf90a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  leftGrabAction: {fileID: -6131295136447488360, guid: c348712bda248c246b8c49b3db54643f, type: 3}
+  rightGrabAction: {fileID: 187161793506945269, guid: c348712bda248c246b8c49b3db54643f, type: 3}
   dialogueObject: {fileID: 4687916321930558257}
   dialogueText: {fileID: 4356563678930185980}
   audioSource: {fileID: 6106569949152240180}
+  faceMaterial: {fileID: 0}
+  faceSprite: []
+  faceSpriteDefault: {fileID: 0}
   typingSpeed: 0.05
   maxCharsPerPage: 36
   pageDelay: 1.5
