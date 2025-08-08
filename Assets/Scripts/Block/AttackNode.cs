@@ -72,12 +72,12 @@ public class AttackNode : IGridNode, IConnectable, ILogicalModule, IGetDataFilte
         // 특정 타겟이 지정된 경우 (If 노드에서 온 경우)
         if (target != null && target is IAttackable attackable)
         {
-            state = new AttackState(attackable, 2);
+            state = new AttackState(attackable, 1);
         }
         else
         {
             // 타겟이 없으면 아무 적이나 공격
-            state = new AttackState(null, 2);
+            state = new AttackState(null, 1);
         }
     }
     
@@ -86,7 +86,7 @@ public class AttackNode : IGridNode, IConnectable, ILogicalModule, IGetDataFilte
         currentGnomes = gnomes;
         
         // AttackState 생성 시 필터 적용
-        var attackState = new AttackState(target as IAttackable, 2);
+        var attackState = new AttackState(target as IAttackable, 1);
         if (dataFilter != null)
         {
             attackState.SetDataFilter(dataFilter);

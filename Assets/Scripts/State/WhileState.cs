@@ -71,11 +71,11 @@ public class WhileState : IUnitState
     private void UpdateWaitingForTarget(Unit unit)
     {
         // 조건에 맞는 DataContainer 찾기
-        Collider[] containers = Physics.OverlapSphere(unit.transform.position, 5f);
+        Collider[] containers = Physics.OverlapSphere(unit.transform.position, 0.1f);
         
         foreach (var container in containers)
         {
-            if (container.TryGetComponent<DataContainer>(out var dataContainer))
+            if (container.TryGetComponent<BadDataContainer>(out var dataContainer))
             {
                 // 🚨 핵심: 이미 공격한 타겟이면 건너뛰기
                 if (_attackedTargets.Contains(dataContainer))
