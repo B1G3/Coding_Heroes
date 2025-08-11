@@ -102,6 +102,7 @@ public class ARGridPlacer : MonoBehaviour
         {
             // ▶ 블록이 없으면 코너 스폰 후 딕셔너리에 등록, then 연결
             Vector3 cornerWorldPos = CellToWorld(to);
+            cornerWorldPos.y = fromWorldPos.transform.position.y;
             // 1) 월드 공간에서의 yaw
             float worldYaw = cornerRotation.eulerAngles.y;
             // 2) origin 기준 yaw

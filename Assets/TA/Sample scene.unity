@@ -253,7 +253,7 @@ GameObject:
   m_Component:
   - component: {fileID: 200358014}
   m_Layer: 0
-  m_Name: GameObject (5)
+  m_Name: attack
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -600,7 +600,7 @@ GameObject:
   m_Component:
   - component: {fileID: 474755155}
   m_Layer: 0
-  m_Name: GameObject (1)
+  m_Name: function
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -696,7 +696,7 @@ GameObject:
   m_Component:
   - component: {fileID: 519880993}
   m_Layer: 0
-  m_Name: GameObject (2)
+  m_Name: variable
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1079,7 +1079,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1077180342}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: move
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1422,7 +1422,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1476598595}
   m_Layer: 0
-  m_Name: GameObject (3)
+  m_Name: if
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2011,7 +2011,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2091126799}
   m_Layer: 0
-  m_Name: GameObject (4)
+  m_Name: while
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

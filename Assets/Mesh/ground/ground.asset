@@ -1,0 +1,233 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d41887b1546f5c44ab54e7e65aad3bc, type: 3}
+  m_Name: ground
+  m_EditorClassIdentifier: 
+  version: 3252
+  resultType: 0
+  materialsAndUVRects:
+  - material: {fileID: 478856442364120957, guid: 55357f527dbaaa04a93c9a10229537bb, type: 3}
+    atlasRect:
+      serializedVersion: 2
+      x: 0.6668831
+      y: 0.0009107468
+      width: 0.33246753
+      height: 0.46630237
+    srcObjName: ground
+    textureArraySliceIdx: -1
+    allPropsUseSameTiling: 1
+    allPropsUseSameTiling_sourceMaterialTiling:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 1
+      height: 1
+    allPropsUseSameTiling_samplingEncapsulatinRect:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 1
+      height: 1
+    propsUseDifferntTiling_srcUVsamplingRect:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
+    tilingTreatment: 0
+  - material: {fileID: -3846018093981099296, guid: 55357f527dbaaa04a93c9a10229537bb, type: 3}
+    atlasRect:
+      serializedVersion: 2
+      x: 0.6668831
+      y: 0.0009107468
+      width: 0.33246753
+      height: 0.46630237
+    srcObjName: ground
+    textureArraySliceIdx: -1
+    allPropsUseSameTiling: 1
+    allPropsUseSameTiling_sourceMaterialTiling:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 1
+      height: 1
+    allPropsUseSameTiling_samplingEncapsulatinRect:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 1
+      height: 1
+    propsUseDifferntTiling_srcUVsamplingRect:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
+    tilingTreatment: 0
+  - material: {fileID: -7198559261415225722, guid: 55357f527dbaaa04a93c9a10229537bb, type: 3}
+    atlasRect:
+      serializedVersion: 2
+      x: 0.00064935064
+      y: 0.0009107468
+      width: 0.66493505
+      height: 0.93260473
+    srcObjName: ground
+    textureArraySliceIdx: -1
+    allPropsUseSameTiling: 1
+    allPropsUseSameTiling_sourceMaterialTiling:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 1
+      height: 1
+    allPropsUseSameTiling_samplingEncapsulatinRect:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 1
+      height: 1
+    propsUseDifferntTiling_srcUVsamplingRect:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
+    tilingTreatment: 0
+  - material: {fileID: -30378598915172805, guid: 55357f527dbaaa04a93c9a10229537bb, type: 3}
+    atlasRect:
+      serializedVersion: 2
+      x: 0.00064935064
+      y: 0.93533695
+      width: 0.01038961
+      height: 0.014571949
+    srcObjName: ground
+    textureArraySliceIdx: -1
+    allPropsUseSameTiling: 1
+    allPropsUseSameTiling_sourceMaterialTiling:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 1
+      height: 1
+    allPropsUseSameTiling_samplingEncapsulatinRect:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 1
+      height: 1
+    propsUseDifferntTiling_srcUVsamplingRect:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
+    tilingTreatment: 0
+  - material: {fileID: 3326987968012634402, guid: 55357f527dbaaa04a93c9a10229537bb, type: 3}
+    atlasRect:
+      serializedVersion: 2
+      x: 0.00064935064
+      y: 0.95173043
+      width: 0.01038961
+      height: 0.014571949
+    srcObjName: ground
+    textureArraySliceIdx: -1
+    allPropsUseSameTiling: 1
+    allPropsUseSameTiling_sourceMaterialTiling:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 1
+      height: 1
+    allPropsUseSameTiling_samplingEncapsulatinRect:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 1
+      height: 1
+    propsUseDifferntTiling_srcUVsamplingRect:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
+    tilingTreatment: 0
+  - material: {fileID: -2244688745032930226, guid: 55357f527dbaaa04a93c9a10229537bb, type: 3}
+    atlasRect:
+      serializedVersion: 2
+      x: 0.00064935064
+      y: 0.96812385
+      width: 0.01038961
+      height: 0.014571949
+    srcObjName: ground
+    textureArraySliceIdx: -1
+    allPropsUseSameTiling: 1
+    allPropsUseSameTiling_sourceMaterialTiling:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 1
+      height: 1
+    allPropsUseSameTiling_samplingEncapsulatinRect:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 1
+      height: 1
+    propsUseDifferntTiling_srcUVsamplingRect:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
+    tilingTreatment: 0
+  - material: {fileID: -5837117417356383784, guid: 55357f527dbaaa04a93c9a10229537bb, type: 3}
+    atlasRect:
+      serializedVersion: 2
+      x: 0.00064935064
+      y: 0.9845173
+      width: 0.01038961
+      height: 0.014571949
+    srcObjName: ground
+    textureArraySliceIdx: -1
+    allPropsUseSameTiling: 1
+    allPropsUseSameTiling_sourceMaterialTiling:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 1
+      height: 1
+    allPropsUseSameTiling_samplingEncapsulatinRect:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 1
+      height: 1
+    propsUseDifferntTiling_srcUVsamplingRect:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
+    tilingTreatment: 0
+  resultMaterials:
+  - combinedMaterial: {fileID: 2100000, guid: db832225c03913b4ba689e185d7e63c8, type: 2}
+    considerMeshUVs: 0
+    sourceMaterials:
+    - {fileID: 478856442364120957, guid: 55357f527dbaaa04a93c9a10229537bb, type: 3}
+    - {fileID: -3846018093981099296, guid: 55357f527dbaaa04a93c9a10229537bb, type: 3}
+    - {fileID: -7198559261415225722, guid: 55357f527dbaaa04a93c9a10229537bb, type: 3}
+    - {fileID: -30378598915172805, guid: 55357f527dbaaa04a93c9a10229537bb, type: 3}
+    - {fileID: 3326987968012634402, guid: 55357f527dbaaa04a93c9a10229537bb, type: 3}
+    - {fileID: -2244688745032930226, guid: 55357f527dbaaa04a93c9a10229537bb, type: 3}
+    - {fileID: -5837117417356383784, guid: 55357f527dbaaa04a93c9a10229537bb, type: 3}
+  resultMaterialsTexArray: []
+  doMultiMaterial: 0
