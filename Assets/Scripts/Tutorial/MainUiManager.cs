@@ -4,6 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.Serialization;
 
@@ -30,6 +31,14 @@ public class MainUiManager : MonoBehaviour
     [SerializeField] AudioSource audioSource;
     [SerializeField] AudioClip completeVoiceClip;
     [SerializeField] AudioClip warnigClip;
+    
+    [SerializeField] private float defaultVolume = 1f;
+    [SerializeField] private float totalDurationSeconds = 3f; // 전체 지속 시간(3초)
+    [SerializeField] private float fadeDuration        = 0.8f; // 마지막 페이드 시간
+    [SerializeField] private bool  useUnscaledTime     = true;
+    [SerializeField] private bool  stopAfterFade       = true;
+
+    Coroutine _fadeCo;
 
     public static event Action OnLookAroundComplete;
     public static event Action OnTutorialComplete;
@@ -140,12 +149,44 @@ public class MainUiManager : MonoBehaviour
 
     void Warning()
     {
-        if (warnigClip != null)
-        {
-            PlayVoice(warnigClip);
-        }
+        if (!audioSource || !warnigClip) return;
+
+        if (_fadeCo != null) { StopCoroutine(_fadeCo); _fadeCo = null; }
+
+        audioSource.loop   = false;           // 경고음은 루프 금지
+        audioSource.volume = defaultVolume;
+        audioSource.clip   = warnigClip;
+        audioSource.Play();
+
+        // 총 3초 = (대기 구간) + (페이드 구간)
+        float fade = Mathf.Min(fadeDuration, totalDurationSeconds);
+        float wait = Mathf.Max(0f, totalDurationSeconds - fade);
+
+        _fadeCo = StartCoroutine(FadeOutAfter(audioSource, wait, fade, useUnscaledTime, stopAfterFade));
     }
 
+    IEnumerator FadeOutAfter(AudioSource src, float delay, float duration, bool unscaled, bool stopWhenDone)
+    {
+        if (unscaled) yield return new WaitForSecondsRealtime(delay);
+        else          yield return new WaitForSeconds(delay);
+
+        float start = src.volume;
+        float t = 0f;
+        while (t < duration && src != null)
+        {
+            t += unscaled ? Time.unscaledDeltaTime : Time.deltaTime;
+            float k = Mathf.Clamp01(t / duration);
+            src.volume = Mathf.Lerp(start, 0f, k);
+            yield return null;
+        }
+
+        if (src != null)
+        {
+            src.volume = 0f;
+            if (stopWhenDone) src.Stop();  // 정확히 totalDurationSeconds 근처에서 정지
+        }
+    }
+    
     void CompleteQuest(int idx)
     {
         tutorialQuests[idx].questUI.isOn = true;

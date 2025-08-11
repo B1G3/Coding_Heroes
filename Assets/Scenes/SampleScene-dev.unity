@@ -2326,7 +2326,6 @@ GameObject:
   - component: {fileID: 379203565}
   - component: {fileID: 379203564}
   - component: {fileID: 379203567}
-  - component: {fileID: 379203566}
   m_Layer: 5
   m_Name: Tutorial
   m_TagString: Untagged
@@ -2394,32 +2393,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 379203562}
   m_CullTransparentMesh: 1
---- !u!114 &379203566
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 379203562}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 59f8146938fff824cb5fd77236b75775, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 4
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 1
-  m_ChildForceExpandHeight: 1
-  m_ChildControlWidth: 1
-  m_ChildControlHeight: 1
-  m_ChildScaleWidth: 0
-  m_ChildScaleHeight: 0
-  m_ReverseArrangement: 0
 --- !u!225 &379203567
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -9849,10 +9822,10 @@ RectTransform:
   - {fileID: 1155915909}
   m_Father: {fileID: 379203563}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 288, y: -540}
+  m_SizeDelta: {x: 576, y: 216}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1470014056
 MonoBehaviour:
@@ -10972,10 +10945,10 @@ RectTransform:
   - {fileID: 1781164750}
   m_Father: {fileID: 379203563}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 288, y: -108}
+  m_SizeDelta: {x: 576, y: 216}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1702866863
 MonoBehaviour:
@@ -12269,7 +12242,7 @@ MonoBehaviour:
   logoDisplayTime: 3
   audioSource: {fileID: 1784034861}
   completeVoiceClip: {fileID: 8300000, guid: e9fc0dea22209df4d9ec58a2a33d8813, type: 3}
-  warnigClip: {fileID: 8300000, guid: 48e7f6ca6ad6a394f96baceada627aed, type: 3}
+  warnigClip: {fileID: 8300000, guid: 4d81e947a11c5a648a295b5ce1712a14, type: 3}
 --- !u!82 &1784034861
 AudioSource:
   m_ObjectHideFlags: 0
@@ -14493,10 +14466,10 @@ RectTransform:
   - {fileID: 1314381583}
   m_Father: {fileID: 379203563}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 288, y: -324}
+  m_SizeDelta: {x: 576, y: 216}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2099657526
 MonoBehaviour:
