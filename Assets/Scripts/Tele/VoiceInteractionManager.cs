@@ -70,6 +70,7 @@ public class VoiceInteractionManager : MonoBehaviour
         }
         catch (Exception ex)
         {
+            OnResponseReceived?.Invoke("네트워크 통신이 잘 안되는 것 같아", errorAudioClip);
             Debug.LogError($"Chat 호출 실패: {ex}");
             return;
         }
