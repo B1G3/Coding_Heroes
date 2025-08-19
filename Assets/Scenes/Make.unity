@@ -3773,6 +3773,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3674721341614953540, guid: 234898a111b911449bb259e85aca86d2, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 6398561307128445606, guid: 234898a111b911449bb259e85aca86d2, type: 3}
       propertyPath: m_Name
       value: Attack Block
@@ -4697,7 +4701,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2024609094505839701, guid: 3bff0fb36f91cc34d89b076716eec74f, type: 3}
       propertyPath: m_Name
-      value: If Block (1)
+      value: If Block
       objectReference: {fileID: 0}
     - target: {fileID: 4050867838405142893, guid: 3bff0fb36f91cc34d89b076716eec74f, type: 3}
       propertyPath: m_LocalPosition.x
