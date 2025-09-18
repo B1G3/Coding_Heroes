@@ -48,18 +48,18 @@ public class ARHomeSpawnTrigger : MonoBehaviour
         surfaceNormal = default;
 
         var arPlane = objectCollider.GetComponent<ARPlane>();
-        if (arPlane == null)
+        if (arPlane != null)
         {
-            return false;
+            if (arPlane.alignment != PlaneAlignment.HorizontalUp)
+                return false;
+
+            surfaceNormal = arPlane.normal;
+            surfacePosition = arPlane.center;
+            return true;
         }
 
-        if (arPlane.alignment != PlaneAlignment.HorizontalUp)
-        {
-            return false;
-        }
-
-        surfaceNormal = arPlane.normal;
-        surfacePosition = arPlane.center;
+        surfacePosition = objectCollider.bounds.center;
+        surfaceNormal   = objectCollider.transform.up;
         return true;
     }
 }

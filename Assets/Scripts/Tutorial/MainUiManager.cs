@@ -22,6 +22,13 @@ public class MainUiManager : MonoBehaviour
     [SerializeField] GameObject tutorialPanel;
     [SerializeField] CanvasGroup tutorialCanvasGroup;
     [SerializeField] GameObject warningPanel;
+    [SerializeField] private GameObject BlockUI;
+    [SerializeField] private GameObject LeverUI;
+    [SerializeField] private GameObject MenuUI;
+    [SerializeField] private GameObject StageUI;
+    [SerializeField] private GameObject PlaneUI;
+    [SerializeField] private GameObject PlaneMenuUI;
+    
 
     [Header("Tutorial Settings")]
     [SerializeField] List<TutorialQuest> tutorialQuests;
@@ -40,13 +47,16 @@ public class MainUiManager : MonoBehaviour
 
     Coroutine _fadeCo;
 
-    public static event Action OnLookAroundComplete;
+    private bool planeVisible;
+
+    public static event Action<bool> OnLookAroundComplete;
     public static event Action OnTutorialComplete;
     
     // 외부 트리거용 플래그
     bool onLookAround    = false;
     bool onFirstAlignment = false;
     bool onUIMove        = false;
+    bool onButtonPressed = false;
 
     void Start()
     {
@@ -73,6 +83,8 @@ public class MainUiManager : MonoBehaviour
         logoPanel.enabled = true;
         tutorialPanel.SetActive(false);
         warningPanel.SetActive(false);
+        PlaneUI.SetActive(false);
+        ToggleGameUI(false);
         foreach (var q in tutorialQuests)
         {
             q.questUI.isOn = false;
@@ -93,6 +105,12 @@ public class MainUiManager : MonoBehaviour
     /// </summary>
     async UniTask RunTutorialSequenceAsync()
     {
+        PlaneUI.SetActive(true);
+        
+        await UniTask.WaitUntil(() => onButtonPressed);
+        
+        PlaneMenuUI.SetActive(false);
+        PlaneUI.SetActive(false);
         tutorialPanel.SetActive(true);
         
         // --- Quest 0: 자동 완료 (1초 대기 후) ---
@@ -100,9 +118,11 @@ public class MainUiManager : MonoBehaviour
         // await UniTask.Delay(TimeSpan.FromSeconds(1f));
         await UniTask.WaitUntil(() => onLookAround);
         CompleteQuest(0);
-        OnLookAroundComplete?.Invoke();
+        OnLookAroundComplete?.Invoke(planeVisible);
 
         // --- Quest 1: FollowerAlignment.OnFirstAlignment 이벤트 대기 ---
+        ToggleGameUI(true);
+        await UniTask.Delay(TimeSpan.FromSeconds(fadeDuration));
         PlayVoice(1);
         await UniTask.WaitUntil(() => onFirstAlignment);
         CompleteQuest(1);
@@ -115,6 +135,7 @@ public class MainUiManager : MonoBehaviour
         // ... 이어서 추가 퀘스트가 있다면 같은 패턴으로 ...
         
         // 끝나면 패널 숨기기
+        PlaneUI.SetActive(!planeVisible);
         PlayVoice(completeVoiceClip);
         await UniTask.WaitWhile(() => audioSource.isPlaying);
         
@@ -126,6 +147,20 @@ public class MainUiManager : MonoBehaviour
         warningPanel.SetActive(true);
         OnTutorialComplete?.Invoke();
         Debug.Log("튜토리얼 전부 완료!");
+    }
+
+    private void ToggleGameUI(bool visible)
+    {
+        BlockUI.SetActive(visible);
+        // LeverUI.SetActive(visible);
+        MenuUI.SetActive(visible);
+        StageUI.SetActive(visible);
+    }
+
+    public void SetPlaneVisibility(bool visible)
+    {
+        planeVisible = visible;
+        onButtonPressed = true;
     }
 
     void PlayVoice(int idx)

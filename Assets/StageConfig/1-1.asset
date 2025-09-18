@@ -12,11 +12,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2ce7401fca69ce4e9bd9695842aff02, type: 3}
   m_Name: 1-1
   m_EditorClassIdentifier: 
-  stageInfo: "\uC6DC x 1, \uBC14\uC774\uB7EC\uC2A4\uB97C \uB9C9\uC544\uBCF4\uC790!"
+  BossStage: 0
+  stageInfo: "\uC774\uB3D9\uD55C\uB2E4 \uBE14\uB7ED\uC744 \uD65C\uC6A9\uD558\uC790!"
   descriptions:
-  - text: "\uC774\uB3D9\uD55C\uB2E4 \uBE14\uB85D\uACFC \uACF5\uACA9\uD55C\uB2E4 \uBE14\uB85D\uC744
-      \uC774\uC6A9\uD574\uC11C \uBC14\uC774\uB7EC\uC2A4\uB97C \uC7A1\uC544 \uBCF4\uC790!"
-    audioClip: {fileID: 8300000, guid: 5ac942eb06960744a8bc9d56e55ab51c, type: 3}
+  - text: "\uC5B4\uC11C \uC640, Player!"
+    audioClip: {fileID: 8300000, guid: 3d6de590cf78b1b4aa3325396be4ba0e, type: 3}
+  - text: "\uC774\uC804 \uC2A4\uD14C\uC774\uC9C0\uC5D0\uC11C \uC720\uB2DB \uBE14\uB85D\uACFC
+      \uD589\uB3D9 \uBE14\uB85D\uC744 \uC5F0\uACB0\uD574 \uBD24\uC9C0?"
+    audioClip: {fileID: 8300000, guid: 991d9ca63796f6f4da754e22da7566db, type: 3}
+  - text: "\uC774\uBC88\uC5D0\uB294 '\uC774\uB3D9\uD55C\uB2E4' \uBE14\uB85D\uC5D0
+      \uB300\uD574 \uBC30\uC6CC \uBCF4\uC790!"
+    audioClip: {fileID: 8300000, guid: 0a3c7516ac7750948966764726cab7f4, type: 3}
+  - text: "\uC774\uB3D9\uD55C\uB2E4 \uBE14\uB85D\uC774 \uCD94\uAC00\uB41C \uBC31\uC2E0\uC740
+      '\uB370\uC774\uD130 \uB85C\uB4DC'\uB85C \uC774\uB3D9\uD574."
+    audioClip: {fileID: 8300000, guid: e8297f3ca84e7b14e9f4e12e169cd212, type: 3}
+  - text: "\uC5EC\uAE30\uC11C \uC911\uC694\uD55C \uC810! \uC774\uB3D9\uD55C\uB2E4
+      \uBE14\uB85D\uC740 \uC815\uC218 \uD615\uD0DC\uC758 '\uC785\uB825 \uBE14\uB85D'\uC774
+      \uD544\uC694\uD574!"
+    audioClip: {fileID: 8300000, guid: 7a0ac14bc30a26a45b3e2ddfab18effc, type: 3}
+  - text: "'\uC774\uB3D9\uD55C\uB2E4' \uBE14\uB85D\uACFC '\uC815\uC218' \uC785\uB825
+      \uBE14\uB85D\uC744 \uC5F0\uACB0\uD574 \uBCFC\uAE4C?"
+    audioClip: {fileID: 8300000, guid: 30044269072da4f49b9d1e9994e58e30, type: 3}
   dummyEntries:
   - prefab: {fileID: 3060869569163377651, guid: 479db0ba2d3d0604dbb7d292175cb52e, type: 3}
     count: 0

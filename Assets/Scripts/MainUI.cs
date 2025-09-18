@@ -6,6 +6,7 @@ using UnityEngine;
 public class MainUI : MonoBehaviour
 {
     [SerializeField] private FollowerAlignment followerAlignment;
+    [SerializeField] private GameObject planeUI;
     [SerializeField] private Canvas canvas;
     [SerializeField] private CanvasGroup canvasGroup;
     [SerializeField] private float delay = 0.5f;
@@ -30,6 +31,7 @@ public class MainUI : MonoBehaviour
         canvas.enabled = false;
         yield return new WaitForSeconds(delay);
         followerAlignment.AlignSingleObject(transform);
+        followerAlignment.AlignSingleObject(planeUI.transform, 0.5f, -0.25f);
         yield return new WaitUntil(() => !followerAlignment.IsAligning);
         canvas.enabled = true;
     }

@@ -8,6 +8,7 @@ using static BlockConfig;
 public class MoveNode : IGridNode, IConnectable, ILogicalModule, IGetData, IOutput, IInput
 {
     [SerializeField] private LocalDirection inputDirection = LocalDirection.Back;
+    [SerializeField] private LocalDirection dataDirection = LocalDirection.Left;
     [SerializeField] private LocalDirection outputDirection = LocalDirection.Forward;
     
     private IUnitState state;
@@ -25,6 +26,7 @@ public class MoveNode : IGridNode, IConnectable, ILogicalModule, IGetData, IOutp
         base.Initialize(gridPos, rotationY);
         int steps = DirectionUtils.StepsFromRotationY(rotationY);
         inputDirection = inputDirection.RotateY(steps);
+        dataDirection = dataDirection.RotateY(steps);
         outputDirection = outputDirection.RotateY(steps);
         name = "Move";
     }
@@ -65,7 +67,7 @@ public class MoveNode : IGridNode, IConnectable, ILogicalModule, IGetData, IOutp
         else
         {
             // 기본 타겟 사용
-            var defaultTarget = GameManager.Instance.GetTarget();
+            var defaultTarget = GameManager.Instance.GetTarget(0);
             state = new MoveState(defaultTarget, 0f);
         }
         command.Add(state);

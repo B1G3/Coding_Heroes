@@ -16,8 +16,6 @@ public class StartNode : IGridNode, IConnectable, ILogicalModule, IOutput
     public IConnectable Next { get; set; }
     public IConnectable Prev { get; set; }
     
-    private ITarget target;
-    
     [SerializeField] private string _next;
     [SerializeField] private string _prev;
     
@@ -30,9 +28,7 @@ public class StartNode : IGridNode, IConnectable, ILogicalModule, IOutput
         base.Initialize(gridPos, rotationY);
         int steps = DirectionUtils.StepsFromRotationY(rotationY);
         outputDirection = outputDirection.RotateY(steps);
-        target = GameManager.Instance.GetTarget();
         idleState = new IdleState();
-        moveState = new MoveState(target, 0f);
         name = "Start";
         _prev = "It is start";
     }
@@ -71,7 +67,7 @@ public class StartNode : IGridNode, IConnectable, ILogicalModule, IOutput
         await WaitForGnomesToReachNext();
 
         // 예: 애니메이션 등 효과를 먼저 실행해도 좋습니다.
-        (Next as ILogicalModule)?.OnSignalEnter(new List<IUnitState> { idleState, moveState }, spawnedGnomes).Forget();
+        (Next as ILogicalModule)?.OnSignalEnter(new List<IUnitState> { idleState}, spawnedGnomes).Forget();
     }
     
     public WorldDirection GetOutputDirection()

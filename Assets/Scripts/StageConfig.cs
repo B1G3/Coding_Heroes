@@ -5,6 +5,8 @@ using UnityEngine.Serialization;
 [CreateAssetMenu(menuName = "Game/StageConfig")]
 public class StageConfig : ScriptableObject
 {
+    public bool BossStage;
+    
     public string stageInfo;
 
     [Header("Descriptions")]

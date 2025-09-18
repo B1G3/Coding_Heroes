@@ -1,6 +1,7 @@
 using System;
 using Cysharp.Threading.Tasks;
 using Newtonsoft.Json;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -23,6 +24,23 @@ public class ApiService : IServerClient
 {
     private readonly string baseUrl;
     private readonly int timeoutSeconds;
+    
+    private bool isBoss = false;
+
+    private void OnEnable()
+    {
+        StageManager.OnStageChanged += StageSettingChanged;
+    }
+    
+    private void OnDisable()
+    {
+        StageManager.OnStageChanged -= StageSettingChanged;
+    }
+
+    private void StageSettingChanged(StageConfig stage)
+    {
+        isBoss = stage.BossStage;
+    }
 
     public ApiService(string baseUrl, int timeoutSeconds = 15)
     {
@@ -65,7 +83,12 @@ public class ApiService : IServerClient
     
     public async UniTask<ChatbotResponse> SendChat(string prompt) {
         string url = $"{baseUrl}/ai_npc/qa_chatbot";
-        var payload = new { text = prompt };
+        var stageInfo = isBoss ? "boss" : "learn";
+        var payload = new
+        {
+            text = prompt,
+            stage = stageInfo,
+        };
         string jsonBody = JsonConvert.SerializeObject(payload);
 
         using (var req = new UnityWebRequest(url, "POST")) {

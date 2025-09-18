@@ -4,6 +4,7 @@ using static BlockConfig;
 public class DataNode : IGridNode, IConnectable, IOutput
 {
     [SerializeField] private LocalDirection outputDirection = LocalDirection.Forward;
+    [SerializeField] private int targetNumber;
     
     public IConnectable Next { get; set; }
     public IConnectable Prev { get; set; }
@@ -18,7 +19,7 @@ public class DataNode : IGridNode, IConnectable, IOutput
         base.Initialize(gridPos, rotationY);
         int steps = DirectionUtils.StepsFromRotationY(rotationY);
         outputDirection = outputDirection.RotateY(steps);
-        target = GameManager.Instance.GetTarget();
+        target = GameManager.Instance.GetTarget(targetNumber);
         name = "Target";
         prev = "It is target";
     }

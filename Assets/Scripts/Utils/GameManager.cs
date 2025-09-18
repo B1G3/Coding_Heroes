@@ -32,7 +32,7 @@ public class GameManager : MonoBehaviour
     private RecordState recordState;
     private RepositionState repositionState;
     
-    private EnemyPath enemyPath;
+    private List<EnemyPath> enemyPath;
     public static GameManager Instance { get; private set; }
     
     private List<StartNode> startNodes = new();
@@ -118,11 +118,11 @@ public class GameManager : MonoBehaviour
     public bool CanRotateBlock() => currentState?.CanRotateBlock ?? false;
     public bool CanReposition() => currentState?.CanReposition ?? false;
 
-    public ITarget GetTarget()
+    public ITarget GetTarget(int index)
     {
         // text.text += $"Get Target {enemyPath.Position}";
-        if(!enemyPath) return null;
-        return enemyPath;
+        if(!enemyPath[index]) return null;
+        return enemyPath[index];
     }
     
     public void SaveStartNode(StartNode startNode)
@@ -143,7 +143,7 @@ public class GameManager : MonoBehaviour
     private void LaunchGame()
     {
         // text.text = "Launch Game";
-        enemyPath?.StartGame(currentStage);
+        enemyPath[0]?.StartGame(currentStage);
     }
 
     public void LaunchStartNode()
@@ -157,7 +157,7 @@ public class GameManager : MonoBehaviour
 
     private void SetEnemyPath(GameObject home)
     {
-        enemyPath ??= home.GetComponent<Home>().path1;
+        enemyPath ??= home.GetComponent<Home>().path;
         // text.text = $"{enemyPath.Position}";
     }
 }
